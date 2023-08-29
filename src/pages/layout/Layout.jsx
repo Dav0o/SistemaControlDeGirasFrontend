@@ -10,8 +10,13 @@ function Layout() {
       <NavLink className="" to="/">
         Home
       </NavLink>
+
+      <NavLink className="" to="/users">
+        Users
+      </NavLink>
       
     </nav>
+
 
     <main>
       <QueryClientProvider client={queryClient}>
