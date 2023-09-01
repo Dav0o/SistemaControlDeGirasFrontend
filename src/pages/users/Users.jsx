@@ -40,7 +40,7 @@ function Users() {
       licenseUNA: userLicenseUNA.current.valueOf,
       email: userEmail.current.value,
       password: userPassword.current.value,
-      state: userState.current.value,
+      state: userState.current.valueOf,
     };
     mutation.mutateAsync(newUser);
 
