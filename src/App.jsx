@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import User from './pages/users/components/User'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Vehicles } from './pages/vehicles/Vehicles';
+import Login from './pages/auth/Login'
 
 function App() {
   
@@ -15,10 +16,11 @@ function App() {
     <Routes>
        
       <Route path='/' element={<Layout/>}>
-        <Route index element={<Home/>} />
+        <Route index element={<Login/>} />
         <Route path='/users' element={<Users/>} />
         <Route path='/users/:userId' element={<User/>}/>
         <Route path='/vehicles' element={<Vehicles/>}/>
+        <Route path='/home' element={<Home/>}/>
 
         
       </Route>

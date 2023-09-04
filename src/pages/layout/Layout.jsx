@@ -11,7 +11,7 @@ function Layout() {
           <ul className="nav flex-column">
             <hr className="sidebar-divider"></hr>
             <li className="nav-item">
-              <NavLink className="nav-link" to="/">
+              <NavLink className="nav-link" to="/home">
                 <span className="material-symbols-outlined">home</span>
               </NavLink>
             </li>
@@ -45,7 +45,7 @@ function Layout() {
 
             <hr className="sidebar-divider"></hr>
             <li className="nav-item">
-              <NavLink className="nav-link" to="/vehicles">
+              <NavLink className="nav-link" to="/">
                 <span className="material-symbols-outlined">person</span>
               </NavLink>
             </li>
