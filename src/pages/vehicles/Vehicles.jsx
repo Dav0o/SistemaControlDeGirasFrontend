@@ -14,8 +14,7 @@ export const Vehicles = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const { isLoading, data, isError } = useQuery("vehicles", getVehicles, {
     enabled: true,
-  }
-  );
+  });
   const handleSave = () => {
     let newVehicle = {
       plate_Number: plate_Number.current.value,
@@ -34,8 +33,9 @@ export const Vehicles = () => {
       imageUrl: image_url.current.value,
     };
     mutation.mutateAsync(newVehicle);
+    handleRefreshClick();
   };
-  
+
   const plate_Number = useRef(null);
   const make = useRef(null);
   const model = useRef(null);
@@ -75,17 +75,31 @@ export const Vehicles = () => {
       color: color.current.value,
       capacity: capacity.current.value,
       engine_capacity: engine_capacity.current.value,
-      mileage:mileage.current.value,
+      mileage: mileage.current.value,
       fuel: fuel.current.value,
       oil_Change: "2023-09-01",
-      status: true,
-      imageUrl: image_url.current.value,
+      status: false,
+      imageUrl: editingVehicle.imageUrl,
     };
 
-    mutation.mutateAsync(updatedVehicle);
-    setShowEditModal(false);
+    mutation.mutateAsync(updatedVehicle).then(() => {
+      setShowEditModal(false);
+      handleRefreshClick();
+    });
   };
 
+  const handleRefreshClick = () => {
+    window.location.reload();
+  };
+
+
+  const handleDisableVehicle = (vehicleId) => {
+    const updatedVehicles = data.map((vehicle) =>
+      vehicle.id === vehicleId ? { ...vehicle, status: false } : vehicle
+    );
+    handleUpdate(updatedVehicles);
+    mutation.mutateAsync({ id: vehicleId, status: false });
+  };
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [showFormModal, setShowFormModal] = useState(false);
   const handleCloseInfoModal = () => setShowInfoModal(false);
@@ -130,6 +144,7 @@ export const Vehicles = () => {
               <th>Año</th>
               <th>Tracción</th>
               <th>Imagen</th>
+              <th>Estado</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -144,7 +159,12 @@ export const Vehicles = () => {
                 <td>{vehicle.capacity}</td>
                 <td>{vehicle.year}</td>
                 <td>{vehicle.traction}</td>
-                <img src={vehicle.imageUrl} alt={vehicle.plate_Number} style={{ width: '100px', height: '100px' }} />
+                <td><img src={vehicle.imageUrl} alt={vehicle.plate_Number} style={{ width: '65px', height: '40px' }} /></td>
+                <td>{vehicle.status ? <span class="material-symbols-outlined">
+                  visibility
+                </span> : <span class="material-symbols-outlined">
+                  visibility_off
+                </span>}</td>
                 <td>
                   <Button variant="info" onClick={() => handleShowInfoModal(vehicle)}>Detalles</Button>
                   <Button variant="primary" onClick={() => handleEditClick(vehicle.id)}>Editar</Button>
@@ -226,7 +246,7 @@ export const Vehicles = () => {
                   <Form.Control type="text" placeholder="Ingrese el color" ref={color} />
                 </Form.Group>
                 <Form.Group>
-                  <Form.Label>kilometraje</Form.Label>
+                  <Form.Label>Kilometraje</Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Ingrese el kilometraje"
@@ -262,123 +282,132 @@ export const Vehicles = () => {
 
         <Modal.Body>
           <Form>
-            <Form.Group>
-              <Form.Label>Placa</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingrese la placa"
-                defaultValue={editingVehicle ? editingVehicle.plate_Number : ''}
-                ref={plate_Number}
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Marca</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingrese la marca"
-                defaultValue={editingVehicle ? editingVehicle.make : ''}
-                ref={make}
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Capacidad</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingrese la capacidad"
-                defaultValue={editingVehicle ? editingVehicle.capacity : ''}
-                ref={capacity}
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Traccion</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingrese la traccion"
-                defaultValue={editingVehicle ? editingVehicle.traction : ''}
-                ref={traction}
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Cilindraje</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingrese el cilindraje"
-                defaultValue={editingVehicle ? editingVehicle.engine_capacity : ''}
-                ref={engine_capacity}
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Gasolina</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Gasolina"
-                defaultValue={editingVehicle ? editingVehicle.fuel : ''}
-                ref={fuel}
-              />
-            </Form.Group>
-            <Form.Group >
-              <Form.Label>Año</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingrese el año"
-                defaultValue={editingVehicle ? editingVehicle.year : ''}
-                ref={year}
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Modelo</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingrese el modelo"
-                defaultValue={editingVehicle ? editingVehicle.model : ''}
-                ref={model}
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Categoria</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingrese la categoria"
-                defaultValue={editingVehicle ? editingVehicle.category : ''}
-                ref={category}
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Color</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingrese el color"
-                defaultValue={editingVehicle ? editingVehicle.color : ''}
-                ref={color}
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Kilometraje</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingrese el kilometraje"
-                defaultValue={editingVehicle ? editingVehicle.mileage : ''}
-                ref={mileage}
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Cambio de aceite</Form.Label>
-              <Form.Control
-                type="date"
-                placeholder="Ingrese la fecha"
-                defaultValue={editingVehicle ? editingVehicle.oil_Change : ''}
-                ref={oil_Change}
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Imagen</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingrese la imagen"
-                defaultValue={editingVehicle ? editingVehicle.image_url : ''}
-                ref={image_url}
-              />
-            </Form.Group>
+            <Row>
+              <Col>
+                <Form.Group>
+                  <Form.Label>Placa</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Ingrese la placa"
+                    defaultValue={editingVehicle ? editingVehicle.plate_Number : ''}
+                    ref={plate_Number}
+                  />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label>Marca</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Ingrese la marca"
+                    defaultValue={editingVehicle ? editingVehicle.make : ''}
+                    ref={make}
+                  />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label>Capacidad</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Ingrese la capacidad"
+                    defaultValue={editingVehicle ? editingVehicle.capacity : ''}
+                    ref={capacity}
+                  />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label>Traccion</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Ingrese la traccion"
+                    defaultValue={editingVehicle ? editingVehicle.traction : ''}
+                    ref={traction}
+                  />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label>Cilindraje</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Ingrese el cilindraje"
+                    defaultValue={editingVehicle ? editingVehicle.engine_capacity : ''}
+                    ref={engine_capacity}
+                  />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label>Gasolina</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Gasolina"
+                    defaultValue={editingVehicle ? editingVehicle.fuel : ''}
+                    ref={fuel}
+                  />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label>Imagen</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Ingrese la imagen"
+                    defaultValue={editingVehicle ? editingVehicle.image_url : ''}
+                    ref={image_url}
+                  />
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group >
+                  <Form.Label>Año</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Ingrese el año"
+                    defaultValue={editingVehicle ? editingVehicle.year : ''}
+                    ref={year}
+                  />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label>Modelo</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Ingrese el modelo"
+                    defaultValue={editingVehicle ? editingVehicle.model : ''}
+                    ref={model}
+                  />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label>Categoria</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Ingrese la categoria"
+                    defaultValue={editingVehicle ? editingVehicle.category : ''}
+                    ref={category}
+                  />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label>Color</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Ingrese el color"
+                    defaultValue={editingVehicle ? editingVehicle.color : ''}
+                    ref={color}
+                  />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label>Kilometraje</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Ingrese el kilometraje"
+                    defaultValue={editingVehicle ? editingVehicle.mileage : ''}
+                    ref={mileage}
+                  />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label>Cambio de aceite</Form.Label>
+                  <Form.Control
+                    type="date"
+                    placeholder="Ingrese la fecha"
+                    defaultValue={editingVehicle ? editingVehicle.oil_Change : ''}
+                    ref={oil_Change}
+                  />
+                </Form.Group>
+
+
+              </Col>
+            </Row>
+
           </Form>
         </Modal.Body>
         <Modal.Footer>
@@ -388,6 +417,9 @@ export const Vehicles = () => {
           <Button variant="dark" onClick={handleUpdate}>
             Actualizar
           </Button>
+          <Button variant="danger" onClick={() => handleDisableVehicle(editingVehicle.id)} > <span class="material-symbols-outlined">
+            visibility
+          </span> </Button>
         </Modal.Footer>
       </Modal>
 
@@ -410,6 +442,7 @@ export const Vehicles = () => {
               <p><strong>Categoría:</strong> {selectedVehicle.category}</p>
               <p><strong>Kilometraje:</strong> {selectedVehicle.mileage}</p>
               <p><strong>Cambio de Aceite:</strong> {selectedVehicle.oil_Change}</p>
+              <p><strong>Estado:</strong> {selectedVehicle.status ? "Habilitado" : "Deshabilitado"}</p>
               <p><strong>Imagen:</strong> {selectedVehicle.image_url}</p>
 
             </div>
