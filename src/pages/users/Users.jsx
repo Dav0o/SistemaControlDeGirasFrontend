@@ -40,8 +40,8 @@ function Users() {
       name: userName.current.value,
       lastName1: userLastName1.current.value,
       lastName2: userLastName2.current.value,
-      phoneNumber: userPhoneNumber.current.valueOf,
-      licenseUNA: userLicenseUNA.current.valueOf,
+      phoneNumber: parseInt(userPhoneNumber.current.value),
+      licenseUNA: parseInt(userLicenseUNA.current.value),
       email: userEmail.current.value,
       password: userPassword.current.value,
       state: userState.current.valueOf,
@@ -72,8 +72,8 @@ function Users() {
       name: userName.current.value,
       lastName1: userLastName1.current.value,
       lastName2: userLastName2.current.value,
-      phoneNumber: userPhoneNumber.current.value,
-      licenseUNA: userLicenseUNA.current.value,
+      phoneNumber: parseInt(userPhoneNumber.current.value),
+      licenseUNA: parseInt(userLicenseUNA.current.value),
       email: userEmail.current.value,
       password: userPassword.current.value,
       state: userState.current.value,
@@ -303,7 +303,7 @@ function Users() {
               <p><strong>Telefono:</strong> {selectedUser.phoneNumber}</p>
               <p><strong>Licencia UNA:</strong> {selectedUser.licenseUNA}</p>
               <p><strong>Correo electronico:</strong> {selectedUser.email}</p>
-              <p><strong>Contraseña:</strong> {selectedUser.password}</p>
+              
               <p><strong>Estado:</strong> {selectedUser.state}</p>
             </div>
           )}

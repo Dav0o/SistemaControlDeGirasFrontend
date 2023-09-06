@@ -1,0 +1,11 @@
+import api from "../api/config";
+
+export const create = async (maintenance) => { 
+    if (maintenance.id) {
+        let data = await api.put(`maintenances/${maintenance.id}`, maintenance).then(result => result.data);
+        return data;
+    } else {
+        let data = await api.post('maintenances', maintenance).then(result => result.data);
+        return data;
+    }
+};
