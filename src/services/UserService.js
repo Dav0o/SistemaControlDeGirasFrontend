@@ -1,4 +1,5 @@
 import api from "../api/config";
+import Users from "../pages/users/Users";
 
 
 export const getUsers = async () => { 
@@ -7,8 +8,14 @@ export const getUsers = async () => {
 };
 
 export const create = async (user) => { 
-    let data = await api.post('users',user).then(result => result.data);
-    return data;
+    if (user.id) {
+        let data = await api.put('users/${user.id}', user).then(result => result.data);
+        return data;
+    } else {
+        let data = await api.post('users', user).then(result => result.data);
+        return data;
+    }
+    
 };
 
 export const getByIdUser = async (userId) => {
