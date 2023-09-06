@@ -15,3 +15,8 @@ export const create = async (vehicle) => {
         return data;
     }
 };
+
+export const getByIdVehicle = async (vehicleId) => {
+    let data = await api.get(`vehicles/${vehicleId}`).then(result => result.data);
+    return data;
+}

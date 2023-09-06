@@ -8,6 +8,12 @@ import User from './pages/users/components/User'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Vehicles } from './pages/vehicles/Vehicles';
 import Login from './pages/auth/Login'
+import Vehicle from './pages/vehicle/Vehicle'
+import VehicleMaintenances from './pages/vehicle/components/VehicleMaintenances'
+
+
+
+
 
 function App() {
   
@@ -22,8 +28,10 @@ function App() {
         <Route path='/vehicles' element={<Vehicles/>}/>
         <Route path='/home' element={<Home/>}/>
       
+        <Route path='/vehicle' element={<Vehicle/>}/>
+        <Route path='/vehicle/:vehicleId' element={<VehicleMaintenances/>}/>
 
-        
+         
       </Route>
     </Routes>
     

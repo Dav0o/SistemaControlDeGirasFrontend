@@ -31,7 +31,7 @@ function Layout() {
             </li>
             <hr className="sidebar-divider"></hr>
             <li className="nav-item">
-              <NavLink className="nav-link" to="/vehicles">
+              <NavLink className="nav-link" to="/vehicle">
                 <span className="material-symbols-outlined">engineering</span>
               </NavLink>
             </li>
