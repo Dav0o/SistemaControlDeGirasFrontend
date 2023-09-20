@@ -9,6 +9,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useMutation, useQuery } from "react-query";
 import { create, getUsers } from "../../services/UserService";
 import Form from "react-bootstrap/Form";
+import UserDataTable from "./components/UserDataTable";
 
 
 function Users() {
@@ -55,8 +56,8 @@ function Users() {
     setShowEditModal(true);
   };
 
-  const [selectedUser, setSelectedUser] = useState(null);
 
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const [showEditModal, setShowEditModal] = useState(false);
 
@@ -121,32 +122,7 @@ function Users() {
         </Row>
         <br />
         <div>
-          <Table striped="columns">
-            <thead>
-              <tr>
-                <th>Id</th>
-                <th>Nombre</th>
-                <th>Apellidos</th>
-                <th>Correo Electronico</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user) =>(
-                  <tr key={user.id}>
-                  <td>{user.id}</td>
-                  <td>{user.name}</td>
-                  <td>{user.lastName1} {user.lastName2}</td>
-                  <td>{user.email}</td>
-                  <td>
-                  <Button variant="info" onClick={() => handleShowDetailModal(user)}>Detalles</Button>
-                  <Button variant="primary" onClick={() => handleEditClick(user.id)}>Editar</Button>
-                  </td>
-                </tr>
-              ))}
-              
-            </tbody>
-          </Table>
+          <UserDataTable/>
         </div>
       </Container>
 
@@ -161,29 +137,7 @@ function Users() {
                 <Form.Label htmlFor="inputName">Nombre</Form.Label>
                 <Form.Control type="text" id="inputName" ref={userName} />
 
-                <Form.Label htmlFor="inputLastName1">
-                  Primer Apellido
-                </Form.Label>
-                <Form.Control
-                  type="text"
-                  id="inputLastName1"
-                  ref={userLastName1}
-                />
-
-                <Form.Label htmlFor="inputEmail">Correo Electronico</Form.Label>
-                <Form.Control type="email" id="inputEmail" ref={userEmail} />
-
-                <Form.Label htmlFor="inputLicenseUNA">Licencia UNA</Form.Label>
-                <Form.Control type="number" id="inputLicenseUNA" ref={userLicenseUNA} />
-              </Col>
-              <Col>
-                <Form.Label htmlFor="inputPhoneNumber">Telefono</Form.Label>
-                <Form.Control
-                  type="number"
-                  id="inputPhoneNumber"
-                  ref={userPhoneNumber}
-                />
-
+                
                 <Form.Label htmlFor="inputLastName2">
                   Segundo Apellido
                 </Form.Label>
@@ -192,7 +146,32 @@ function Users() {
                   id="inputLastName2"
                   ref={userLastName2}
                 />
+               
 
+                <Form.Label htmlFor="inputEmail">Correo Electronico</Form.Label>
+                <Form.Control type="email" id="inputEmail" ref={userEmail} />
+
+                <Form.Label htmlFor="inputLicenseUNA">Licencia UNA</Form.Label>
+                <Form.Control type="number" id="inputLicenseUNA" ref={userLicenseUNA} />
+              </Col>
+              <Col>
+              <Form.Label htmlFor="inputLastName1">
+                  Primer Apellido
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  id="inputLastName1"
+                  ref={userLastName1}
+                />
+
+                <Form.Label htmlFor="inputPhoneNumber">Telefono</Form.Label>
+                <Form.Control
+                  type="number"
+                  id="inputPhoneNumber"
+                  ref={userPhoneNumber}
+                 />
+
+        
                 <Form.Label htmlFor="inputPassword">Contraseña</Form.Label>
                 <Form.Control
                   type="password"
@@ -303,7 +282,6 @@ function Users() {
               <p><strong>Telefono:</strong> {selectedUser.phoneNumber}</p>
               <p><strong>Licencia UNA:</strong> {selectedUser.licenseUNA}</p>
               <p><strong>Correo electronico:</strong> {selectedUser.email}</p>
-              
               <p><strong>Estado:</strong> {selectedUser.state}</p>
             </div>
           )}
@@ -315,15 +293,6 @@ function Users() {
         </Modal.Footer>
       </Modal>
 
-  <nav aria-label="Page navigation example">
-  <ul class="pagination">
-    <li class="page-item"><a class="page-link" href="#">Anterior</a></li>
-    <li class="page-item"><a class="page-link" href="#">1</a></li>
-    <li class="page-item"><a class="page-link" href="#">2</a></li>
-    <li class="page-item"><a class="page-link" href="#">3</a></li>
-    <li class="page-item"><a class="page-link" href="#">Siguiente</a></li>
-  </ul>
-</nav>
     </>
   );
 }
