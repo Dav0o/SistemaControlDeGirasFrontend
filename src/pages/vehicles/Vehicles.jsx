@@ -6,6 +6,8 @@ import Col from "react-bootstrap/Col";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useMutation, useQuery } from "react-query";
 import { create, getVehicles } from "../../services/VehicleService";
+import VehicleDataTable from "./components/VehicleDataTable";
+
 
 export const Vehicles = () => {
   const mutation = useMutation("vehicles", create);
@@ -132,24 +134,9 @@ export const Vehicles = () => {
             </Button>
           </Col>
         </Row>
+<div><VehicleDataTable/></div>
 
-        <Table striped="columns">
-          <thead>
-            <tr>
-              <th>Placa</th>
-              <th>Marca</th>
-              <th>Modelo</th>
-              <th>Color</th>
-              <th>Capacidad</th>
-              <th>Año</th>
-              <th>Tracción</th>
-              <th>Imagen</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-
-          <tbody>
+          {/* <tbody>
             {data.map((vehicle) => (
               <tr key={vehicle.id}>
                 <td>{vehicle.plate_Number}</td>
@@ -171,8 +158,8 @@ export const Vehicles = () => {
                 </td>
               </tr>
             ))}
-          </tbody>
-        </Table>
+          </tbody> */}
+    
       </Container>
 
       <Modal show={showFormModal} onHide={handleCloseFormModal} centered>
