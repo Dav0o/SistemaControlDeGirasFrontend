@@ -1,6 +1,7 @@
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Outlet, NavLink } from "react-router-dom";
+import Dropdown from "react-bootstrap/Dropdown";
 
 function Layout() {
   const queryClient = new QueryClient();
@@ -38,9 +39,31 @@ function Layout() {
 
             <hr className="sidebar-divider"></hr>
             <li className="nav-item">
-              <NavLink className="nav-link" to="/vehicles">
-                <span className="material-symbols-outlined">folder_open</span>
-              </NavLink>
+              <Dropdown>
+                <Dropdown.Toggle variant="light" id="dropdown-basic">
+                  <span className="material-symbols-outlined">folder_open</span>
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                  <Dropdown.Item>
+                    <NavLink className="nav-link" to="/requestForm">
+                      Request Form
+                    </NavLink>
+                  </Dropdown.Item>
+
+                  <Dropdown.Item>
+                    <NavLink className="nav-link" to="/endorseRequest">
+                      Endorse Request
+                    </NavLink>
+                  </Dropdown.Item>
+
+                  <Dropdown.Item>
+                    <NavLink className="nav-link" to="/approveRequest">
+                      Approve Request
+                    </NavLink>
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
             </li>
 
             <hr className="sidebar-divider"></hr>

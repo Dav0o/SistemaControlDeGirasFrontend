@@ -78,7 +78,7 @@ export const Vehicles = () => {
       mileage: mileage.current.value,
       fuel: fuel.current.value,
       oil_Change: "2023-09-01",
-      status: false,
+      status: editingVehicle.status,
       imageUrl: editingVehicle.imageUrl,
     };
 

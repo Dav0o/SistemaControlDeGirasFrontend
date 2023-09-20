@@ -10,6 +10,9 @@ import { Vehicles } from './pages/vehicles/Vehicles';
 import Login from './pages/auth/Login'
 import Vehicle from './pages/vehicle/Vehicle'
 import VehicleMaintenances from './pages/vehicle/components/VehicleMaintenances'
+import RequestForm from './pages/requestForm/RequestForm'
+import EndorseRequest from './pages/endorseRequest/EndorseRequest'
+import ApproveRequest from './pages/approveRequest/ApproveRequest'
 
 
 
@@ -31,6 +34,9 @@ function App() {
         <Route path='/vehicle' element={<Vehicle/>}/>
         <Route path='/vehicle/:vehicleId' element={<VehicleMaintenances/>}/>
 
+        <Route path='/requestForm' element={<RequestForm/>}/>
+        <Route path='/endorseRequest' element={<EndorseRequest/>}/>
+        <Route path='/approveRequest' element={<ApproveRequest/>}/>
          
       </Route>
     </Routes>
