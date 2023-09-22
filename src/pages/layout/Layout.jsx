@@ -4,6 +4,7 @@ import { Outlet, NavLink } from "react-router-dom";
 import { NavDropdown, Nav } from "react-bootstrap";
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
+import { Dropdown } from "react-bootstrap";
 
 const queryClient = new QueryClient();
 
@@ -60,35 +61,36 @@ function Layout() {
 
               <hr className="sidebar-divider" />
               <li className="nav-item">
-                <NavDropdown title="Folder Open" id="dropdown-basic">
-                  <NavDropdown.Item>
+              <Dropdown>
+                <Dropdown.Toggle variant="light" id="dropdown-basic">
+                  <span className="material-symbols-outlined">folder_open</span>
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                  <Dropdown.Item>
                     <NavLink className="nav-link" to="/requestForm">
                       Request Form
                     </NavLink>
-                  </NavDropdown.Item>
-                  <NavDropdown.Item>
+                  </Dropdown.Item>
+
+                  <Dropdown.Item>
                     <NavLink className="nav-link" to="/endorseRequest">
                       Endorse Request
                     </NavLink>
-                  </NavDropdown.Item>
-                  <NavDropdown.Item>
+                  </Dropdown.Item>
+
+                  <Dropdown.Item>
                     <NavLink className="nav-link" to="/approveRequest">
                       Approve Request
                     </NavLink>
-
-                  </NavDropdown.Item>
-    <Dropdown.Item>
+                  </Dropdown.Item>
+                  <Dropdown.Item>
                     <NavLink className="nav-link" to="/checkedRequests">
                       View Approved Requests
                     </NavLink>
                   </Dropdown.Item>
-                </NavDropdown>
-    </Dropdown.Menu>
+                </Dropdown.Menu>
               </Dropdown>
-              </li>
-
-
-                
             </li>
 
               <hr className="sidebar-divider" />
