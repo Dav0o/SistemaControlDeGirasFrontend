@@ -15,12 +15,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "axios": "^1.4.0",
     "bootstrap": "^5.3.1",
-    "datatables.net-bs5": "^1.13.6",
-    "datatables.net-buttons-bs5": "^2.4.2",
-    "datatables.net-buttons-dt": "^2.4.2",
-    "datatables.net-dt": "^1.13.6",
-    "datatables.net-responsive-bs5": "^2.5.0",
-    "pdfmake": "^0.2.7",
+
     "react": "^18.2.0",
     "react-bootstrap": "^2.8.0",
     "react-data-table-component": "^7.5.4",
