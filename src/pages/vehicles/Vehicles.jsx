@@ -1,22 +1,23 @@
 import React, { useRef, useState } from "react";
-import { Modal, Form, Button, Table } from 'react-bootstrap';
+import { Modal, Form, Button, Table } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useMutation, useQuery } from "react-query";
 import { create, getVehicles } from "../../services/VehicleService";
-import VehicleDataTable from "./components/VehicleDataTable";
-
+import { useEffect } from "react";
 
 export const Vehicles = () => {
   const mutation = useMutation("vehicles", create);
+  const [dataTable, setDataTable] = useState(null); // Estado para mantener la referencia del DataTable
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [editingVehicle, setEditingVehicle] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const { isLoading, data, isError } = useQuery("vehicles", getVehicles, {
     enabled: true,
   });
+  
   const handleSave = () => {
     let newVehicle = {
       plate_Number: plate_Number.current.value,
@@ -63,8 +64,6 @@ export const Vehicles = () => {
     setShowEditModal(false);
   };
 
-
-
   const handleUpdate = () => {
     let updatedVehicle = {
       id: editingVehicle.id,
@@ -94,7 +93,6 @@ export const Vehicles = () => {
     window.location.reload();
   };
 
-
   const handleDisableVehicle = (vehicleId) => {
     const updatedVehicles = data.map((vehicle) =>
       vehicle.id === vehicleId ? { ...vehicle, status: false } : vehicle
@@ -111,6 +109,22 @@ export const Vehicles = () => {
   };
   const handleCloseFormModal = () => setShowFormModal(false);
   const handleShowFormModal = () => setShowFormModal(true);
+
+   useEffect(() => {
+    if (dataTable) {
+      // Destruye el DataTable existente antes de volver a inicializarlo
+      dataTable.destroy();
+    }
+
+        // Inicializa el DataTable después de renderizar los datos
+        const newDataTable = new DataTable('#tableVehicles', {
+          // Configuración del DataTable (si es necesario)
+          retrieve:true,
+        });
+    
+        // Actualiza el estado para mantener la referencia del DataTable
+        setDataTable(newDataTable);
+      }, [data]); // Vuelve a inicializar el DataTable cuando los datos cambien
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -134,9 +148,22 @@ export const Vehicles = () => {
             </Button>
           </Col>
         </Row>
-<div><VehicleDataTable/></div>
+        <Table striped="columns" id="tableVehicles">
+          <thead>
+            <tr>
+              <th>Placa</th>
+              <th>Marca</th>
+              <th>Modelo</th>
+              <th>Color</th>
+              <th>Capacidad</th>
+              <th>Año</th>
+              <th>Tracción</th>
+              
+              <th>Acciones</th>
+            </tr>
+          </thead>
 
-          {/* <tbody>
+          <tbody>
             {data.map((vehicle) => (
               <tr key={vehicle.id}>
                 <td>{vehicle.plate_Number}</td>
@@ -146,20 +173,25 @@ export const Vehicles = () => {
                 <td>{vehicle.capacity}</td>
                 <td>{vehicle.year}</td>
                 <td>{vehicle.traction}</td>
-                <td><img src={vehicle.imageUrl} alt={vehicle.plate_Number} style={{ width: '65px', height: '40px' }} /></td>
-                <td>{vehicle.status ? <span class="material-symbols-outlined">
-                  visibility
-                </span> : <span class="material-symbols-outlined">
-                  visibility_off
-                </span>}</td>
+                
                 <td>
-                  <Button variant="info" onClick={() => handleShowInfoModal(vehicle)}>Detalles</Button>
-                  <Button variant="primary" onClick={() => handleEditClick(vehicle.id)}>Editar</Button>
+                  <Button
+                    variant="info"
+                    onClick={() => handleShowInfoModal(vehicle)}
+                  >
+                    Detalles
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={() => handleEditClick(vehicle.id)}
+                  >
+                    Editar
+                  </Button>
                 </td>
               </tr>
             ))}
-          </tbody> */}
-    
+          </tbody>
+        </Table>
       </Container>
 
       <Modal show={showFormModal} onHide={handleCloseFormModal} centered>
@@ -173,12 +205,20 @@ export const Vehicles = () => {
               <div className="col-md-6">
                 <Form.Group controlId="formPlaca">
                   <Form.Label>Placa</Form.Label>
-                  <Form.Control type="text" placeholder="Ingrese la placa" ref={plate_Number} />
+                  <Form.Control
+                    type="text"
+                    placeholder="Ingrese la placa"
+                    ref={plate_Number}
+                  />
                 </Form.Group>
 
                 <Form.Group controlId="formMarca">
                   <Form.Label>Marca</Form.Label>
-                  <Form.Control type="text" placeholder="Ingrese la marca" ref={make} />
+                  <Form.Control
+                    type="text"
+                    placeholder="Ingrese la marca"
+                    ref={make}
+                  />
                 </Form.Group>
 
                 <Form.Group controlId="formCapacidad">
@@ -217,20 +257,36 @@ export const Vehicles = () => {
               <div className="col-md-6">
                 <Form.Group controlId="formColor">
                   <Form.Label>Año</Form.Label>
-                  <Form.Control type="text" placeholder="Ingrese el año" ref={year} />
+                  <Form.Control
+                    type="text"
+                    placeholder="Ingrese el año"
+                    ref={year}
+                  />
                 </Form.Group>
                 <Form.Group controlId="formModelo">
                   <Form.Label>Modelo</Form.Label>
-                  <Form.Control type="text" placeholder="Ingrese el modelo" ref={model} />
+                  <Form.Control
+                    type="text"
+                    placeholder="Ingrese el modelo"
+                    ref={model}
+                  />
                 </Form.Group>
 
                 <Form.Group controlId="formEstado">
                   <Form.Label>Categoria</Form.Label>
-                  <Form.Control type="text" placeholder="Ingrese el estado" ref={category} />
+                  <Form.Control
+                    type="text"
+                    placeholder="Ingrese el estado"
+                    ref={category}
+                  />
                 </Form.Group>
                 <Form.Group>
                   <Form.Label>Color</Form.Label>
-                  <Form.Control type="text" placeholder="Ingrese el color" ref={color} />
+                  <Form.Control
+                    type="text"
+                    placeholder="Ingrese el color"
+                    ref={color}
+                  />
                 </Form.Group>
                 <Form.Group>
                   <Form.Label>Kilometraje</Form.Label>
@@ -242,12 +298,20 @@ export const Vehicles = () => {
                 </Form.Group>
                 <Form.Group>
                   <Form.Label>Cambio de aceite</Form.Label>
-                  <Form.Control type="date" placeholder="Ingrese la fecha" ref={oil_Change} />
+                  <Form.Control
+                    type="date"
+                    placeholder="Ingrese la fecha"
+                    ref={oil_Change}
+                  />
                 </Form.Group>
               </div>
               <Form.Group>
                 <Form.Label>Imagen</Form.Label>
-                <Form.Control type="text" placeholder="Ingrese la imagen" ref={image_url} />
+                <Form.Control
+                  type="text"
+                  placeholder="Ingrese la imagen"
+                  ref={image_url}
+                />
               </Form.Group>
             </div>
           </Form>
@@ -276,7 +340,9 @@ export const Vehicles = () => {
                   <Form.Control
                     type="text"
                     placeholder="Ingrese la placa"
-                    defaultValue={editingVehicle ? editingVehicle.plate_Number : ''}
+                    defaultValue={
+                      editingVehicle ? editingVehicle.plate_Number : ""
+                    }
                     ref={plate_Number}
                   />
                 </Form.Group>
@@ -285,7 +351,7 @@ export const Vehicles = () => {
                   <Form.Control
                     type="text"
                     placeholder="Ingrese la marca"
-                    defaultValue={editingVehicle ? editingVehicle.make : ''}
+                    defaultValue={editingVehicle ? editingVehicle.make : ""}
                     ref={make}
                   />
                 </Form.Group>
@@ -294,7 +360,7 @@ export const Vehicles = () => {
                   <Form.Control
                     type="text"
                     placeholder="Ingrese la capacidad"
-                    defaultValue={editingVehicle ? editingVehicle.capacity : ''}
+                    defaultValue={editingVehicle ? editingVehicle.capacity : ""}
                     ref={capacity}
                   />
                 </Form.Group>
@@ -303,7 +369,7 @@ export const Vehicles = () => {
                   <Form.Control
                     type="text"
                     placeholder="Ingrese la traccion"
-                    defaultValue={editingVehicle ? editingVehicle.traction : ''}
+                    defaultValue={editingVehicle ? editingVehicle.traction : ""}
                     ref={traction}
                   />
                 </Form.Group>
@@ -312,7 +378,9 @@ export const Vehicles = () => {
                   <Form.Control
                     type="text"
                     placeholder="Ingrese el cilindraje"
-                    defaultValue={editingVehicle ? editingVehicle.engine_capacity : ''}
+                    defaultValue={
+                      editingVehicle ? editingVehicle.engine_capacity : ""
+                    }
                     ref={engine_capacity}
                   />
                 </Form.Group>
@@ -321,7 +389,7 @@ export const Vehicles = () => {
                   <Form.Control
                     type="text"
                     placeholder="Gasolina"
-                    defaultValue={editingVehicle ? editingVehicle.fuel : ''}
+                    defaultValue={editingVehicle ? editingVehicle.fuel : ""}
                     ref={fuel}
                   />
                 </Form.Group>
@@ -330,18 +398,20 @@ export const Vehicles = () => {
                   <Form.Control
                     type="text"
                     placeholder="Ingrese la imagen"
-                    defaultValue={editingVehicle ? editingVehicle.image_url : ''}
+                    defaultValue={
+                      editingVehicle ? editingVehicle.image_url : ""
+                    }
                     ref={image_url}
                   />
                 </Form.Group>
               </Col>
               <Col>
-                <Form.Group >
+                <Form.Group>
                   <Form.Label>Año</Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Ingrese el año"
-                    defaultValue={editingVehicle ? editingVehicle.year : ''}
+                    defaultValue={editingVehicle ? editingVehicle.year : ""}
                     ref={year}
                   />
                 </Form.Group>
@@ -350,7 +420,7 @@ export const Vehicles = () => {
                   <Form.Control
                     type="text"
                     placeholder="Ingrese el modelo"
-                    defaultValue={editingVehicle ? editingVehicle.model : ''}
+                    defaultValue={editingVehicle ? editingVehicle.model : ""}
                     ref={model}
                   />
                 </Form.Group>
@@ -359,7 +429,7 @@ export const Vehicles = () => {
                   <Form.Control
                     type="text"
                     placeholder="Ingrese la categoria"
-                    defaultValue={editingVehicle ? editingVehicle.category : ''}
+                    defaultValue={editingVehicle ? editingVehicle.category : ""}
                     ref={category}
                   />
                 </Form.Group>
@@ -368,7 +438,7 @@ export const Vehicles = () => {
                   <Form.Control
                     type="text"
                     placeholder="Ingrese el color"
-                    defaultValue={editingVehicle ? editingVehicle.color : ''}
+                    defaultValue={editingVehicle ? editingVehicle.color : ""}
                     ref={color}
                   />
                 </Form.Group>
@@ -377,7 +447,7 @@ export const Vehicles = () => {
                   <Form.Control
                     type="text"
                     placeholder="Ingrese el kilometraje"
-                    defaultValue={editingVehicle ? editingVehicle.mileage : ''}
+                    defaultValue={editingVehicle ? editingVehicle.mileage : ""}
                     ref={mileage}
                   />
                 </Form.Group>
@@ -386,15 +456,14 @@ export const Vehicles = () => {
                   <Form.Control
                     type="date"
                     placeholder="Ingrese la fecha"
-                    defaultValue={editingVehicle ? editingVehicle.oil_Change : ''}
+                    defaultValue={
+                      editingVehicle ? editingVehicle.oil_Change : ""
+                    }
                     ref={oil_Change}
                   />
                 </Form.Group>
-
-
               </Col>
             </Row>
-
           </Form>
         </Modal.Body>
         <Modal.Footer>
@@ -404,9 +473,13 @@ export const Vehicles = () => {
           <Button variant="dark" onClick={handleUpdate}>
             Actualizar
           </Button>
-          <Button variant="danger" onClick={() => handleDisableVehicle(editingVehicle.id)} > <span class="material-symbols-outlined">
-            visibility
-          </span> </Button>
+          <Button
+            variant="danger"
+            onClick={() => handleDisableVehicle(editingVehicle.id)}
+          >
+            {" "}
+            <span class="material-symbols-outlined">visibility</span>{" "}
+          </Button>
         </Modal.Footer>
       </Modal>
 
@@ -417,21 +490,49 @@ export const Vehicles = () => {
         <Modal.Body>
           {selectedVehicle && (
             <div>
-              <p><strong>Placa:</strong> {selectedVehicle.plate_Number}</p>
-              <p><strong>Marca:</strong> {selectedVehicle.make}</p>
-              <p><strong>Modelo:</strong> {selectedVehicle.model}</p>
-              <p><strong>Capacidad:</strong> {selectedVehicle.capacity}</p>
-              <p><strong>Tracción:</strong> {selectedVehicle.traction}</p>
-              <p><strong>Cilindraje:</strong> {selectedVehicle.engine_capacity}</p>
-              <p><strong>Gasolina:</strong> {selectedVehicle.fuel}</p>
-              <p><strong>Año:</strong> {selectedVehicle.year}</p>
-              <p><strong>Color:</strong> {selectedVehicle.color}</p>
-              <p><strong>Categoría:</strong> {selectedVehicle.category}</p>
-              <p><strong>Kilometraje:</strong> {selectedVehicle.mileage}</p>
-              <p><strong>Cambio de Aceite:</strong> {selectedVehicle.oil_Change}</p>
-              <p><strong>Estado:</strong> {selectedVehicle.status ? "Habilitado" : "Deshabilitado"}</p>
-              <p><strong>Imagen:</strong> {selectedVehicle.image_url}</p>
-
+              <p>
+                <strong>Placa:</strong> {selectedVehicle.plate_Number}
+              </p>
+              <p>
+                <strong>Marca:</strong> {selectedVehicle.make}
+              </p>
+              <p>
+                <strong>Modelo:</strong> {selectedVehicle.model}
+              </p>
+              <p>
+                <strong>Capacidad:</strong> {selectedVehicle.capacity}
+              </p>
+              <p>
+                <strong>Tracción:</strong> {selectedVehicle.traction}
+              </p>
+              <p>
+                <strong>Cilindraje:</strong> {selectedVehicle.engine_capacity}
+              </p>
+              <p>
+                <strong>Gasolina:</strong> {selectedVehicle.fuel}
+              </p>
+              <p>
+                <strong>Año:</strong> {selectedVehicle.year}
+              </p>
+              <p>
+                <strong>Color:</strong> {selectedVehicle.color}
+              </p>
+              <p>
+                <strong>Categoría:</strong> {selectedVehicle.category}
+              </p>
+              <p>
+                <strong>Kilometraje:</strong> {selectedVehicle.mileage}
+              </p>
+              <p>
+                <strong>Cambio de Aceite:</strong> {selectedVehicle.oil_Change}
+              </p>
+              <p>
+                <strong>Estado:</strong>{" "}
+                {selectedVehicle.status ? "Habilitado" : "Deshabilitado"}
+              </p>
+              <p>
+                <strong>Imagen:</strong> {selectedVehicle.image_url}
+              </p>
             </div>
           )}
         </Modal.Body>

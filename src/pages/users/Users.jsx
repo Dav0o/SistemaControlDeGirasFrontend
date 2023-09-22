@@ -9,7 +9,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useMutation, useQuery } from "react-query";
 import { create, getUsers } from "../../services/UserService";
 import Form from "react-bootstrap/Form";
-import UserDataTable from "./components/UserDataTable";
+import { useEffect } from "react";
+
 
 
 function Users() {
@@ -27,14 +28,34 @@ function Users() {
   const handleClose = () => setModalCreate(false);
   const handleShow = () => setModalCreate(true);
 
-  const { isLoading: loadingUsers, data:users, isError:errorUsers} = useQuery("users", getUsers, {enabled: true});
-  const {  data } = useQuery("users", getUsers, {
+  const {
+    isLoading: loadingUsers,
+    data: users,
+    isError: errorUsers,
+  } = useQuery("users", getUsers, { enabled: true });
+  const { data } = useQuery("users", getUsers, {
     enabled: true,
-  }
-  );
-
+  });
 
   const mutation = useMutation("users", create);
+  const [dataTable, setDataTable] = useState(null); // Estado para mantener la referencia del DataTable
+
+  useEffect(() => {
+    if (dataTable) {
+      // Destruye el DataTable existente antes de volver a inicializarlo
+      dataTable.destroy();
+    }
+
+        // Inicializa el DataTable después de renderizar los datos
+        const newDataTable = new DataTable('#tableUsers', {
+          // Configuración del DataTable (si es necesario)
+          retrieve: true,
+        });
+    
+        // Actualiza el estado para mantener la referencia del DataTable
+        setDataTable(newDataTable);
+      }, [data]); // Vuelve a inicializar el DataTable cuando los datos cambien
+    
 
   const handleSave = () => {
     let newUser = {
@@ -56,7 +77,6 @@ function Users() {
     setShowEditModal(true);
   };
 
-
   const [selectedUser, setSelectedUser] = useState(null);
 
   const [showEditModal, setShowEditModal] = useState(false);
@@ -65,7 +85,7 @@ function Users() {
     setShowEditModal(false);
   };
 
-  const [editingUser, setEditingUser] = useState(null)
+  const [editingUser, setEditingUser] = useState(null);
 
   const handleUpdate = () => {
     let updatedUser = {
@@ -79,13 +99,14 @@ function Users() {
       password: userPassword.current.value,
       state: userState.current.value,
     };
-    mutation.mutateAsync(updatedUser)
-    .then(response =>{
-      console.log('Usuario actualizado exitosamente', response);
-    })
-    .catch(error =>{
-      console.error('Error al actualizar el usuario', error);
-    });
+    mutation
+      .mutateAsync(updatedUser)
+      .then((response) => {
+        console.log("Usuario actualizado exitosamente", response);
+      })
+      .catch((error) => {
+        console.error("Error al actualizar el usuario", error);
+      });
     setShowEditModal(false);
   };
 
@@ -95,8 +116,6 @@ function Users() {
     setSelectedUser(user);
     setShowDetailModal(true);
   };
-
-
 
   if (loadingUsers) {
     return <div>Loading...</div>;
@@ -122,7 +141,35 @@ function Users() {
         </Row>
         <br />
         <div>
-          <UserDataTable/>
+          <Table striped="columns" id='tableUsers'>
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+                <th>Correo Electronico</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <tr key={user.id}>
+                  <td>{user.id}</td>
+                  <td>{user.name}</td>
+                  <td>
+                    {user.lastName1} {user.lastName2}
+                  </td>
+                  <td>{user.email}</td>
+                  <td>
+                    <Button variant="info" onClick={()=>handleShowDetailModal(user)} >
+                      Detalles
+                    </Button>
+                    <Button variant="primary" onClick={()=>handleEditClick(user.id)}>Editar</Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
         </div>
       </Container>
 
@@ -137,7 +184,6 @@ function Users() {
                 <Form.Label htmlFor="inputName">Nombre</Form.Label>
                 <Form.Control type="text" id="inputName" ref={userName} />
 
-                
                 <Form.Label htmlFor="inputLastName2">
                   Segundo Apellido
                 </Form.Label>
@@ -146,16 +192,19 @@ function Users() {
                   id="inputLastName2"
                   ref={userLastName2}
                 />
-               
 
                 <Form.Label htmlFor="inputEmail">Correo Electronico</Form.Label>
                 <Form.Control type="email" id="inputEmail" ref={userEmail} />
 
                 <Form.Label htmlFor="inputLicenseUNA">Licencia UNA</Form.Label>
-                <Form.Control type="number" id="inputLicenseUNA" ref={userLicenseUNA} />
+                <Form.Control
+                  type="number"
+                  id="inputLicenseUNA"
+                  ref={userLicenseUNA}
+                />
               </Col>
               <Col>
-              <Form.Label htmlFor="inputLastName1">
+                <Form.Label htmlFor="inputLastName1">
                   Primer Apellido
                 </Form.Label>
                 <Form.Control
@@ -169,9 +218,8 @@ function Users() {
                   type="number"
                   id="inputPhoneNumber"
                   ref={userPhoneNumber}
-                 />
+                />
 
-        
                 <Form.Label htmlFor="inputPassword">Contraseña</Form.Label>
                 <Form.Control
                   type="password"
@@ -180,11 +228,7 @@ function Users() {
                 />
 
                 <Form.Label htmlFor="inputState">Estado</Form.Label>
-                <Form.Control
-                  type="text"
-                  id="inputState"
-                  ref={userState}
-                />
+                <Form.Control type="text" id="inputState" ref={userState} />
               </Col>
             </Row>
           </Container>
@@ -194,7 +238,7 @@ function Users() {
             Cerrar
           </Button>
           <Button variant="primary" onClick={handleSave}>
-            Guardar 
+            Guardar
           </Button>
         </Modal.Footer>
       </Modal>
@@ -203,60 +247,76 @@ function Users() {
         <Modal.Header closeButton>
           <Modal.Title>Editar usuario</Modal.Title>
         </Modal.Header>
-         <Modal.Body>
+        <Modal.Body>
           <Form>
             <Row>
               <Col>
-              <Form.Label>Nombre</Form.Label>
-              <Form.Control type="text" placeholder="Ingrese el nombre"
-              defaultValue={editingUser ? editingUser.name : ''} ref={userName}/>
-           
+                <Form.Label>Nombre</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingrese el nombre"
+                  defaultValue={editingUser ? editingUser.name : ""}
+                  ref={userName}
+                />
+
+                <Form.Label>Segundo apellido</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingrese el segundo apellido"
+                  defaultValue={editingUser ? editingUser.lastName2 : ""}
+                  ref={userLastName2}
+                />
+
+                <Form.Label>Correo electronico</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingrese el correo"
+                  defaultValue={editingUser ? editingUser.email : ""}
+                  ref={userEmail}
+                />
+
+                <Form.Label>Licencia UNA</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingrese la licencia universitaria"
+                  defaultValue={editingUser ? editingUser.licenseUNA : ""}
+                  ref={userLicenseUNA}
+                />
+              </Col>
+              <Col>
               <Form.Label>Primer apellido</Form.Label>
-              <Form.Control type="text" placeholder="Ingrese el primer apellido"
-              defaultValue={editingUser ? editingUser.lastName1 : ''} ref={userLastName1}
-              />
-       
-              <Form.Label>Correo electronico</Form.Label>
-              <Form.Control type="text" placeholder="Ingrese el correo"
-              defaultValue={editingUser ? editingUser.email : ''} ref={userEmail}/>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingrese el primer apellido"
+                  defaultValue={editingUser ? editingUser.lastName1 : ""}
+                  ref={userLastName1}
+                />
 
-              <Form.Label>Licencia UNA</Form.Label>
-              <Form.Control type="text" placeholder="Ingrese la licencia universitaria"
-              defaultValue={editingUser ? editingUser.licenseUNA : ''} ref={userLicenseUNA}
-             />
+                <Form.Label>Telefono</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingrese el telefono"
+                  defaultValue={editingUser ? editingUser.phoneNumber : ""}
+                  ref={userPhoneNumber}
+                />
 
-            </Col>
-            <Col>
-            <Form.Label>Telefono</Form.Label>
-              <Form.Control type="text" placeholder="Ingrese el telefono"
-              defaultValue={editingUser ? editingUser.phoneNumber : ''} ref={userPhoneNumber}
-              />
-            
-              <Form.Label>Segundo apellido</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingrese el segundo apellido"
-                defaultValue={editingUser ? editingUser.lastName2 : ''}
-                ref={userLastName2}
-              />
-  
-              <Form.Label>Contraseña</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingrese la contraseña"
-                defaultValue={editingUser ? editingUser.password : ''}
-                ref={userPassword}
-              />
-            
-              <Form.Label>Estado</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingrese el estado"
-                defaultValue={editingUser ? editingUser.state : ''}
-                ref={userState}
-              />  
-          </Col>
-          </Row>
+                <Form.Label>Contraseña</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingrese la contraseña"
+                  defaultValue={editingUser ? editingUser.password : ""}
+                  ref={userPassword}
+                />
+
+                <Form.Label>Estado</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingrese el estado"
+                  defaultValue={editingUser ? editingUser.state : ""}
+                  ref={userState}
+                />
+              </Col>
+            </Row>
           </Form>
         </Modal.Body>
         <Modal.Footer>
@@ -276,13 +336,27 @@ function Users() {
         <Modal.Body>
           {selectedUser && (
             <div>
-              <p><strong>Nombre:</strong> {selectedUser.name}</p>
-              <p><strong>Primer apellido:</strong> {selectedUser.lastName1}</p>
-              <p><strong>Segundo apellido:</strong> {selectedUser.lastName2}</p>
-              <p><strong>Telefono:</strong> {selectedUser.phoneNumber}</p>
-              <p><strong>Licencia UNA:</strong> {selectedUser.licenseUNA}</p>
-              <p><strong>Correo electronico:</strong> {selectedUser.email}</p>
-              <p><strong>Estado:</strong> {selectedUser.state}</p>
+              <p>
+                <strong>Nombre:</strong> {selectedUser.name}
+              </p>
+              <p>
+                <strong>Primer apellido:</strong> {selectedUser.lastName1}
+              </p>
+              <p>
+                <strong>Segundo apellido:</strong> {selectedUser.lastName2}
+              </p>
+              <p>
+                <strong>Telefono:</strong> {selectedUser.phoneNumber}
+              </p>
+              <p>
+                <strong>Licencia UNA:</strong> {selectedUser.licenseUNA}
+              </p>
+              <p>
+                <strong>Correo electronico:</strong> {selectedUser.email}
+              </p>
+              <p>
+                <strong>Estado:</strong> {selectedUser.state}
+              </p>
             </div>
           )}
         </Modal.Body>
@@ -294,6 +368,7 @@ function Users() {
       </Modal>
 
     </>
+  
   );
 }
 
