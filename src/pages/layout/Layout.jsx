@@ -75,9 +75,21 @@ function Layout() {
                     <NavLink className="nav-link" to="/approveRequest">
                       Approve Request
                     </NavLink>
+
                   </NavDropdown.Item>
+    <Dropdown.Item>
+                    <NavLink className="nav-link" to="/checkedRequests">
+                      View Approved Requests
+                    </NavLink>
+                  </Dropdown.Item>
                 </NavDropdown>
+    </Dropdown.Menu>
+              </Dropdown>
               </li>
+
+
+                
+            </li>
 
               <hr className="sidebar-divider" />
               <li className="nav-item">
