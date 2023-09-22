@@ -7,6 +7,12 @@ import Row from "react-bootstrap/Row";
 import { Link } from 'react-router-dom';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { create } from '../../services/MaintenanceService';
+import DataTable from 'datatables.net-dt';
+import { useState, useEffect } from 'react';
+import pdfmake from 'pdfmake';
+import 'datatables.net-buttons-dt';
+import 'datatables.net-buttons/js/buttons.html5.mjs';
+
 
 function Vehicle() {
 
@@ -15,6 +21,33 @@ function Vehicle() {
       }
       );
       const mutation = useMutation("maintenances", create);
+
+      const [dataTable, setDataTable] = useState(null);
+
+      useEffect(() => {
+        if (dataTable) {
+          // Destruye el DataTable existente antes de volver a inicializarlo
+          dataTable.destroy();
+        }
+    
+        // Inicializa el DataTable después de renderizar los datos
+        const newDataTable = new DataTable('#tableMaintenance', {
+          retrieve: true,
+          responsive:true,
+          dom: 'Bfrtip',
+          buttons: [
+            
+            'excel', 'print',
+            {
+              extend: 'pdf', 
+              messageTop: 'Reporte de Mantenimiento'
+            }
+        ],
+        });
+    
+        // Actualiza el estado para mantener la referencia del DataTable
+        setDataTable(newDataTable);
+      }, [data]);
 
       if (isLoading) {
         return <div>Loading...</div>;
@@ -31,8 +64,8 @@ function Vehicle() {
             <h2>Lista de Vehiculos</h2>
             <p>Observar el mantenimiento de cada uno de los vehiculos</p>
         </Row>
-
-        <Table striped="columns">
+        
+        <Table striped="columns" id='tableMaintenance' className='display wrap'>
           <thead>
             <tr>
               <th>Placa</th>
@@ -61,6 +94,8 @@ function Vehicle() {
             ))}
           </tbody>
         </Table>
+    
+       
     </Container>
     </>
   )

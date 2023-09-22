@@ -13,6 +13,7 @@ import VehicleMaintenances from './pages/vehicle/components/VehicleMaintenances'
 import RequestForm from './pages/requestForm/RequestForm'
 import EndorseRequest from './pages/endorseRequest/EndorseRequest'
 import ApproveRequest from './pages/approveRequest/ApproveRequest'
+import CheckedRequests from './pages/checkedRequests/CheckedRequests'
 
 
 
@@ -23,9 +24,9 @@ function App() {
   return (
     <BrowserRouter>
     <Routes>
-       
+    <Route index element={<Login/>} />
       <Route path='/' element={<Layout/>}>
-        <Route index element={<Login/>} />
+        
         <Route path='/users' element={<Users/>} />
         <Route path='/users/:userId' element={<User/>}/>
         <Route path='/vehicles' element={<Vehicles/>}/>
@@ -37,6 +38,8 @@ function App() {
         <Route path='/requestForm' element={<RequestForm/>}/>
         <Route path='/endorseRequest' element={<EndorseRequest/>}/>
         <Route path='/approveRequest' element={<ApproveRequest/>}/>
+
+        <Route path='/checkedRequests' element={<CheckedRequests/>}/>
          
       </Route>
     </Routes>

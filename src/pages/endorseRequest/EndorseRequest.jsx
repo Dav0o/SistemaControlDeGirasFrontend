@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useQuery } from "react-query";
-import { getRequests } from "../../services/RequestService";
+import { useMutation, useQuery } from "react-query";
+import { endorse, getRequests } from "../../services/RequestService";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -15,13 +15,20 @@ import { useRef } from "react";
 function EndorseRequest() {
   const { data, isLoading, isError } = useQuery("requests", getRequests, {
     enabled: true,
+    
   });
-
+  
   const { data:vehicles, isLoading:loadingVehicles, isError:errorVehicles } = useQuery("vehicles", getVehicles, {
     enabled: true,
   });
+
+  
+  const mutation = useMutation(`requests/endorse`, endorse);
+
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [showEndorseModal, setShowEndorseModal] = useState(false);
+
+ 
 
   const vehicleId = useRef(0);
 
@@ -36,9 +43,10 @@ function EndorseRequest() {
   const handleEndorse = () =>{
       let updateRequest = {
       id: selectedRequest.id,
-      vehicleId: vehicleId.current.value,
+      vehicleId: parseInt(vehicleId.current.value),
       itsEndorse: true,
       };
+      mutation.mutateAsync(updateRequest);
   }
 
   if (isLoading) {
@@ -56,11 +64,15 @@ function EndorseRequest() {
   if (errorVehicles) {
     return <div>Error</div>;
   }
+
+  const filteredData = data.filter(item => item.itsEndorse === false);
+  
   return (
     <>
       <Container>
         <Col>
-          {data.map((request) => (
+          <h1>Solicitudes a avalar</h1>
+          {filteredData.map((request) => (
             <Card key={request.id}>
               <Card.Header>{request.consecutiveNumber}</Card.Header>
               <Card.Body>
@@ -73,7 +85,7 @@ function EndorseRequest() {
                   variant="info"
                   onClick={() => handleShowEndorse(request.id)}
                 >
-                  Aprobar
+                  Avalar
                 </Button>
                 <Button
                   variant="primary"
@@ -89,7 +101,7 @@ function EndorseRequest() {
 
       <Modal show={showEndorseModal} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Solicitud a aprobar</Modal.Title>
+          <Modal.Title>Solicitud a avalar</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
@@ -97,11 +109,11 @@ function EndorseRequest() {
             <Form>
               <Form.Group>
                 <Form.Label>
-                  Numero de Consecutivo de la Solicitud a Aprobar
+                  Numero de consecutivo de la solicitud a avalar
                 </Form.Label>
                 <Form.Control
                   type="number"
-                  placeholder={selectedRequest.consecutiveNumber}
+                  placeholder={selectedRequest.id}
                   aria-label="Disabled input example"
                   disabled
                   readOnly
@@ -112,31 +124,26 @@ function EndorseRequest() {
                 <Form.Label>
                   Seleccione el vehiculo para la solicitud
                 </Form.Label>
-                <Form.Select aria-label="Default select example" ref={vehicleId}>
+                <Form.Select aria-label="Default select example">
                   <option>Lista de Vehiculos</option>
                   {vehicles.map((vehicle)=> (
-                    <option value={vehicle.id}>{vehicle.plate_Number}</option>
+                    <option value={vehicle.id} ref={vehicleId}>{vehicle.plate_Number}</option>
                   ))}
                   
                   
                 </Form.Select>
               </Form.Group>
 
-              <Form.Group>
-                <Form.Label>
-                  Aprobar solicitud
-                </Form.Label>
-                <Form.Check aria-label="option 1" />
-              </Form.Group>
+              
             </Form>
           )}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
-            Close
+            Cerrar
           </Button>
-          <Button variant="primary" onClick={handleClose}>
-            Save Changes
+          <Button variant="primary" onClick={handleEndorse}>
+            Avalar
           </Button>
         </Modal.Footer>
       </Modal>

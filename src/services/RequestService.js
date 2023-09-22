@@ -12,7 +12,14 @@ export const create = async (request) => {
 };
 
 export const endorse = async (request) => {
-    let data = await api.put(`Requests/endorse/${request.id}`).then(result => result.data);
+    let data = await api.put(`requests/endorse`,request
+    ).then(result => result.data);
+    return data;
+}
+
+export const approve = async (request) => {
+    let data = await api.put(`requests/approve`,request
+    ).then(result => result.data);
     return data;
 }
 

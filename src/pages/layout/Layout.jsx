@@ -62,6 +62,11 @@ function Layout() {
                       Approve Request
                     </NavLink>
                   </Dropdown.Item>
+                  <Dropdown.Item>
+                    <NavLink className="nav-link" to="/checkedRequests">
+                      View Approved Requests
+                    </NavLink>
+                  </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </li>
