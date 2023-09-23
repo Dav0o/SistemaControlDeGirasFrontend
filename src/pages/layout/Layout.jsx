@@ -1,114 +1,164 @@
-import React from "react";
+import React, { useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Outlet, NavLink } from "react-router-dom";
 import { NavDropdown, Nav } from "react-bootstrap";
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
-import { Dropdown } from "react-bootstrap";
-
-const queryClient = new QueryClient();
 
 function Layout() {
+  const queryClient = new QueryClient();
+  const [sidebarToggled, setSidebarToggled] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
+
+
+  const handleSidebarToggleClick = () => {
+    setSidebarToggled(!sidebarToggled);
+  };
+
+  const toggleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
+  const sidebarStyle = {
+    backgroundColor: "#CD1719", 
+    transition: "width 0.3s", // Agregar transición suave al cambiar el ancho
+  };
+
+  const sidebarClasses = ["navbar-nav", "sidebar", "sidebar-dark"];
+  if (sidebarToggled) {
+    sidebarClasses.push("toggled");
+  }
+
+
   return (
     <div>
-      <Navbar bg="body-tertiary" variant="success">
-        <Container>
-          <Navbar.Brand href="#home">Sistema Control de Giras UNA, SRCH</Navbar.Brand>
-          <Navbar.Toggle />
-          <Navbar.Collapse className="justify-content-end">
-            <Navbar.Text>
-              Registrado como: <a href="#login"> <NavDropdown title="Nombre Usuario" id="basic-nav-dropdown">
-            <NavDropdown.Item href="#action/3.1"><button>Cerrar Sesión</button></NavDropdown.Item>
-            <NavDropdown.Item href="#action/3.2">
-              <button>Configuración</button>
+      
+      <Navbar style={sidebarStyle} expand="lg">
+  <Container>
+    <Navbar.Brand href="/home">Sistema Control de Giras UNA, SRCH</Navbar.Brand>
+    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+    <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
+      <Navbar.Text>
+        Registrado como:{" "}
+        <a href="#login">
+          <NavDropdown title="Nombre Usuario" id="basic-nav-dropdown">
+            <NavDropdown.Item href="#action/3.1">
+              <button className="btn btn-danger">Cerrar Sesión</button>
             </NavDropdown.Item>
-          </NavDropdown></a>
-             
-            </Navbar.Text>
-          </Navbar.Collapse>
-          
-        </Container>
-      </Navbar>
+            <NavDropdown.Item href="#action/3.2">
+              <button className="btn btn-primary">Configuración</button>
+            </NavDropdown.Item>
+          </NavDropdown>
+        </a>
+      </Navbar.Text>
+    </Navbar.Collapse>
+  </Container>
+</Navbar>
 
-      <div className="d-flex">
-        <nav className="bg-white py-2 collapse-inner rounded">
-          <div className="position-sticky">
-            <ul className="nav flex-column">
-              <hr className="sidebar-divider" />
-              <li className="nav-item">
-                <NavLink className="nav-link" to="/home">
-                  <span className="material-symbols-outlined">home</span>
-                </NavLink>
-              </li>
-              <hr className="sidebar-divider" />
-              <li className="nav-item">
-                <NavLink className="nav-link" to="/vehicles">
-                  <span className="material-symbols-outlined">directions_car</span>
-                </NavLink>
-              </li>
-              <hr className="sidebar-divider" />
-              <li className="nav-item">
-                <NavLink className="nav-link" to="/users">
-                  <span className="material-symbols-outlined">person</span>
-                </NavLink>
-              </li>
-              <hr className="sidebar-divider" />
-              <li className="nav-item">
-                <NavLink className="nav-link" to="/vehicle">
-                  <span className="material-symbols-outlined">engineering</span>
-                </NavLink>
-              </li>
+    <div className="d-flex">
+      <body id="page-top">
+        <div id="wrapper">
+          <ul style={sidebarStyle} className={sidebarClasses.join(" ")}>
+           
+            <hr className="sidebar-divider my-0"style={{ backgroundColor: "white" }}></hr>
+            <div className="position-sticky">
+              <ul className="nav flex-column">
 
-              <hr className="sidebar-divider" />
-              <li className="nav-item">
-              <Dropdown>
-                <Dropdown.Toggle variant="light" id="dropdown-basic">
-                  <span className="material-symbols-outlined">folder_open</span>
-                </Dropdown.Toggle>
+                <li className="nav-item">
+                  <a className="nav-link" href="/home">
+                    <i className="fa fa-house"></i>
+                    <span>Inicio</span>
+                  </a>
+                </li>
+                <hr className="sidebar-divider" style={{ backgroundColor: "white" }}></hr>
+                <div class="sidebar-heading">
+                Interfaces
+            </div>
+                <li className="nav-item">
+                  <a className="nav-link" href="/vehicles">
+                    <i className="fa-solid fa-car-side"></i>
+                    <span>Vehículos</span>
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" href="/users">
+                    <i className="fa-solid fa-user"></i>
+                    <span>Usuarios</span>
+                  </a>
+                </li>
 
-                <Dropdown.Menu>
-                  <Dropdown.Item>
-                    <NavLink className="nav-link" to="/requestForm">
-                      Request Form
-                    </NavLink>
-                  </Dropdown.Item>
+                <li className="nav-item" >
+                  <a
+                    className={`nav-link ${isCollapsed ? 'collapsed' : ''} `}
+                    href="#"
+                    onClick={toggleCollapse}
+                    aria-expanded={!isCollapsed}
+                    aria-controls="collapseTwo"
+                  >
+                    <i className="fas fa-fw fa-cog"></i>
+                    <span>Solicitudes</span>
+                  </a>
+                  <div
+                    id="collapseTwo"
+                    className={`collapse ${!isCollapsed ? 'show' : ''}`}
+                    aria-labelledby="headingTwo"
+                    data-parent="#accordionSidebar"
+                  >
+                    <div className="bg-white py-2 collapse-inner rounded" >
+                      <h6 className="collapse-header">Gestión de solicitudes:</h6>
+                      <a className="collapse-item" href="/requestForm" >
+                        Formulario de Solicitud
+                      </a>
+                      <a className="collapse-item" href="/endorseRequest">
+                        Avalar la Solicitud
+                      </a>
+                      <a className="collapse-item" href="/approveRequest">
+                        Aprobar la Solicitud
+                      </a>
+                      <a className="collapse-item" href="/checkedRequests">
+                       Ver solicitudes
+                      </a>
+                    </div>
+                  </div>
+                </li>
 
-                  <Dropdown.Item>
-                    <NavLink className="nav-link" to="/endorseRequest">
-                      Endorse Request
-                    </NavLink>
-                  </Dropdown.Item>
+                <li className="nav-item">
+                  <a className="nav-link" href="/">
+                    <i className="fa-solid fa-right-to-bracket"></i>
+                    <span>Login</span>
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" href="/vehicle">
+                    <i className="fa-solid fa-wrench"></i>
+                    <span>Mantenimiento</span>
+                  </a>
+                </li>
 
-                  <Dropdown.Item>
-                    <NavLink className="nav-link" to="/approveRequest">
-                      Approve Request
-                    </NavLink>
-                  </Dropdown.Item>
-                  <Dropdown.Item>
-                    <NavLink className="nav-link" to="/checkedRequests">
-                      View Approved Requests
-                    </NavLink>
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </li>
+                <hr className="sidebar-divider d-none d-md-block"></hr>
 
-              <hr className="sidebar-divider" />
-              <li className="nav-item">
-                <NavLink className="nav-link" to="/">
-                  <span className="material-symbols-outlined">person</span>
-                </NavLink>
-              </li>
-            </ul>
-          </div>
-        </nav>
+                <div className="text-center d-none d-md-inline">
+                  <button className="rounded-circle border-0" id="sidebarToggle" onClick={handleSidebarToggleClick}></button>
+                </div>
+              </ul>
+            </div>
+            <footer className="sticky-footer">
+              <div className="container my-auto">
+                <div className="copyright text-center my-auto">
+                  <span>Made for &copy; David Acuña - Rosicela Cubero - Daniel Guadamuz - Eylin Cabrera - Jesus Guevara</span>
+                </div>
+              </div>
+            </footer>
+          </ul>
+        </div>
+      </body>
 
-        <main className="flex-grow-1 p-3">
-          <QueryClientProvider client={queryClient}>
-            <Outlet />
-          </QueryClientProvider>
-        </main>
-      </div>
+      <main className="flex-grow-1 p-3">
+        <QueryClientProvider client={queryClient}>
+          <Outlet />
+        </QueryClientProvider>
+      </main>
+    </div>
     </div>
   );
 }
