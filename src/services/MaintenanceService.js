@@ -9,3 +9,12 @@ export const create = async (maintenance) => {
         return data;
     }
 };
+
+export const deleteMaintenance = async (maintenanceId) => {
+    try {
+      const response = await api.delete(`maintenances/${maintenanceId}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
