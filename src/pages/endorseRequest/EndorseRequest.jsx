@@ -57,7 +57,7 @@ function EndorseRequest() {
     mutation.isSuccess
       ? MySwal.fire({
           icon: "success",
-          title: "Solicitud avalada con exito!",
+          title: "Tu trabajo ha sido guardado!",
           showConfirmButton: false,
           timer: 1500,
         }).then(mutation.reset)

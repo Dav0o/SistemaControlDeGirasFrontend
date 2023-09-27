@@ -28,7 +28,7 @@ export const Vehicles = () => {
     mutation.isSuccess
       ? MySwal.fire({
           icon: "success",
-          title: "Vehiculo creado con exito!",
+          title: "Tu trabajo ha sido guardado!",
           showConfirmButton: false,
           timer: 1500,
         }).then(mutation.reset)
@@ -196,12 +196,12 @@ export const Vehicles = () => {
   return (
     <>
       <Container className="container-fluid">
-        <h1 className="h3 mb-2 text-gray-800">Vehiculos</h1>
-        <p class="mb-4">Lista de vehiculos</p>
+        <h1 className="h3 mb-2 text-gray-800">Vehículos</h1>
+        <p class="mb-4">Lista de vehículos</p>
         <div className="card shadow mb-4">
           <div className="card-header py-3">
             <div className="d-flex justify-content-between">
-              <div>Clik en el boton para crear un vehiculo</div>
+              <div>Click en el botón para crear un vehículo</div>
               <div>
                 <Button
                   variant="success"

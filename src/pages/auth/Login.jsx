@@ -4,12 +4,15 @@ import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 function Login() {
   const [token, setToken] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
+  const MySwal = withReactContent(Swal);
 
   const navigate = useNavigate();
   const handleSubmit = (e) => {
@@ -24,9 +27,20 @@ function Login() {
         console.log(localStorage);
         setToken(response.data);
         setLoggedIn(true);
+        Swal.fire({
+          position: 'top-end',
+          icon: 'success',
+          title: 'Sesión iniciada con éxito!',
+          showConfirmButton: false,
+          timer: 1500
+        })
         // Handle response
       })
       .catch((error) => {
+        MySwal.fire({
+          icon: "error",
+          text: "Algo salio mal!",
+        });
         if (error.response) {
           console.log(error.response);
           console.log("server responded");
