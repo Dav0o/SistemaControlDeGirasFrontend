@@ -35,7 +35,7 @@ function ApproveRequest() {
     mutation.isSuccess
       ? MySwal.fire({
           icon: "success",
-          title: "Solicitud aprobada con exito!",
+          title: "Tu trabajo ha sido guardado!",
           showConfirmButton: false,
           timer: 1500,
         }).then(mutation.reset)

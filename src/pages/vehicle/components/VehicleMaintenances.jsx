@@ -14,6 +14,7 @@ import {
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { useEffect } from "react";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 function VehicleMaintenances() {
   const { vehicleId } = useParams();
@@ -36,7 +37,7 @@ function VehicleMaintenances() {
     mutation.isSuccess
       ? MySwal.fire({
           icon: "success",
-          title: "Mantenimiento creado con exito!",
+          title: "Tu trabajo ha sido guardado!",
           showConfirmButton: false,
           timer: 1500,
         }).then(mutation.reset)
@@ -183,50 +184,64 @@ function VehicleMaintenances() {
   return (
     <>
       <Container className="container-fluid">
-        <h2>Lista de Mantenimiento del Vehículo</h2>
+        <h1 className="h3 mb-2 text-gray-800">
+          Lista de Mantenimiento del Vehículo
+        </h1>
+        <p class="mb-4">Lista de mantenimientos o incidentes</p>
+        <div className="card shadow mb-4">
+          <div className="card-header py-3">
+            <div className="d-flex justify-content-between">
+              <div>Clik en el boton para crear un mantenimiento</div>
+              <Button
+                variant="success"
+                className="bg-gradient-success text-light
+                "
+                onClick={handleShowFormModal}
+              >
+                <i class="bi bi-plus-square"></i>
+              </Button>
+            </div>
+          </div>
+          <div className="card-body">
+            <Table striped="columns">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Gravedad</th>
+                  <th>Tipo</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
 
-        <Button
-          variant="dark"
-          className="bg-gradient-secondary"
-          onClick={handleShowFormModal}
-        >
-          Crear
-        </Button>
+              <tbody>
+                {data.maintenances.map((maintenance) => (
+                  <tr key={maintenance.id}>
+                    <td>{maintenance.name}</td>
+                    <td>{maintenance.severity}</td>
+                    <td>{maintenance.type}</td>
+                    <td>
+                      <Button
+                        variant="warning"
+                        className="bg-gradient-warning mr-1 text-light"
+                        onClick={() => handleEditClick(maintenance.id)}
+                      >
+                        <i class="bi bi-pencil-square"></i>
+                      </Button>
+                      <Button
+                        variant="danger"
+                        className="bg-gradient-danger mr-1 text-light"
+                        onClick={() => handleOpenModal(maintenance.id)}
+                      >
+                        <i class="bi bi-trash"></i>
+                      </Button>{" "}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+        </div>
 
-        <Table striped="columns">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Gravedad</th>
-              <th>Tipo</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {data.maintenances.map((maintenance) => (
-              <tr key={maintenance.id}>
-                <td>{maintenance.name}</td>
-                <td>{maintenance.severity}</td>
-                <td>{maintenance.type}</td>
-                <td>
-                  <Button
-                    variant="info"
-                    onClick={() => handleEditClick(maintenance.id)}
-                  >
-                    Editar
-                  </Button>
-                  <Button
-                    variant="danger"
-                    onClick={() => handleOpenModal(maintenance.id)}
-                  >
-                    Eliminar
-                  </Button>{" "}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
         <Link style={LinkStyle} to={"/vehicle"}>
           <Button variant="dark" className="bg-gradient-danger">
             Regresar

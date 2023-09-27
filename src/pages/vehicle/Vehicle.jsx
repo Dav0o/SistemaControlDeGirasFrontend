@@ -1,4 +1,4 @@
-import React from "react";;
+import React from "react";
 import { getVehicles } from "../../services/VehicleService";
 import { useQuery, useMutation } from "react-query";
 import { Button, Table } from "react-bootstrap";
@@ -9,7 +9,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { create } from "../../services/MaintenanceService";
 import { useState, useEffect } from "react";
 import "datatables.net-buttons-dt";
-
 
 function Vehicle() {
   const LinkStyle = {
@@ -34,25 +33,44 @@ function Vehicle() {
     const newDataTable = new DataTable("#tableMaintenance", {
       retrieve: true,
       responsive: true,
-      dom: "Bfrtip",
+      dom: "<'row' <'col-md-12 float-right'B>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>",
       buttons: [
         {
-            extend: "excelHtml5",
-            text: '<i class="fa-solid fa-file-csv"></i>',
-            titleAttr: "Exportar a Excel",
-            className: "btn btn-success",
+          extend: "print",
+          title: "Vehículos en Mantenimiento",
+          titleAttr: "Imprimir",
+          text: '<i class="fa-solid fa-print" aria-hidden="true"></i>',
+          className: "btn btn-info",
+          exportOptions: {
+            columns: [0, 1, 2, 3],
+          },
+          customize: function (win) {
+            $(win.document.body)
+              .find("tableMaintenance")
+              .addClass("compact")
+              .css("font-size", "inherit");
+            $(win.document.body).find("h1").css("text-align", "center");
+            $(win.document.body).css("font-size", "9px");
+          },
         },
         {
-            extend: "pdfHtml5",
-            text: '<i class="fa-regular fa-file-pdf"></i>',
-            titleAttr: "Exportar a PDF",
-            className: "btn btn-danger",
+          extend: "pdf",
+          title: "Vehículos en Mantenimiento",
+          titleAttr: "Exportar a PDF",
+          text: '<i class="fa-regular fa-file-pdf" aria-hidden="true"></i>',
+          className: "btn btn-danger",
+          exportOptions: { columns: [0, 1, 2, 3] },
+          customize: function (doc) {
+            doc.content[1].margin = [100, 0, 100, 0]; //left, top, right, bottom
+          },
         },
         {
-            extend: "print",
-            text: '<i class="fa-solid fa-print"></i>',
-            titleAttr: "Imprimir",
-            className: "btn btn-info",
+          extend: "excel",
+          title: "Vehículos en Mantenimiento",
+          titleAttr: "Exportar a Excel",
+          text: '<i class="fa-solid fa-file-csv"></i>',
+          className: "btn btn-success",
+          exportOptions: { columns: [0, 1, 2, 3] },
         },
       ],
     });
