@@ -9,6 +9,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { getByIdVehicle } from "../../../services/VehicleService";
 import { create, deleteMaintenance } from "../../../services/MaintenanceService";
 
+import { useEffect } from "react";
+
 function VehicleMaintenances() {
   const { vehicleId } = useParams();
   const { isLoading, data, isError } = useQuery(["vehicles", vehicleId], () =>
@@ -26,14 +28,15 @@ function VehicleMaintenances() {
   const category = useRef(0);
   const status = useRef(true);
   const description = useRef(null);
+ 
 
   const handleSave = () => {
     let newMaintenance = {
-      name: name.current.value,
-      severity: severity.current.value,
-      date: "2023-09-22",
+      name:  name.current.value,
+      severity:  severity.current.value,
+      date:  "2023-09-22",
       type: type.current.value,
-      category: 0,
+      category:  0,
       status: true, 
       description: description.current.value,
       vehicleId: vehicleId,
@@ -54,6 +57,46 @@ function VehicleMaintenances() {
 
   const handleCloseFormModal = () => setModalCreate(false);
   const handleShowFormModal = () => setModalCreate(true);
+
+  const [dataTable, setDataTable] = useState(null); // Estado para mantener la referencia del DataTable
+
+
+  useEffect(() => {
+    if (dataTable) {
+      // Destruye el DataTable existente antes de volver a inicializarlo
+      dataTable.destroy();
+    }
+
+    // Inicializa el DataTable después de renderizar los datos
+    const newDataTable = new DataTable("#tableMaintenance", {
+      retrieve: true,
+      responsive: true,
+      dom: "Bfrtp",
+      buttons: [
+        {
+          extend: "excelHtml5",
+          text: '<i class="fa-solid fa-file-csv"></i>',
+          titleAttr: "Exportar a Excel",
+          className: "btn btn-success",
+        },
+        {
+          extend: "pdfHtml5",
+          text: '<i class="fa-regular fa-file-pdf"></i>',
+          titleAttr: "Exportar a PDF",
+          className: "btn btn-danger",
+        },
+        {
+          extend: "print",
+          text: '<i class="fa-solid fa-print"></i>',
+          titleAttr: "Imprimir",
+          className: "btn btn-info",
+        },
+      ],
+    });
+
+    // Actualiza el estado para mantener la referencia del DataTable
+    setDataTable(newDataTable);
+  }, [data]);
 
   const handleCloseEditModal = () => {
     setShowEditModal(false);
@@ -321,5 +364,4 @@ function VehicleMaintenances() {
     </>
   );
 }
-
 export default VehicleMaintenances;

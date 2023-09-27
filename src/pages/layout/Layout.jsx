@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Outlet, NavLink } from "react-router-dom";
-import { NavDropdown, Nav } from "react-bootstrap";
+import { NavDropdown, Navbar } from "react-bootstrap";
 import Container from 'react-bootstrap/Container';
-import Navbar from 'react-bootstrap/Navbar';
+import { Dropdown } from "react-bootstrap";
+import { useNavigate } from "react-router-dom"; 
+
+const queryClient = new QueryClient();
 
 function Layout() {
   const queryClient = new QueryClient();
@@ -30,30 +33,62 @@ function Layout() {
   }
 
 
+  const navigate = useNavigate();
+  const [isLoggedOut, setIsLoggedOut] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      // Aquí debes realizar la lógica de cierre de sesión, por ejemplo, enviando una solicitud al servidor para invalidar el token de autenticación.
+      // Esto es solo un ejemplo simplificado.
+
+      // Simulamos una solicitud al servidor para cerrar sesión
+      const response = await fetch("/api/logout", {
+        method: "POST", // Puedes usar el método HTTP adecuado
+        // Añade cualquier encabezado necesario, como el token de autenticación
+        // headers: {
+        //   Authorization: `Bearer ${yourAuthToken}`,
+        // },
+      });
+
+      if (response.status === 200) {
+        // Si la solicitud de cierre de sesión fue exitosa en el servidor:
+
+        // Elimina el token de autenticación localmente
+        localStorage.removeItem("token");
+
+        // Establece el estado de isLoggedOut a true
+        setIsLoggedOut(true);
+
+        // Redirige al usuario a la página de inicio de sesión
+        navigate("/login");
+      } else {
+        // Maneja errores en caso de que la solicitud de cierre de sesión falle
+        // Por ejemplo, muestra un mensaje de error al usuario
+        console.error("Error al cerrar sesión");
+      }
+    } catch (error) {
+      // Maneja errores de red u otros errores que puedan ocurrir durante el proceso de cierre de sesión
+      console.error("Error inesperado:", error);
+    }
+  };
   return (
     <div>
-      
-      <Navbar style={sidebarStyle} expand="lg">
-  <Container>
-    <Navbar.Brand href="/home">Sistema Control de Giras UNA, SRCH</Navbar.Brand>
-    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-    <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
-      <Navbar.Text>
-        Registrado como:{" "}
-        <a href="#login">
-          <NavDropdown title="Nombre Usuario" id="basic-nav-dropdown">
-            <NavDropdown.Item href="#action/3.1">
-              <button className="btn btn-danger">Cerrar Sesión</button>
-            </NavDropdown.Item>
-            <NavDropdown.Item href="#action/3.2">
-              <button className="btn btn-primary">Configuración</button>
-            </NavDropdown.Item>
-          </NavDropdown>
-        </a>
-      </Navbar.Text>
-    </Navbar.Collapse>
-  </Container>
-</Navbar>
+      <Navbar bg="body-tertiary" variant="success">
+        <Container>
+          <Navbar.Brand href="#home">Sistema Control de Giras UNA, SRCH</Navbar.Brand>
+          <Navbar.Toggle />
+          <Navbar.Collapse className="justify-content-end">
+            <Navbar.Text>
+              <a href="#login">
+                <NavDropdown title="Usuario" id="basic-nav-dropdown">
+                  <NavDropdown.Item onClick={handleLogout}>Cerrar Sesión</NavDropdown.Item>
+                  <NavDropdown.Item href="#action/3.2">Configuración</NavDropdown.Item>
+                </NavDropdown>
+              </a>
+            </Navbar.Text>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
 
     <div className="d-flex">
       <body id="page-top">
