@@ -10,7 +10,7 @@ import { useMutation, useQuery } from "react-query";
 import { create, getUsers } from "../../services/UserService";
 import Form from "react-bootstrap/Form";
 import { useEffect } from "react";
-import Swal from "sweetalert2";
+import { Link } from "react-router-dom"; import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
 function Users() {
@@ -43,19 +43,19 @@ function Users() {
   {
     mutation.isError
       ? MySwal.fire({
-          icon: "error",
-          text: "Algo salio mal!",
-        }).then(mutation.reset)
+        icon: "error",
+        text: "Algo salio mal!",
+      }).then(mutation.reset)
       : null;
   }
   {
     mutation.isSuccess
       ? MySwal.fire({
-          icon: "success",
-          title: "Usuario creado con exito!",
-          showConfirmButton: false,
-          timer: 1500,
-        })
+        icon: "success",
+        title: "Usuario creado con exito!",
+        showConfirmButton: false,
+        timer: 1500,
+      })
       : null;
   }
   const [dataTable, setDataTable] = useState(null); // Estado para mantener la referencia del DataTable
@@ -66,39 +66,39 @@ function Users() {
       dataTable.destroy();
     }
 
-        // Inicializa el DataTable después de renderizar los datos
-        const newDataTable = new DataTable('#tableUsers', {
-          retrieve: true,
-          responsive: true,
-          dom: 'Bfrtp',
-          buttons: [
-            {
-              extend: 'excelHtml5',
-              text: '<i class="fa-solid fa-file-csv"></i>',
-              titleAttr: 'Exportar a Excel',
-              className: 'btn btn-success',
-            },
-            {
-              extend: 'pdfHtml5',
-              text: '<i class="fa-regular fa-file-pdf"></i>',
-              titleAttr: 'Exportar a PDF',
-              className: 'btn btn-danger',
-            },
-            {
-              extend: 'print',
-              text: '<i class="fa-solid fa-print"></i>',
-              titleAttr: 'Imprimir',
-              className: 'btn btn-info',
-            },
-          ],
+    // Inicializa el DataTable después de renderizar los datos
+    const newDataTable = new DataTable('#tableUsers', {
+      retrieve: true,
+      responsive: true,
+      dom: 'Bfrtp',
+      buttons: [
+        {
+          extend: 'excelHtml5',
+          text: '<i class="fa-solid fa-file-csv"></i>',
+          titleAttr: 'Exportar a Excel',
+          className: 'btn btn-success',
+        },
+        {
+          extend: 'pdfHtml5',
+          text: '<i class="fa-regular fa-file-pdf"></i>',
+          titleAttr: 'Exportar a PDF',
+          className: 'btn btn-danger',
+        },
+        {
+          extend: 'print',
+          text: '<i class="fa-solid fa-print"></i>',
+          titleAttr: 'Imprimir',
+          className: 'btn btn-info',
+        },
+      ],
 
-        });
+    });
 
-    
-        // Actualiza el estado para mantener la referencia del DataTable
-        setDataTable(newDataTable);
-      }, [data]); // Vuelve a inicializar el DataTable cuando los datos cambien
-    
+
+    // Actualiza el estado para mantener la referencia del DataTable
+    setDataTable(newDataTable);
+  }, [data]); // Vuelve a inicializar el DataTable cuando los datos cambien
+
 
   const handleSave = () => {
     let newUser = {
@@ -144,7 +144,7 @@ function Users() {
     };
     mutation
       .mutateAsync(updatedUser)
-      
+
     setShowEditModal(false);
   };
 
@@ -205,7 +205,7 @@ function Users() {
                     </td>
                     <td>{user.email}</td>
                     <td>
-                      
+
                       <Button
                         variant="warning"
                         className="bg-gradient-warning mr-1 text-light"
@@ -220,6 +220,12 @@ function Users() {
                       >
                         <i class="bi bi-info-square"></i>
                       </Button>
+                         
+                      <Link 
+                      to={`/users/UserRole/${user.id}`} className="btn btn-warning mr-1 text-light">
+                        <i className="bi bi-person-gear"></i>
+                      </Link>
+                     
                     </td>
                   </tr>
                 ))}

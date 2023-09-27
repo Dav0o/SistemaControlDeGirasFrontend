@@ -14,7 +14,7 @@ import RequestForm from './pages/requestForm/RequestForm'
 import EndorseRequest from './pages/endorseRequest/EndorseRequest'
 import ApproveRequest from './pages/approveRequest/ApproveRequest'
 import CheckedRequests from './pages/checkedRequests/CheckedRequests'
-
+import UserRole from './pages/users/components/UserRole'
 
 
 
@@ -28,7 +28,9 @@ function App() {
       <Route path='/' element={<Layout/>}>
         
         <Route path='/users' element={<Users/>} />
-        <Route path='/users/:userId' element={<User/>}/>
+        {/* <Route path='/users/:userId' element={<User/>}/> */}
+        <Route path='/users/UserRole/:User' element={<UserRole/>}/>
+       
         <Route path='/vehicles' element={<Vehicles/>}/>
         <Route path='/home' element={<Home/>}/>
       
@@ -40,7 +42,8 @@ function App() {
         <Route path='/approveRequest' element={<ApproveRequest/>}/>
 
         <Route path='/checkedRequests' element={<CheckedRequests/>}/>
-         
+
+        
       </Route>
     </Routes>
     
