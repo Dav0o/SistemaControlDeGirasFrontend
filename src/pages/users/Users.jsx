@@ -66,39 +66,55 @@ function Users() {
       dataTable.destroy();
     }
 
-        // Inicializa el DataTable después de renderizar los datos
-        const newDataTable = new DataTable('#tableUsers', {
-          retrieve: true,
-          responsive: true,
-          dom: 'Bfrtp',
-          buttons: [
-            {
-              extend: 'excelHtml5',
-              text: '<i class="fa-solid fa-file-csv"></i>',
-              titleAttr: 'Exportar a Excel',
-              className: 'btn btn-success',
-            },
-            {
-              extend: 'pdfHtml5',
-              text: '<i class="fa-regular fa-file-pdf"></i>',
-              titleAttr: 'Exportar a PDF',
-              className: 'btn btn-danger',
-            },
-            {
-              extend: 'print',
-              text: '<i class="fa-solid fa-print"></i>',
-              titleAttr: 'Imprimir',
-              className: 'btn btn-info',
-            },
-          ],
+    // Inicializa el DataTable después de renderizar los datos
+    const newDataTable = new DataTable("#tableUsers", {
+      retrieve: true,
+      responsive: true,
+      dom: "<'row' <'col-md-12 float-right'B>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>",
+      buttons: [
+        {
+          extend: "print",
+          title: "Registro Usuarios",
+          titleAttr: "Imprimir",
+          text: '<i class="fa-solid fa-print" aria-hidden="true"></i>',
+          className: "btn btn-info",
+          exportOptions: {
+            columns: [0, 1, 2, 3],
+          },
+          customize: function (win) {
+            $(win.document.body)
+              .find("tableUsers")
+              .addClass("compact")
+              .css("font-size", "inherit");
+            $(win.document.body).find("h1").css("text-align", "center");
+            $(win.document.body).css("font-size", "9px");
+          },
+        },
+        {
+          extend: "pdf",
+          title: "Registro Usuarios",
+          titleAttr: "Exportar a PDF",
+          text: '<i class="fa-regular fa-file-pdf" aria-hidden="true"></i>',
+          className: "btn btn-danger",
+          exportOptions: { columns: [0, 1, 2, 3] },
+          customize: function (doc) {
+            doc.content[1].margin = [100, 0, 100, 0]; //left, top, right, bottom
+          },
+        },
+        {
+          extend: "excel",
+          title: "Registro Usuarios",
+          titleAttr: "Exportar a Excel",
+          text: '<i class="fa-solid fa-file-csv"></i>',
+          className: "btn btn-success",
+          exportOptions: { columns: [0, 1, 2, 3] },
+        },
+      ],
+    });
 
-        });
-
-    
-        // Actualiza el estado para mantener la referencia del DataTable
-        setDataTable(newDataTable);
-      }, [data]); // Vuelve a inicializar el DataTable cuando los datos cambien
-    
+    // Actualiza el estado para mantener la referencia del DataTable
+    setDataTable(newDataTable);
+  }, [data]); // Vuelve a inicializar el DataTable cuando los datos cambien
 
   const handleSave = () => {
     let newUser = {
@@ -142,9 +158,8 @@ function Users() {
       password: userPassword.current.value,
       state: userState.current.value,
     };
-    mutation
-      .mutateAsync(updatedUser)
-      
+    mutation.mutateAsync(updatedUser);
+
     setShowEditModal(false);
   };
 
@@ -205,7 +220,6 @@ function Users() {
                     </td>
                     <td>{user.email}</td>
                     <td>
-                      
                       <Button
                         variant="warning"
                         className="bg-gradient-warning mr-1 text-light"
