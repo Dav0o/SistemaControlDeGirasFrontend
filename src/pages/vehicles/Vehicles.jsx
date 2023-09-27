@@ -118,8 +118,29 @@ export const Vehicles = () => {
 
         // Inicializa el DataTable después de renderizar los datos
         const newDataTable = new DataTable('#tableVehicles', {
-          // Configuración del DataTable (si es necesario)
-          retrieve:true,
+          retrieve: true,
+          responsive: true,
+          dom: 'Bfrtp',
+          buttons: [
+            {
+              extend: 'excelHtml5',
+              text: '<i class="fa-solid fa-file-csv"></i>',
+              titleAttr: 'Exportar a Excel',
+              className: 'btn btn-success',
+            },
+            {
+              extend: 'pdfHtml5',
+              text: '<i class="fa-regular fa-file-pdf"></i>',
+              titleAttr: 'Exportar a PDF',
+              className: 'btn btn-danger',
+            },
+            {
+              extend: 'print',
+              text: '<i class="fa-solid fa-print"></i>',
+              titleAttr: 'Imprimir',
+              className: 'btn btn-info',
+            },
+          ],
         });
     
         // Actualiza el estado para mantener la referencia del DataTable
