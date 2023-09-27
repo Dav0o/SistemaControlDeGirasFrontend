@@ -7,8 +7,12 @@ import Col from "react-bootstrap/Col";
 import { useQuery, useMutation } from "react-query";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { getByIdVehicle } from "../../../services/VehicleService";
-import { create, deleteMaintenance } from "../../../services/MaintenanceService";
-
+import {
+  create,
+  deleteMaintenance,
+} from "../../../services/MaintenanceService";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 import { useEffect } from "react";
 
 function VehicleMaintenances() {
@@ -17,6 +21,27 @@ function VehicleMaintenances() {
     getByIdVehicle(vehicleId)
   );
   const mutation = useMutation("maintenances", create);
+
+  const MySwal = withReactContent(Swal);
+
+  {
+    mutation.isError
+      ? MySwal.fire({
+          icon: "error",
+          text: "Algo salio mal!",
+        }).then(mutation.reset)
+      : null;
+  }
+  {
+    mutation.isSuccess
+      ? MySwal.fire({
+          icon: "success",
+          title: "Mantenimiento creado con exito!",
+          showConfirmButton: false,
+          timer: 1500,
+        }).then(mutation.reset)
+      : null;
+  }
   const [maintenances, setMaintenances] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedMaintenance, setSelectedMaintenance] = useState(null);
@@ -26,28 +51,26 @@ function VehicleMaintenances() {
   const date = useRef(null);
   const type = useRef(null);
   const category = useRef(0);
-  const status = useRef(true);
+  const status = useRef(null);
   const description = useRef(null);
- 
 
   const handleSave = () => {
     let newMaintenance = {
-      name:  name.current.value,
-      severity:  severity.current.value,
-      date:  "2023-09-22",
+      name: name.current.value,
+      severity: severity.current.value,
+      date: date.current.value,
       type: type.current.value,
-      category:  0,
-      status: true, 
+      category: 0,
+      status: true,
       description: description.current.value,
       vehicleId: vehicleId,
     };
     mutation.mutateAsync(newMaintenance);
-    setModalCreate(false);
   };
 
-  const handleEditClick = (MaintenanceId) => {
+  const handleEditClick = (maintenanceId) => {
     const maintenanceToEdit = data.maintenances.find(
-      (maintenance) => maintenance.id === MaintenanceId
+      (maintenance) => maintenance.id === maintenanceId
     );
     setEditingMaintenance(maintenanceToEdit);
     setShowEditModal(true);
@@ -59,7 +82,6 @@ function VehicleMaintenances() {
   const handleShowFormModal = () => setModalCreate(true);
 
   const [dataTable, setDataTable] = useState(null); // Estado para mantener la referencia del DataTable
-
 
   useEffect(() => {
     if (dataTable) {
@@ -103,39 +125,37 @@ function VehicleMaintenances() {
   };
 
   const [editingMaintenance, setEditingMaintenance] = useState(null);
-  const [showEditModal, setShowEditModal] = useState(false); 
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const handleUpdate = () => {
     const updatedMaintenance = {
       id: editingMaintenance.id,
       name: name.current.value,
       severity: severity.current.value,
-      date: "2023-09-22",
+      date: date.current.value,
       type: type.current.value,
       category: 0,
       status: editingMaintenance.status,
       description: description.current.value,
       vehicleId: vehicleId,
     };
-    
+
     mutation.mutateAsync(updatedMaintenance).then(() => {
       setShowEditModal(false);
     });
   };
 
-
-
-
   const handleDeleteMaintenance = async () => {
     try {
       await deleteMaintenance(selectedMaintenance);
-      const updatedMaintenances = maintenances.filter(maintenance => maintenance.id !== selectedMaintenance);
+      const updatedMaintenances = maintenances.filter(
+        (maintenance) => maintenance.id !== selectedMaintenance
+      );
       setMaintenances(updatedMaintenances);
       setShowModal(false);
     } catch (error) {
       console.error(error);
     }
-    
   };
 
   const handleOpenModal = (maintenanceId) => {
@@ -148,7 +168,6 @@ function VehicleMaintenances() {
     setShowModal(false);
   };
 
-
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -156,18 +175,23 @@ function VehicleMaintenances() {
   if (isError) {
     return <div>Error</div>;
   }
+  const LinkStyle = {
+    textDecoration: "none",
+    color: "white",
+  };
 
   return (
     <>
-      <Container>
-        <Row>
-          <Col>
-            <h2>Lista de Mantenimiento del Vehículo</h2>
-          </Col>
-          <Col>
-            <Button onClick={handleShowFormModal}>Crear</Button>
-          </Col>
-        </Row>
+      <Container className="container-fluid">
+        <h2>Lista de Mantenimiento del Vehículo</h2>
+
+        <Button
+          variant="dark"
+          className="bg-gradient-secondary"
+          onClick={handleShowFormModal}
+        >
+          Crear
+        </Button>
 
         <Table striped="columns">
           <thead>
@@ -186,15 +210,28 @@ function VehicleMaintenances() {
                 <td>{maintenance.severity}</td>
                 <td>{maintenance.type}</td>
                 <td>
-                <Button variant="info" onClick={() => handleEditClick(maintenance.id)}>Editar</Button>
-                <Button variant="danger" onClick={() => handleOpenModal(maintenance.id)}>Eliminar</Button>                </td>
+                  <Button
+                    variant="info"
+                    onClick={() => handleEditClick(maintenance.id)}
+                  >
+                    Editar
+                  </Button>
+                  <Button
+                    variant="danger"
+                    onClick={() => handleOpenModal(maintenance.id)}
+                  >
+                    Eliminar
+                  </Button>{" "}
+                </td>
               </tr>
             ))}
           </tbody>
         </Table>
-        <Button variant="info">
-          <Link to={"/vehicle"}>Regresar</Link>
-        </Button>
+        <Link style={LinkStyle} to={"/vehicle"}>
+          <Button variant="dark" className="bg-gradient-danger">
+            Regresar
+          </Button>
+        </Link>
       </Container>
 
       <Modal show={modalCreate} onHide={handleCloseFormModal} centered>
@@ -320,8 +357,6 @@ function VehicleMaintenances() {
                     ref={type}
                   />
                 </Form.Group>
-
-               
               </div>
             </div>
             <Form.Group controlId="formDescription">
@@ -350,7 +385,9 @@ function VehicleMaintenances() {
         <Modal.Header closeButton>
           <Modal.Title>Confirmar eliminación</Modal.Title>
         </Modal.Header>
-        <Modal.Body>¿Estás seguro de que quieres eliminar este mantenimiento?</Modal.Body>
+        <Modal.Body>
+          ¿Estás seguro de que quieres eliminar este mantenimiento?
+        </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseModal}>
             Cancelar
@@ -360,7 +397,6 @@ function VehicleMaintenances() {
           </Button>
         </Modal.Footer>
       </Modal>
-      
     </>
   );
 }

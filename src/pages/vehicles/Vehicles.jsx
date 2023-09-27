@@ -7,9 +7,34 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useMutation, useQuery } from "react-query";
 import { create, getVehicles } from "../../services/VehicleService";
 import { useEffect } from "react";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 export const Vehicles = () => {
   const mutation = useMutation("vehicles", create);
+
+  const MySwal = withReactContent(Swal);
+
+  {
+    mutation.isError
+      ? MySwal.fire({
+          icon: "error",
+          text: "Algo salio mal!",
+        }).then(mutation.reset)
+      : null;
+  }
+  {
+    mutation.isSuccess
+      ? MySwal.fire({
+          icon: "success",
+          title: "Vehiculo creado con exito!",
+          showConfirmButton: false,
+          timer: 1500,
+        }).then(mutation.reset)
+      : null;
+  }
+
   const [dataTable, setDataTable] = useState(null); // Estado para mantener la referencia del DataTable
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [editingVehicle, setEditingVehicle] = useState(null);
@@ -17,7 +42,7 @@ export const Vehicles = () => {
   const { isLoading, data, isError } = useQuery("vehicles", getVehicles, {
     enabled: true,
   });
-  
+
   const handleSave = () => {
     let newVehicle = {
       plate_Number: plate_Number.current.value,
@@ -36,7 +61,6 @@ export const Vehicles = () => {
       imageUrl: image_url.current.value,
     };
     mutation.mutateAsync(newVehicle);
-    handleRefreshClick();
   };
 
   const plate_Number = useRef(null);
@@ -85,12 +109,7 @@ export const Vehicles = () => {
 
     mutation.mutateAsync(updatedVehicle).then(() => {
       setShowEditModal(false);
-      handleRefreshClick();
     });
-  };
-
-  const handleRefreshClick = () => {
-    window.location.reload();
   };
 
   const handleDisableVehicle = (vehicleId) => {
@@ -110,11 +129,12 @@ export const Vehicles = () => {
   const handleCloseFormModal = () => setShowFormModal(false);
   const handleShowFormModal = () => setShowFormModal(true);
 
-   useEffect(() => {
+  useEffect(() => {
     if (dataTable) {
       // Destruye el DataTable existente antes de volver a inicializarlo
       dataTable.destroy();
     }
+
 
         // Inicializa el DataTable después de renderizar los datos
         const newDataTable = new DataTable('#tableVehicles', {
@@ -147,6 +167,9 @@ export const Vehicles = () => {
         setDataTable(newDataTable);
       }, [data]); // Vuelve a inicializar el DataTable cuando los datos cambien
 
+    
+
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -157,62 +180,79 @@ export const Vehicles = () => {
 
   return (
     <>
-      <Container>
-        <Row>
-          <Col>
-            <h2>Vehiculos</h2>
-          </Col>
-          <Col>
-            <Button color="success" onClick={handleShowFormModal}>
-              {" "}
-              Crear
-            </Button>
-          </Col>
-        </Row>
-        <Table striped="columns" id="tableVehicles">
-          <thead>
-            <tr>
-              <th>Placa</th>
-              <th>Marca</th>
-              <th>Modelo</th>
-              <th>Color</th>
-              <th>Capacidad</th>
-              <th>Año</th>
-              <th>Tracción</th>
-              
-              <th>Acciones</th>
-            </tr>
-          </thead>
+      <Container className="container-fluid">
+        <h1 className="h3 mb-2 text-gray-800">Vehiculos</h1>
+        <p class="mb-4">Lista de vehiculos</p>
+        <div className="card shadow mb-4">
+          <div className="card-header py-3">
+            <div className="d-flex justify-content-between">
+              <div>Clik en el boton para crear un vehiculo</div>
+              <div>
+                <Button
+                  variant="success"
+                  className="bg-gradient-success text-light
+                  "
+                  onClick={handleShowFormModal}
+                >
+                  {" "}
+                  <i class="bi bi-plus-square"></i>
+                </Button>
+              </div>
+            </div>
+          </div>
+          <div className="card-body">
+            <Table
+              className="table table-bordered"
+              striped="columns"
+              id="tableVehicles"
+            >
+              <thead>
+                <tr>
+                  <th>Placa</th>
+                  <th>Marca</th>
+                  <th>Modelo</th>
+                  <th>Color</th>
+                  <th>Capacidad</th>
+                  <th>Año</th>
+                  <th>Tracción</th>
 
-          <tbody>
-            {data.map((vehicle) => (
-              <tr key={vehicle.id}>
-                <td>{vehicle.plate_Number}</td>
-                <td>{vehicle.make}</td>
-                <td>{vehicle.model}</td>
-                <td>{vehicle.color}</td>
-                <td>{vehicle.capacity}</td>
-                <td>{vehicle.year}</td>
-                <td>{vehicle.traction}</td>
-                
-                <td>
-                  <Button
-                    variant="info"
-                    onClick={() => handleShowInfoModal(vehicle)}
-                  >
-                    Detalles
-                  </Button>
-                  <Button
-                    variant="primary"
-                    onClick={() => handleEditClick(vehicle.id)}
-                  >
-                    Editar
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {data.map((vehicle) => (
+                  <tr key={vehicle.id}>
+                    <td>{vehicle.plate_Number}</td>
+                    <td>{vehicle.make}</td>
+                    <td>{vehicle.model}</td>
+                    <td>{vehicle.color}</td>
+                    <td>{vehicle.capacity}</td>
+                    <td>{vehicle.year}</td>
+                    <td>{vehicle.traction}</td>
+
+                    <td>
+                      <Button
+                        variant="warning"
+                        className="bg-gradient-warning mr-1 text-light"
+                        onClick={() => handleEditClick(vehicle.id)}
+                      >
+                        <i class="bi bi-pencil-square"></i>
+                      </Button>
+                      <Button
+                        variant="info"
+                        className="bg-gradient-info text-light"
+                        onClick={() => handleShowInfoModal(vehicle)}
+                      >
+                        <i class="bi bi-info-square"></i>
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+        </div>
       </Container>
 
       <Modal show={showFormModal} onHide={handleCloseFormModal} centered>
@@ -341,7 +381,7 @@ export const Vehicles = () => {
           <Button variant="danger" onClick={handleCloseFormModal}>
             Cancelar
           </Button>
-          <Button variant="dark" onClick={handleSave}>
+          <Button variant="success" className="bg-gradient-success" onClick={handleSave}>
             Guardar
           </Button>
         </Modal.Footer>
@@ -491,16 +531,16 @@ export const Vehicles = () => {
           <Button variant="danger" onClick={handleCloseEditModal}>
             Cancelar
           </Button>
-          <Button variant="dark" onClick={handleUpdate}>
+          <Button variant="warning" className="bg-gradient-warning text-light" onClick={handleUpdate}>
             Actualizar
           </Button>
-          <Button
+          {/* <Button
             variant="danger"
             onClick={() => handleDisableVehicle(editingVehicle.id)}
           >
             {" "}
             <span class="material-symbols-outlined">visibility</span>{" "}
-          </Button>
+          </Button> */}
         </Modal.Footer>
       </Modal>
 

@@ -12,13 +12,35 @@ import Form from "react-bootstrap/Form";
 import { getVehicles } from "../../services/VehicleService";
 import { useRef } from "react";
 import { useState } from "react";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 function ApproveRequest() {
   const { data, isLoading, isError } = useQuery("requests", getRequests, {
     enabled: true,
   });
 
-  const mutation = useMutation("requests/approve", approve)
+  const mutation = useMutation("requests/approve", approve);
+
+  const MySwal = withReactContent(Swal);
+  {
+    mutation.isError
+      ? MySwal.fire({
+          icon: "error",
+          text: "Algo salio mal!",
+        }).then(mutation.reset)
+      : null;
+  }
+  {
+    mutation.isSuccess
+      ? MySwal.fire({
+          icon: "success",
+          title: "Solicitud aprobada con exito!",
+          showConfirmButton: false,
+          timer: 1500,
+        }).then(mutation.reset)
+      : null;
+  }
 
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [showApproveModal, setShowApproveModal] = useState(false);
@@ -31,13 +53,13 @@ function ApproveRequest() {
     setShowApproveModal(true);
   };
 
-  const handleApprove = () =>{
-      let updateRequest = {
+  const handleApprove = () => {
+    let updateRequest = {
       id: selectedRequest.id,
       itsApprove: true,
-      };
-      mutation.mutateAsync(updateRequest);
-  }
+    };
+    mutation.mutateAsync(updateRequest);
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -47,34 +69,43 @@ function ApproveRequest() {
     return <div>Error</div>;
   }
 
-  const filteredData = data.filter(request => request.itsApprove === false && request.itsEndorse === true)
+  const filteredData = data.filter(
+    (request) => request.itsApprove === false && request.itsEndorse === true
+  );
   return (
     <>
-      <Container>
-        <h1>Solicitudes a aprobar</h1>
-        <Col>
-          {filteredData.map((request) => (
-            <Card key={request.id}>
-              <Card.Header>{request.consecutiveNumber}</Card.Header>
-              <Card.Body>
-                <Card.Title>{request.objective}</Card.Title>
-                <Card.Text>
-                  Fecha de salida {request.departureDate} con el destino de{" "}
-                  {request.destinyLocation}
-                </Card.Text>
-                <Button
-                  variant="info"
-                  onClick={() => handleShowApprove(request.id)}
-                >
-                  Aprobar
-                </Button>
-                <Button variant="primary">Editar</Button>
-              </Card.Body>
-            </Card>
-          ))}
-        </Col>
+      <Container className="container-fluid">
+        <h1 className="h3 mb-2 text-gray-800">Solicitudes a aprobar</h1>
+        <p class="mb-4">Lista de solicitudes por aprobar</p>
+        <div className="card shadow mb-4">
+          <div className="card-header py-3">
+            <p>De click en aprobar para seleccionar una solicitud</p>
+          </div>
+          <div className="card-body">
+            {filteredData.map((request) => (
+              <Card key={request.id} className="mb-3">
+                <Card.Header>{request.consecutiveNumber}</Card.Header>
+                <Card.Body>
+                  <Card.Title>{request.objective}</Card.Title>
+                  <Card.Text>
+                    Fecha de salida {request.departureDate} con el destino de{" "}
+                    {request.destinyLocation}
+                  </Card.Text>
+                  <Button
+                    variant="success"
+                    className="bg-gradient-success text-light 
+                    "
+                    onClick={() => handleShowApprove(request.id)}
+                  >
+                    Aprobar
+                  </Button>
+                  
+                </Card.Body>
+              </Card>
+            ))}
+          </div>
+        </div>
       </Container>
-
 
       <Modal show={showApproveModal} onHide={handleClose}>
         <Modal.Header closeButton>
@@ -96,9 +127,6 @@ function ApproveRequest() {
                   readOnly
                 />
               </Form.Group>
-
-  
-              
             </Form>
           )}
         </Modal.Body>

@@ -7,10 +7,32 @@ import Row from "react-bootstrap/Row";
 import Card from "react-bootstrap/Card";
 import { useMutation } from "react-query";
 import { create } from "../../services/RequestService";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 function RequestForm() {
+  
 
   const mutation = useMutation("requests", create);
+
+  const MySwal = withReactContent(Swal);
+
+  {mutation.isError
+    ? 
+      MySwal.fire({
+      icon: "error",
+      text: "Algo salio mal!",
+    }).then(mutation.reset)
+  
+    : null}
+  {mutation.isSuccess
+    ? MySwal.fire({
+        icon: "success",
+        title: "Solicitud creada con exito!",
+        showConfirmButton: false,
+        timer: 1500,
+      }).then(mutation.reset)
+    : null}
 
   const executingUnit = useRef(0);
   const typeRequest = useRef(null);
@@ -30,7 +52,7 @@ function RequestForm() {
 
   const handleSave = () => {
     let newRequest = {
-      consecutiveNumber:20230000,
+      consecutiveNumber: 20230000,
       executingUnit: parseInt(executingUnit.current.value),
       typeRequest: typeRequest.current.value,
       condition: condition.current.value,
@@ -47,11 +69,13 @@ function RequestForm() {
       typeOfVehicle: typeOfVehicle.current.value,
       itsDriver: itsDriver.current.valueOf,
     };
-    mutation.mutateAsync(newRequest);
-  }
+    mutation.mutate(newRequest);
+    
+  };
 
   return (
     <Container>
+      
       <Card>
         <Card.Header>Formulario de Solicitud</Card.Header>
 
@@ -61,44 +85,44 @@ function RequestForm() {
               <Col>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                   <Form.Label>Tipo de gira</Form.Label>
-                  <Form.Control type="text" ref={typeRequest}/>
+                  <Form.Control type="text" ref={typeRequest} />
                 </Form.Group>
               </Col>
               <Col>
                 <Form.Group className="mb-3" controlId="formBasicPassword">
                   <Form.Label>Unidad ejecutora</Form.Label>
-                  <Form.Control type="number" ref={executingUnit}/>
+                  <Form.Control type="number" ref={executingUnit} />
                 </Form.Group>
               </Col>
               <Col>
                 <Form.Group className="mb-2" controlId="formBasicPassword">
                   <Form.Label>Unidad presupuestaria</Form.Label>
-                  <Form.Control type="number" ref={budgetUnid}/>
+                  <Form.Control type="number" ref={budgetUnid} />
                 </Form.Group>
               </Col>
             </Row>
 
             <Form.Group className="mb-2" controlId="formBasicPassword">
               <Form.Label>Objetivo</Form.Label>
-              <Form.Control as="textarea" ref={objective}/>
+              <Form.Control as="textarea" ref={objective} />
             </Form.Group>
 
             <Form.Group className="mb-2" controlId="formBasicPassword">
               <Form.Label>Numero de personas</Form.Label>
-              <Form.Control type="number" ref={personsAmount}/>
+              <Form.Control type="number" ref={personsAmount} />
             </Form.Group>
 
             <Row>
               <Col>
                 <Form.Group className="mb-2" controlId="formBasicPassword">
                   <Form.Label>Fecha y hora de salida</Form.Label>
-                  <Form.Control type="date"  ref={departureDate}/>
+                  <Form.Control type="datetime-local" ref={departureDate} />
                 </Form.Group>
               </Col>
               <Col>
                 <Form.Group className="mb-2" controlId="formBasicPassword">
                   <Form.Label>Fecha y hora de regreso</Form.Label>
-                  <Form.Control type="date" ref={arriveDate} />
+                  <Form.Control type="datetime-local" ref={arriveDate} />
                 </Form.Group>
               </Col>
             </Row>
@@ -106,53 +130,53 @@ function RequestForm() {
               <Col>
                 <Form.Group className="mb-2" controlId="formBasicPassword">
                   <Form.Label>Lugar de salida</Form.Label>
-                  <Form.Control type="text" ref={departureLocation}/>
+                  <Form.Control type="text" ref={departureLocation} />
                 </Form.Group>
               </Col>
               <Col>
                 <Form.Group className="mb-2" controlId="formBasicPassword">
                   <Form.Label>Lugar de destino</Form.Label>
-                  <Form.Control type="text" ref={destinyLocation}/>
+                  <Form.Control type="text" ref={destinyLocation} />
                 </Form.Group>
               </Col>
             </Row>
 
             <Form.Group className="mb-2" controlId="formBasicPassword">
               <Form.Label>Condicion</Form.Label>
-              <Form.Control type="text" ref={condition}/>
+              <Form.Control type="text" ref={condition} />
             </Form.Group>
 
             <Form.Group className="mb-2" controlId="formBasicPassword">
               <Form.Label>Itinerario</Form.Label>
-              <Form.Control as="textarea" ref={itinerary}/>
+              <Form.Control as="textarea" ref={itinerary} />
             </Form.Group>
             <Row>
               <Col>
                 <Form.Group className="mb-2" controlId="formBasicPassword">
                   <Form.Label>Tipo de vehiculo</Form.Label>
-                  <Form.Control type="text" ref={typeOfVehicle}/>
+                  <Form.Control type="text" ref={typeOfVehicle} />
                 </Form.Group>
               </Col>
               <Col>
                 <Form.Group className="mb-2" controlId="formBasicPassword">
                   <Form.Label>Requiere chofer</Form.Label>
 
-                  <Form.Check type="checkbox" ref={itsDriver}/>
+                  <Form.Check type="checkbox" ref={itsDriver} />
                 </Form.Group>
               </Col>
             </Row>
 
             <Form.Group className="mb-2" controlId="formBasicPassword">
               <Form.Label>Prioridad</Form.Label>
-              <Form.Control type="number" ref={priority}/>
+              <Form.Control type="number" ref={priority} />
             </Form.Group>
 
             <Form.Group className="mb-2" controlId="formBasicPassword">
               <Form.Label>Observaciones</Form.Label>
-              <Form.Control as="textarea" ref={observations}/>
+              <Form.Control as="textarea" ref={observations} />
             </Form.Group>
 
-            <Button variant="primary" onClick={handleSave}>
+            <Button variant="dark" className="bg-gradient-success" onClick={handleSave}>
               Submit
             </Button>
           </Form>

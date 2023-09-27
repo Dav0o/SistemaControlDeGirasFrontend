@@ -10,8 +10,8 @@ import { useMutation, useQuery } from "react-query";
 import { create, getUsers } from "../../services/UserService";
 import Form from "react-bootstrap/Form";
 import { useEffect } from "react";
-
-
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 function Users() {
   const userName = useRef(null);
@@ -38,6 +38,26 @@ function Users() {
   });
 
   const mutation = useMutation("users", create);
+  const MySwal = withReactContent(Swal);
+
+  {
+    mutation.isError
+      ? MySwal.fire({
+          icon: "error",
+          text: "Algo salio mal!",
+        }).then(mutation.reset)
+      : null;
+  }
+  {
+    mutation.isSuccess
+      ? MySwal.fire({
+          icon: "success",
+          title: "Usuario creado con exito!",
+          showConfirmButton: false,
+          timer: 1500,
+        })
+      : null;
+  }
   const [dataTable, setDataTable] = useState(null); // Estado para mantener la referencia del DataTable
 
   useEffect(() => {
@@ -124,12 +144,7 @@ function Users() {
     };
     mutation
       .mutateAsync(updatedUser)
-      .then((response) => {
-        console.log("Usuario actualizado exitosamente", response);
-      })
-      .catch((error) => {
-        console.error("Error al actualizar el usuario", error);
-      });
+      
     setShowEditModal(false);
   };
 
@@ -150,49 +165,67 @@ function Users() {
 
   return (
     <>
-      <Container>
-        <Row>
-          <Col>
-            <h2>Usuario</h2>
-          </Col>
-          <Col>
-            <Button color="success" onClick={handleShow}>
-              {" "}
-              Crear
-            </Button>
-          </Col>
-        </Row>
-        <br />
-        <div>
-          <Table striped="columns" id='tableUsers'>
-            <thead>
-              <tr>
-                <th>Id</th>
-                <th>Nombre</th>
-                <th>Apellidos</th>
-                <th>Correo Electronico</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user) => (
-                <tr key={user.id}>
-                  <td>{user.id}</td>
-                  <td>{user.name}</td>
-                  <td>
-                    {user.lastName1} {user.lastName2}
-                  </td>
-                  <td>{user.email}</td>
-                  <td>
-                    <Button variant="info" onClick={()=>handleShowDetailModal(user)} >
-                      Detalles
-                    </Button>
-                    <Button variant="primary" onClick={()=>handleEditClick(user.id)}>Editar</Button>
-                  </td>
+      <Container className="container-fluid">
+        <h1 className="h3 mb-2 text-gray-800">Usuarios</h1>
+        <p class="mb-4">Lista de usuarios</p>
+
+        <div className="card shadow mb-4">
+          <div className="card-header py-3">
+            <div className="d-flex justify-content-between">
+              <div>Clik en el boton para crear un usuario</div>
+              <Button
+                variant="success"
+                className="bg-gradient-success text-light
+               "
+                onClick={handleShow}
+              >
+                {" "}
+                <i class="bi bi-plus-square"></i>
+              </Button>
+            </div>
+          </div>
+          <div className="card-body">
+            <Table striped="columns" id="tableUsers">
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Nombre</th>
+                  <th>Apellidos</th>
+                  <th>Correo Electronico</th>
+                  <th>Acciones</th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {users.map((user) => (
+                  <tr key={user.id}>
+                    <td>{user.id}</td>
+                    <td>{user.name}</td>
+                    <td>
+                      {user.lastName1} {user.lastName2}
+                    </td>
+                    <td>{user.email}</td>
+                    <td>
+                      
+                      <Button
+                        variant="warning"
+                        className="bg-gradient-warning mr-1 text-light"
+                        onClick={() => handleEditClick(user.id)}
+                      >
+                        <i class="bi bi-pencil-square"></i>
+                      </Button>
+                      <Button
+                        variant="info"
+                        className="bg-gradient-info text-light"
+                        onClick={() => handleShowDetailModal(user)}
+                      >
+                        <i class="bi bi-info-square"></i>
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
         </div>
       </Container>
 
@@ -307,7 +340,7 @@ function Users() {
                 />
               </Col>
               <Col>
-              <Form.Label>Primer apellido</Form.Label>
+                <Form.Label>Primer apellido</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Ingrese el primer apellido"
@@ -389,9 +422,7 @@ function Users() {
           </Button>
         </Modal.Footer>
       </Modal>
-
     </>
-  
   );
 }
 

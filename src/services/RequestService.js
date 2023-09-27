@@ -10,7 +10,10 @@ export const create = async (request) => {
     }
     
 };
-
+export const update = async (request) => {
+    let data = await api.put(`requests`, request).then(result => result.data);
+    return data;
+}
 export const endorse = async (request) => {
     let data = await api.put(`requests/endorse`,request
     ).then(result => result.data);

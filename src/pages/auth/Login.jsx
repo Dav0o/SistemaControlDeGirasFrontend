@@ -3,6 +3,7 @@ import "../../stylesheets/login.css";
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Button } from "react-bootstrap";
 
 function Login() {
   const [token, setToken] = useState("");
@@ -19,7 +20,7 @@ function Login() {
     axios
       .post("https://localhost:7023/api/Users/login", { email, password })
       .then((response) => {
-        localStorage.setItem('token', response.data)
+        localStorage.setItem("token", response.data);
         console.log(localStorage);
         setToken(response.data);
         setLoggedIn(true);
@@ -35,19 +36,16 @@ function Login() {
       });
   };
 
-  useEffect(() =>{
-    if(loggedIn){
-        navigate("/home");
+  useEffect(() => {
+    if (loggedIn) {
+      navigate("/home");
     }
-  })
-  
+  });
 
   return (
     <>
       <div className="sidenav">
-        <div className="login-main-text">
-          
-        </div>
+        <div className="login-main-text"></div>
       </div>
       <div className="main">
         <div className="col-md-6 col-sm-12">
@@ -74,9 +72,9 @@ function Login() {
                 />
               </div>
               <br />
-              <button type="submit" className="btn btn-black">
+              <Button type="submit" variant="dark" className="bg-gradient-success text-light">
                 Login
-              </button>
+              </Button>
             </form>
           </div>
         </div>

@@ -21,31 +21,39 @@ function CheckedRequests() {
     return <div>Error</div>;
   }
 
-  const filteredData = data.filter(request => request.itsEndorse === true && request.itsApprove === true)
+  const filteredData = data.filter(
+    (request) => request.itsEndorse === true && request.itsApprove === true
+  );
   return (
     <>
-      <Container>
-        <h1>Solicitudes autorizadas</h1>
-        <Col>
-          {filteredData.map((request) => (
-            <Card key={request.id}>
-              <Card.Header>{request.consecutiveNumber}</Card.Header>
-              <Card.Body>
-                <Card.Title>{request.objective}</Card.Title>
-                <Card.Text>
-                  Fecha de salida {request.departureDate} con el destino de{" "}
-                  {request.destinyLocation}
-                </Card.Text>
-                <Button
-                  variant="info"
-                >
-                  Detalles
-                </Button>
-                
-              </Card.Body>
-            </Card>
-          ))}
-        </Col>
+      <Container className="mb-3">
+        <h1 className="h3 mb-2 text-gray-800">Solicitudes autorizadas</h1>
+        <p class="mb-4">Lista de solicitudes autorizadas</p>
+        <div className="card shadow mb-4">
+          <div className="card-header py-3">
+            <p>De click en detalles para seleccionar una solicitud</p>
+          </div>
+          <div className="card-body">
+            {filteredData.map((request) => (
+              <Card key={request.id}>
+                <Card.Header>{request.consecutiveNumber}</Card.Header>
+                <Card.Body>
+                  <Card.Title>{request.objective}</Card.Title>
+                  <Card.Text>
+                    Fecha de salida {request.departureDate} con el destino de{" "}
+                    {request.destinyLocation}
+                  </Card.Text>
+                  <Button
+                    variant="info"
+                    className="bg-gradient-info text-light"
+                  >
+                    <i class="bi bi-info-square"></i>
+                  </Button>
+                </Card.Body>
+              </Card>
+            ))}
+          </div>
+        </div>
       </Container>
     </>
   );
