@@ -52,7 +52,7 @@ function Users() {
     mutation.isSuccess
       ? MySwal.fire({
           icon: "success",
-          title: "Usuario creado con exito!",
+          title: "Tu trabajo ha sido guardado!",
           showConfirmButton: false,
           timer: 1500,
         })
@@ -187,7 +187,7 @@ function Users() {
         <div className="card shadow mb-4">
           <div className="card-header py-3">
             <div className="d-flex justify-content-between">
-              <div>Clik en el boton para crear un usuario</div>
+              <div>Click en el botón para crear un usuario</div>
               <Button
                 variant="success"
                 className="bg-gradient-success text-light
