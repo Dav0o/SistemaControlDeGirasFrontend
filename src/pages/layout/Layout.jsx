@@ -183,7 +183,7 @@ function Layout() {
               </li>
 
               <li className="nav-item">
-                <a className="nav-link" href="/">
+                <a className="nav-link" href="/auth">
                   <i className="fa-solid fa-right-to-bracket"></i>
                   <span>Login</span>
                 </a>
