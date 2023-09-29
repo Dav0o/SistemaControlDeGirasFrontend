@@ -21,7 +21,7 @@ function Login() {
 
     // Handle validations
     axios
-      .post("https://localhost:7023/api/Users/login", { email, password })
+      .post("https://controldegirasapi.azurewebsites.net/api/Users/login", { email, password })
       .then((response) => {
         localStorage.setItem("token", response.data);
         console.log(localStorage);
