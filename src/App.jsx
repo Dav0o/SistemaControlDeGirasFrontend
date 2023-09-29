@@ -24,13 +24,13 @@ function App() {
   return (
     <BrowserRouter>
     <Routes>
-    <Route path='/auth' element={<Login/>}/>
+    <Route index element={<Login/>} />
       <Route path='/' element={<Layout/>}>
-        <Route index element={<Home/>} />
+        
         <Route path='/users' element={<Users/>} />
         {/* <Route path='/users/:userId' element={<User/>}/> */}
         <Route path='/users/UserRole/:User' element={<UserRole/>}/>
-        
+       
         <Route path='/vehicles' element={<Vehicles/>}/>
         <Route path='/home' element={<Home/>}/>
       
