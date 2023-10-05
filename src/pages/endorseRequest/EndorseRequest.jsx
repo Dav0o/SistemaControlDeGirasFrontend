@@ -18,11 +18,10 @@ function EndorseRequest() {
   const { data, isLoading, isError } = useQuery("requests", getRequests, {
     enabled: true,
   });
-  const executingUnit = useRef(0);
+  const executingUnit = useRef(null);
   const typeRequest = useRef(null);
   const condition = useRef(null);
   const priority = useRef(0);
-  const budgetUnid = useRef(0);
   const personsAmount = useRef(0);
   const objective = useRef(null);
   const departureDate = useRef(null);
@@ -49,7 +48,7 @@ function EndorseRequest() {
     mutation.isError
       ? MySwal.fire({
           icon: "error",
-          text: "Algo salio mal!",
+          text: "Algo salió mal!",
         }).then(mutation.reset)
       : null;
   }
@@ -99,11 +98,10 @@ function EndorseRequest() {
     let updatedRequest = {
       id: selectedRequest.id,
       consecutiveNumber: 20230000,
-      executingUnit: parseInt(executingUnit.current.value),
+      executingUnit: executingUnit.current.value,
       typeRequest: typeRequest.current.value,
       condition: condition.current.value,
       priority: parseInt(priority.current.value),
-      budgetUnid: parseInt(budgetUnid.current.value),
       personsAmount: parseInt(personsAmount.current.value),
       objective: objective.current.value,
       departureDate: departureDate.current.value,
@@ -145,7 +143,7 @@ function EndorseRequest() {
         <p class="mb-4">Lista de solicitudes por avalar</p>
         <div className="card shadow mb-4">
           <div className="card-header py-3">
-            <p>De click en avalar para seleccionar una solicitud</p>
+            <p>Dé click en avalar para seleccionar una solicitud</p>
           </div>
           <div className="card-body">
             {filteredData.map((request) => (
@@ -189,7 +187,7 @@ function EndorseRequest() {
             <Form>
               <Form.Group>
                 <Form.Label>
-                  Numero de consecutivo de la solicitud a avalar
+                  Número de consecutivo de la solicitud a avalar
                 </Form.Label>
                 <Form.Control
                   type="number"
@@ -210,7 +208,7 @@ function EndorseRequest() {
                 />
               </Form.Group>
               <Form.Group>
-                <Form.Label>Tipo de vehiculo requerido</Form.Label>
+                <Form.Label>Tipo de vehículo requerido</Form.Label>
                 <Form.Control
                   type="number"
                   placeholder={selectedRequest.typeOfVehicle}
@@ -222,10 +220,10 @@ function EndorseRequest() {
 
               <Form.Group>
                 <Form.Label>
-                  Seleccione el vehiculo para la solicitud
+                  Seleccione el vehículo para la solicitud
                 </Form.Label>
                 <Form.Select aria-label="Default select example">
-                  <option>Lista de Vehiculos</option>
+                  <option>Lista de Vehículos</option>
                   {vehicles.map((vehicle) => (
                     <option value={vehicle.id} ref={vehicleId}>
                       {vehicle.plate_Number} - {vehicle.category}
@@ -275,26 +273,16 @@ function EndorseRequest() {
                   <Form.Group className="mb-3" controlId="formBasicPassword">
                     <Form.Label>Unidad ejecutora</Form.Label>
                     <Form.Control
-                      type="number"
+                      type="text"
                       ref={executingUnit}
                       defaultValue={
                         selectedRequest ? selectedRequest.executingUnit : ""
                       }
                     />
                   </Form.Group>
+
                 </Col>
-                <Col>
-                  <Form.Group className="mb-2" controlId="formBasicPassword">
-                    <Form.Label>Unidad presupuestaria</Form.Label>
-                    <Form.Control
-                      type="number"
-                      ref={budgetUnid}
-                      defaultValue={
-                        selectedRequest ? selectedRequest.budgetUnid : ""
-                      }
-                    />
-                  </Form.Group>
-                </Col>
+               
               </Row>
 
               <Form.Group className="mb-2" controlId="formBasicPassword">
@@ -309,7 +297,7 @@ function EndorseRequest() {
               </Form.Group>
 
               <Form.Group className="mb-2" controlId="formBasicPassword">
-                <Form.Label>Numero de personas</Form.Label>
+                <Form.Label>Número de personas</Form.Label>
                 <Form.Control
                   type="number"
                   ref={personsAmount}
@@ -373,7 +361,7 @@ function EndorseRequest() {
               </Row>
 
               <Form.Group className="mb-2" controlId="formBasicPassword">
-                <Form.Label>Condicion</Form.Label>
+                <Form.Label>Condición</Form.Label>
                 <Form.Control
                   type="text"
                   ref={condition}
@@ -382,6 +370,8 @@ function EndorseRequest() {
                   }
                 />
               </Form.Group>
+
+              
 
               <Form.Group className="mb-2" controlId="formBasicPassword">
                 <Form.Label>Itinerario</Form.Label>
@@ -396,7 +386,7 @@ function EndorseRequest() {
               <Row>
                 <Col>
                   <Form.Group className="mb-2" controlId="formBasicPassword">
-                    <Form.Label>Tipo de vehiculo</Form.Label>
+                    <Form.Label>Tipo de vehículo</Form.Label>
                     <Form.Control
                       type="text"
                       ref={typeOfVehicle}
@@ -408,7 +398,7 @@ function EndorseRequest() {
                 </Col>
                 <Col>
                   <Form.Group className="mb-2" controlId="formBasicPassword">
-                    <Form.Label>Requiere chofer</Form.Label>
+                    <Form.Label>Requiere chófer</Form.Label>
 
                     <Form.Check
                       type="checkbox"
@@ -424,11 +414,21 @@ function EndorseRequest() {
               <Form.Group className="mb-2" controlId="formBasicPassword">
                 <Form.Label>Prioridad</Form.Label>
                 <Form.Control
-                  type="number"
+                  type="text"
                   ref={priority}
                   defaultValue={selectedRequest ? selectedRequest.priority : ""}
                 />
               </Form.Group>
+
+              <Form.Group className="mb-2" controlId="formBasicPassword">
+              <Form.Label>Prioridad</Form.Label>
+              <Form.Control as= "select" ref={priority} >
+              <option value="">Seleccione una opción</option>
+              <option value="Objetivos administrativos, académicos-administrativos y paraacadémicos">Objetivos administrativos, académicos-administrativos y paraacadémicos</option>
+              <option value="Cumplen con objetivos de cursos de docencia, según plan de estudios y programa del curso">Cumplen con objetivos de cursos de docencia, según plan de estudios y programa del curso</option>
+              </Form.Control>
+            </Form.Group>
+
 
               <Form.Group className="mb-2" controlId="formBasicPassword">
                 <Form.Label>Observaciones</Form.Label>

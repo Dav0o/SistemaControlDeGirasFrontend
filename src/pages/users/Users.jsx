@@ -14,6 +14,7 @@ import { Link } from "react-router-dom"; import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
 function Users() {
+  const userDNI = useRef(0);
   const userName = useRef(null);
   const userLastName1 = useRef(null);
   const userLastName2 = useRef(null);
@@ -52,11 +53,11 @@ function Users() {
     mutation.isSuccess
       ? MySwal.fire({
 
-          icon: "success",
-          title: "Tu trabajo ha sido guardado!",
-          showConfirmButton: false,
-          timer: 1500,
-        })
+        icon: "success",
+        title: "Tu trabajo ha sido guardado!",
+        showConfirmButton: false,
+        timer: 1500,
+      })
 
       : null;
   }
@@ -70,7 +71,7 @@ function Users() {
 
     // Inicializa el DataTable después de renderizar los datos
 
-    
+
 
     const newDataTable = new DataTable("#tableUsers", {
       retrieve: true,
@@ -124,6 +125,7 @@ function Users() {
 
   const handleSave = () => {
     let newUser = {
+      DNI: userDNI.parseInt(userDNI.current.value),
       name: userName.current.value,
       lastName1: userLastName1.current.value,
       lastName2: userLastName2.current.value,
@@ -155,6 +157,7 @@ function Users() {
   const handleUpdate = () => {
     let updatedUser = {
       id: editingUser.id,
+      DNI: parseInt(userDNI.current.value),
       name: userName.current.value,
       lastName1: userLastName1.current.value,
       lastName2: userLastName2.current.value,
@@ -211,6 +214,7 @@ function Users() {
               <thead>
                 <tr>
                   <th>Id</th>
+                  <th>Cédula</th>
                   <th>Nombre</th>
                   <th>Apellidos</th>
                   <th>Correo Electronico</th>
@@ -221,6 +225,7 @@ function Users() {
                 {users.map((user) => (
                   <tr key={user.id}>
                     <td>{user.id}</td>
+                    <td>{user.DNI}</td>
                     <td>{user.name}</td>
                     <td>
                       {user.lastName1} {user.lastName2}
@@ -242,12 +247,12 @@ function Users() {
                       >
                         <i class="bi bi-info-square"></i>
                       </Button>
-                         
-                      <Link 
-                      to={`/users/UserRole/${user.id}`} className="btn btn-warning mr-1 text-light">
+
+                      <Link
+                        to={`/users/UserRole/${user.id}`} className="btn btn-warning mr-1 text-light">
                         <i className="bi bi-person-gear"></i>
                       </Link>
-                     
+
                     </td>
                   </tr>
                 ))}
@@ -265,6 +270,36 @@ function Users() {
           <Container>
             <Row>
               <Col>
+
+                <Form.Label htmlFor="inputDNI">Cédula</Form.Label>
+                <Form.Control
+                  type="number"
+                  id="inputDNI"
+                  ref={userDNI}
+                />
+                <Form.Label htmlFor="inputLastName1">
+                  Primer Apellido
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  id="inputLastName1"
+                  ref={userLastName1}
+                />
+                <Form.Label htmlFor="inputPhoneNumber">Teléfono</Form.Label>
+                <Form.Control
+                  type="number"
+                  id="inputPhoneNumber"
+                  ref={userPhoneNumber}
+                />
+
+                <Form.Label htmlFor="inputEmail">Correo electrónico</Form.Label>
+                <Form.Control type="email" id="inputEmail" ref={userEmail} />
+
+
+                <Form.Label htmlFor="inputState">Estado</Form.Label>
+                <Form.Control type="text" id="inputState" ref={userState} />
+              </Col>
+              <Col>
                 <Form.Label htmlFor="inputName">Nombre</Form.Label>
                 <Form.Control type="text" id="inputName" ref={userName} />
 
@@ -277,31 +312,11 @@ function Users() {
                   ref={userLastName2}
                 />
 
-                <Form.Label htmlFor="inputEmail">Correo Electronico</Form.Label>
-                <Form.Control type="email" id="inputEmail" ref={userEmail} />
-
                 <Form.Label htmlFor="inputLicenseUNA">Licencia UNA</Form.Label>
                 <Form.Control
                   type="number"
                   id="inputLicenseUNA"
                   ref={userLicenseUNA}
-                />
-              </Col>
-              <Col>
-                <Form.Label htmlFor="inputLastName1">
-                  Primer Apellido
-                </Form.Label>
-                <Form.Control
-                  type="text"
-                  id="inputLastName1"
-                  ref={userLastName1}
-                />
-
-                <Form.Label htmlFor="inputPhoneNumber">Telefono</Form.Label>
-                <Form.Control
-                  type="number"
-                  id="inputPhoneNumber"
-                  ref={userPhoneNumber}
                 />
 
                 <Form.Label htmlFor="inputPassword">Contraseña</Form.Label>
@@ -311,8 +326,7 @@ function Users() {
                   ref={userPassword}
                 />
 
-                <Form.Label htmlFor="inputState">Estado</Form.Label>
-                <Form.Control type="text" id="inputState" ref={userState} />
+
               </Col>
             </Row>
           </Container>
@@ -335,40 +349,16 @@ function Users() {
           <Form>
             <Row>
               <Col>
-                <Form.Label>Nombre</Form.Label>
+
+                <Form.Label>Cédula</Form.Label>
                 <Form.Control
-                  type="text"
-                  placeholder="Ingrese el nombre"
-                  defaultValue={editingUser ? editingUser.name : ""}
-                  ref={userName}
+                  type="number"
+                  placeholder="Ingrese la cédula"
+                  defaultValue={editingUser ? editingUser.DNI : ""}
+                  ref={userDNI}
                 />
 
-                <Form.Label>Segundo apellido</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Ingrese el segundo apellido"
-                  defaultValue={editingUser ? editingUser.lastName2 : ""}
-                  ref={userLastName2}
-                />
-
-                <Form.Label>Correo electronico</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Ingrese el correo"
-                  defaultValue={editingUser ? editingUser.email : ""}
-                  ref={userEmail}
-                />
-
-                <Form.Label>Licencia UNA</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Ingrese la licencia universitaria"
-                  defaultValue={editingUser ? editingUser.licenseUNA : ""}
-                  ref={userLicenseUNA}
-                />
-              </Col>
-              <Col>
-                <Form.Label>Primer apellido</Form.Label>
+                <Form.Label>Primer Apellido</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Ingrese el primer apellido"
@@ -376,20 +366,20 @@ function Users() {
                   ref={userLastName1}
                 />
 
-                <Form.Label>Telefono</Form.Label>
+
+                <Form.Label>Teléfono</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Ingrese el telefono"
                   defaultValue={editingUser ? editingUser.phoneNumber : ""}
                   ref={userPhoneNumber}
                 />
-
-                <Form.Label>Contraseña</Form.Label>
+                <Form.Label>Correo electrónico</Form.Label>
                 <Form.Control
                   type="text"
-                  placeholder="Ingrese la contraseña"
-                  defaultValue={editingUser ? editingUser.password : ""}
-                  ref={userPassword}
+                  placeholder="Ingrese el correo"
+                  defaultValue={editingUser ? editingUser.email : ""}
+                  ref={userEmail}
                 />
 
                 <Form.Label>Estado</Form.Label>
@@ -399,6 +389,38 @@ function Users() {
                   defaultValue={editingUser ? editingUser.state : ""}
                   ref={userState}
                 />
+              </Col>
+              <Col>
+                <Form.Label>Nombre</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingrese el nombre"
+                  defaultValue={editingUser ? editingUser.name : ""}
+                  ref={userName}
+                />
+
+                <Form.Label>Segundo Apellido</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingrese el segundo apellido"
+                  defaultValue={editingUser ? editingUser.lastName2 : ""}
+                  ref={userLastName2}
+                />
+                <Form.Label>Licencia UNA</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingrese la licencia universitaria"
+                  defaultValue={editingUser ? editingUser.licenseUNA : ""}
+                  ref={userLicenseUNA}
+                />
+                <Form.Label>Contraseña</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingrese la contraseña"
+                  defaultValue={editingUser ? editingUser.password : ""}
+                  ref={userPassword}
+                />
+
               </Col>
             </Row>
           </Form>
@@ -421,22 +443,25 @@ function Users() {
           {selectedUser && (
             <div>
               <p>
+                <strong>Cédula:</strong> {selectedUser.DNI}
+              </p>
+              <p>
                 <strong>Nombre:</strong> {selectedUser.name}
               </p>
               <p>
-                <strong>Primer apellido:</strong> {selectedUser.lastName1}
+                <strong>Primer Apellido:</strong> {selectedUser.lastName1}
               </p>
               <p>
-                <strong>Segundo apellido:</strong> {selectedUser.lastName2}
+                <strong>Segundo Apellido:</strong> {selectedUser.lastName2}
               </p>
               <p>
-                <strong>Telefono:</strong> {selectedUser.phoneNumber}
+                <strong>Teléfono:</strong> {selectedUser.phoneNumber}
               </p>
               <p>
                 <strong>Licencia UNA:</strong> {selectedUser.licenseUNA}
               </p>
               <p>
-                <strong>Correo electronico:</strong> {selectedUser.email}
+                <strong>Correo electrónico:</strong> {selectedUser.email}
               </p>
               <p>
                 <strong>Estado:</strong> {selectedUser.state}

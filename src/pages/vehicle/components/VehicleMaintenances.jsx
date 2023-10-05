@@ -209,6 +209,7 @@ function VehicleMaintenances() {
                   <th>Nombre</th>
                   <th>Gravedad</th>
                   <th>Tipo</th>
+                  <th>Imagen</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -219,6 +220,8 @@ function VehicleMaintenances() {
                     <td>{maintenance.name}</td>
                     <td>{maintenance.severity}</td>
                     <td>{maintenance.type}</td>
+                    <td> {maintenance.ImageURL} </td>
+                  
                     <td>
                       <Button
                         variant="warning"
@@ -234,6 +237,14 @@ function VehicleMaintenances() {
                       >
                         <i class="bi bi-trash"></i>
                       </Button>{" "}
+
+                      <Button
+                        variant="primary"
+                        className="bg-gradient-primary mr-1 text-light"
+                        onClick={() => handleimage(maintenance.id)}
+                      >
+                        <i class="bi bi-images"></i>
+                      </Button>
                     </td>
                   </tr>
                 ))}
@@ -297,7 +308,7 @@ function VehicleMaintenances() {
               </div>
             </div>
             <Form.Group controlId="formColor">
-              <Form.Label>Descripcion</Form.Label>
+              <Form.Label>Descripción</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Ingrese la descripción del suceso"

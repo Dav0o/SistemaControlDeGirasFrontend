@@ -26,6 +26,12 @@ export const approve = async (request) => {
     return data;
 }
 
+export const cancel = async (request) => {
+    let data = await api.put(`requests/cancel`,request
+    ).then(result => result.data);
+    return data;
+}
+
 export const getByIdRequest = async (requestId) => {
     let data = await api.get(`requests/${requestId}`).then(result => result.data);
     return data;

@@ -1,21 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link} from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { getByIdUser } from '../../../services/UserService';
 import { getRoles } from '../../../services/RoleService';
 import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Modal from "react-bootstrap/Modal";
 import axios from 'axios';
 import Swal from 'sweetalert2';
-
-
+import { useMutation } from 'react-query';
 
 function UserRole() {
 
   const { User } = useParams();
+ 
   const { isLoading: userLoading, data: userData, isError: userError } = useQuery(['users', User], () =>
     getByIdUser(User));
   const [selectedRoles, setSelectedRoles] = useState([]);
@@ -33,11 +29,36 @@ function UserRole() {
   const { isLoading: rolesLoading, data: rolesData, isError: rolesError } = useQuery(['roles'], getRoles);
   const [isSaving, setIsSaving] = useState(false);
 
-
-  const [show, setShow] = useState(false);
-  const handleCloseRole = () => setShow(false);
-  const handleShowRole = () => setShow(true);
-
+  
+  const deleteRoleMutation = useMutation(async (roleId) => {
+    try {
+      const userId = userData.id;
+      await axios.delete(`https://localhost:7023/api/User_Roles/${userId}/${roleId}`);
+      Swal.fire({
+        title: '¿Seguro que deseas eliminar el rol?',
+        showDenyButton: true,
+      
+        confirmButtonText: 'Eliminar',
+        denyButtonText: `Cancelar`,
+       showLoaderOnConfirm: true, 
+      preConfirm: async () => {
+         Swal.fire({
+          icon: 'success',
+          title: 'Eliminado con éxito',
+          showConfirmButton: false,
+          timer: 2500, 
+        });
+      },
+    });
+    } catch (error) {
+      console.error('Error al eliminar el rol:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al eliminar el rol',
+        text: 'Hubo un problema al eliminar el rol. Por favor, inténtalo de nuevo más tarde.',
+      });
+    }
+  });
 
   const handleRoleChange = (roleId) => {
     const updatedRoles = selectedRoles.includes(roleId)
@@ -45,7 +66,21 @@ function UserRole() {
       : [...selectedRoles, roleId];
 
     setSelectedRoles(updatedRoles);
-  };
+
+      // Si el rol se deselecciona, elimina el rol del usuario
+      if (selectedRoles.includes(roleId)) {
+        deleteRoleMutation.mutate(roleId, {
+          onSuccess: () => {
+            console.log('Rol eliminado ');
+          },
+          onError: (error) => {
+            console.error('Error al eliminar el rol:', error);
+          },
+        });
+      }
+    };
+  
+ 
 
   const handleSave = () => {
     setIsSaving(true);
@@ -73,8 +108,7 @@ function UserRole() {
             timer: 2500,
           }).then(() => {
 
-
-          //  window.location.reload();
+           location.reload();
           });
         })
         .catch((error) => {
@@ -83,65 +117,57 @@ function UserRole() {
     }
   }
 
+
+  const LinkStyle = {
+    textDecoration: 'none',
+    color: 'white',
+  };
+
   return (
+    <div>
+      <h1>Configuración de Roles</h1>
+      <div className="bg-light p-4">
+        {console.log(selectedRoles)}
+        {userLoading ? (
+          <div>Loading user...</div>
+        ) : userError ? (
+          <div>Error loading user</div>
+        ) : (
+          <div>
+            <div>
+              {rolesData.map((role) => (
+                <div key={role.id}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={selectedRoles.includes(role.id)}
+                      onChange={() => handleRoleChange(role.id)}
+                      disabled={isSaving}
+                    />
+                    {role.name}
+                  </label>
+                </div>
+              ))}
+            </div>
+            <div>
+              <Button
+                variant="primary"
+                onClick={handleSave}
+                disabled={isSaving}
+              >
+                Guardar
+              </Button>
 
-    <Modal show={handleShowRole} onHide={handleCloseRole} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>Asignación de Roles</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form>
-          <Row>
-            <Col>
-              <div className="bg-light p-4">
-                {console.log(selectedRoles)}
-                {userLoading ? (
-                  <div>Cargando usuario...</div>
-                ) : userError ? (
-                  <div>Error al cargar usuario</div>
-                ) : (
-                  <div>
-          
-                    <div>
-                    
-                      {rolesData.map((role) => (
-                        <div key={role.id}>
-                          <label>
-                          
-                            <input
-                              type="checkbox"
-                              checked={selectedRoles.includes(role.id)}
-                              onChange={() => handleRoleChange(role.id)}
-                              disabled={isSaving}
-                            />
-                             {role.name}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                    <Modal.Footer>
-                      <Button variant="secondary" onClick={() => handleCloseRole}>
-                        Cerrar
-                      </Button>
-
-                      <Button
-                        variant="primary"
-                        onClick={handleSave}
-                        disabled={isSaving}
-                      >
-                        Guardar
-                      </Button>
-                    </Modal.Footer>
-
-                  </div>
-
-                )}
-              </div>
-            </Col>
-          </Row>
-        </Form>
-      </Modal.Body>
-    </Modal>
+              <Link style={LinkStyle} to={"/users"}>
+          <Button variant="dark" className="bg-gradient-danger">
+            Regresar
+          </Button>
+        </Link>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 
 }
