@@ -1,5 +1,5 @@
 import React from "react";
-import { approve, getRequests } from "../../services/RequestService";
+import { approve,cancel, getRequests } from "../../services/RequestService";
 import { useMutation, useQuery } from "react-query";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -21,32 +21,47 @@ function ApproveRequest() {
   });
 
   const mutation = useMutation("requests/approve", approve);
+  
+  
+  const cancelMutation = useMutation("requests/cancel", cancel);
+  const handleCancel = async (requestId) => {
+    const requestToCancel = data.find((request) => request.id === requestId);
+    try {
+      await cancelMutation.mutateAsync({ id: requestToCancel.id });
+      MySwal.fire("Solicitud Cancelada", "", "success");
+    } catch (error) {
+      console.error("Error al cancelar la solicitud", error);
+      MySwal.fire("Error al cancelar la solicitud", error.message, "error");
+    }
+  };
 
   const MySwal = withReactContent(Swal);
   {
     mutation.isError
       ? MySwal.fire({
-          icon: "error",
-          text: "Algo salio mal!",
-        }).then(mutation.reset)
+        icon: "error",
+        text: "Algo salió mal!",
+      }).then(mutation.reset)
       : null;
   }
   {
     mutation.isSuccess
       ? MySwal.fire({
-          icon: "success",
-          title: "Tu trabajo ha sido guardado!",
-          showConfirmButton: false,
-          timer: 1500,
-        }).then(mutation.reset)
+        icon: "success",
+        title: "Tu trabajo ha sido guardado!",
+        showConfirmButton: false,
+        timer: 1500,
+      }).then(mutation.reset)
       : null;
   }
 
+  
+  
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [showApproveModal, setShowApproveModal] = useState(false);
-
+ 
   const handleClose = () => setShowApproveModal(false);
-
+  
   const handleShowApprove = (requestId) => {
     const requestToApprove = data.find((request) => request.id === requestId);
     setSelectedRequest(requestToApprove);
@@ -60,6 +75,9 @@ function ApproveRequest() {
     };
     mutation.mutateAsync(updateRequest);
   };
+
+
+
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -79,7 +97,7 @@ function ApproveRequest() {
         <p class="mb-4">Lista de solicitudes por aprobar</p>
         <div className="card shadow mb-4">
           <div className="card-header py-3">
-            <p>De click en aprobar para seleccionar una solicitud</p>
+            <p>Dé click en aprobar para seleccionar una solicitud</p>
           </div>
           <div className="card-body">
             {filteredData.map((request) => (
@@ -99,7 +117,15 @@ function ApproveRequest() {
                   >
                     Aprobar
                   </Button>
-                  
+
+                  <Button
+                    variant="danger"
+                    className="bg-gradient-danger text-light"
+                    onClick={() => handleCancel(request.id)}
+                  >
+                    Anular
+                  </Button>
+
                 </Card.Body>
               </Card>
             ))}

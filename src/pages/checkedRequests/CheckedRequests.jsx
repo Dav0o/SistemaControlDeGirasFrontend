@@ -22,7 +22,7 @@ function CheckedRequests() {
   }
 
   const filteredData = data.filter(
-    (request) => request.itsEndorse === true && request.itsApprove === true
+    (request) => request.itsEndorse === true && request.itsApprove === true || request.itsEndorse === true && request.itsCancel ===true 
   );
   return (
     <>
