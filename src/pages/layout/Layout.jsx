@@ -34,43 +34,7 @@ function Layout() {
 
 
   const navigate = useNavigate();
-  const [isLoggedOut, setIsLoggedOut] = useState(false);
 
-  const handleLogout = async () => {
-    try {
-      // Aquí debes realizar la lógica de cierre de sesión, por ejemplo, enviando una solicitud al servidor para invalidar el token de autenticación.
-      // Esto es solo un ejemplo simplificado.
-
-      // Simulamos una solicitud al servidor para cerrar sesión
-      const response = await fetch("/api/logout", {
-        method: "POST", // Puedes usar el método HTTP adecuado
-        // Añade cualquier encabezado necesario, como el token de autenticación
-        // headers: {
-        //   Authorization: `Bearer ${yourAuthToken}`,
-        // },
-      });
-
-      if (response.status === 200) {
-        // Si la solicitud de cierre de sesión fue exitosa en el servidor:
-
-        // Elimina el token de autenticación localmente
-        localStorage.removeItem("token");
-
-        // Establece el estado de isLoggedOut a true
-        setIsLoggedOut(true);
-
-        // Redirige al usuario a la página de inicio de sesión
-        navigate("/login");
-      } else {
-        // Maneja errores en caso de que la solicitud de cierre de sesión falle
-        // Por ejemplo, muestra un mensaje de error al usuario
-        console.error("Error al cerrar sesión");
-      }
-    } catch (error) {
-      // Maneja errores de red u otros errores que puedan ocurrir durante el proceso de cierre de sesión
-      console.error("Error inesperado:", error);
-    }
-  };
   return (
     <body id="page-top">
       <Navbar
@@ -150,7 +114,6 @@ function Layout() {
               <li className="nav-item">
                 <a
                   className={`nav-link ${isCollapsed ? "collapsed" : ""} `}
-                  href="#"
                   onClick={toggleCollapse}
                   aria-expanded={!isCollapsed}
                   aria-controls="collapseTwo"
