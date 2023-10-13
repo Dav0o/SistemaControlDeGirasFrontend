@@ -188,11 +188,10 @@ function RequestForm() {
                 </Form.Group>
                 {showDriverOptions && (
                   <Form.Group className="mb-2" controlId="driverSelect">
-                    <Form.Label>Chofer</Form.Label>
                     <Form.Control as="select">
                       {drivers.map((driver) => (
                         <option key={driver.id} value={driver.id}>
-                         {driver.id}. {driver.name} {driver.lastName1} {driver.lastName2}
+                         {driver.dni} - {driver.name} {driver.lastName1} {driver.lastName2}
                         </option>
                       ))}
                     </Form.Control>

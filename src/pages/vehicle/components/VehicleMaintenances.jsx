@@ -23,24 +23,59 @@ function VehicleMaintenances() {
   );
   const mutation = useMutation("maintenances", create);
 
+  const [imageUrl, setImageUrl] = useState('');
+  const apiKey = '6c4a708d4bdee0384fae9c67a8558f9e';
+
+
+  const handleImageUpload = async (e) => {
+    const imageInput = e.target.files[0];
+
+    if (imageInput) {
+      const formData = new FormData();
+      formData.append('image', imageInput);
+
+      try {
+        const response = await fetch(
+          `https://api.imgbb.com/1/upload?key=${apiKey}`,
+          {
+            method: 'POST',
+            body: formData,
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          const uploadedImageUrl = data.data.url;
+          setImageUrl(uploadedImageUrl);
+          console.log('Url = ', uploadedImageUrl);
+        } else {
+          console.error('Error al subir la imagen');
+        }
+      } catch (error) {
+        console.error('Error de solicitud', error);
+      }
+    }
+  };
+
+
   const MySwal = withReactContent(Swal);
 
   {
     mutation.isError
       ? MySwal.fire({
-          icon: "error",
-          text: "Algo salio mal!",
-        }).then(mutation.reset)
+        icon: "error",
+        text: "Algo salio mal!",
+      }).then(mutation.reset)
       : null;
   }
   {
     mutation.isSuccess
       ? MySwal.fire({
-          icon: "success",
-          title: "Tu trabajo ha sido guardado!",
-          showConfirmButton: false,
-          timer: 1500,
-        }).then(mutation.reset)
+        icon: "success",
+        title: "Tu trabajo ha sido guardado!",
+        showConfirmButton: false,
+        timer: 1500,
+      }).then(mutation.reset)
       : null;
   }
   const [maintenances, setMaintenances] = useState([]);
@@ -54,6 +89,8 @@ function VehicleMaintenances() {
   const category = useRef(0);
   const status = useRef(null);
   const description = useRef(null);
+ 
+
 
   const handleSave = () => {
     let newMaintenance = {
@@ -64,7 +101,9 @@ function VehicleMaintenances() {
       category: 0,
       status: true,
       description: description.current.value,
+      image: imageUrl,
       vehicleId: vehicleId,
+
     };
     mutation.mutateAsync(newMaintenance);
   };
@@ -191,7 +230,7 @@ function VehicleMaintenances() {
         <div className="card shadow mb-4">
           <div className="card-header py-3">
             <div className="d-flex justify-content-between">
-              <div>Clik en el boton para crear un mantenimiento</div>
+              <div>Clik en el botón para crear un mantenimiento</div>
               <Button
                 variant="success"
                 className="bg-gradient-success text-light
@@ -220,8 +259,10 @@ function VehicleMaintenances() {
                     <td>{maintenance.name}</td>
                     <td>{maintenance.severity}</td>
                     <td>{maintenance.type}</td>
-                    <td> {maintenance.ImageURL} </td>
-                  
+                    <img src={maintenance.image} 
+                    alt="Mantenimiento" 
+                    style={{ width: '150px', height: '150px' }} />
+
                     <td>
                       <Button
                         variant="warning"
@@ -238,17 +279,12 @@ function VehicleMaintenances() {
                         <i class="bi bi-trash"></i>
                       </Button>{" "}
 
-                      <Button
-                        variant="primary"
-                        className="bg-gradient-primary mr-1 text-light"
-                        onClick={() => handleimage(maintenance.id)}
-                      >
-                        <i class="bi bi-images"></i>
-                      </Button>
+                      
                     </td>
                   </tr>
                 ))}
               </tbody>
+              
             </Table>
           </div>
         </div>
@@ -314,6 +350,22 @@ function VehicleMaintenances() {
                 placeholder="Ingrese la descripción del suceso"
                 ref={description}
               />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Imagen</Form.Label>
+              <div className="custom-file">
+                <input
+                  type="file"
+                  className="custom-file-input"
+                  id="customFile"
+                 
+                  onChange={handleImageUpload}
+                />
+                <label className="custom-file-label" htmlFor="customFile">
+                </label>
+              </div>
+              {imageUrl && <img src={imageUrl} alt="Imagen subida" className="uploadedImg"
+              style={{ maxWidth: '200px', maxHeight: '200px' }} />}
             </Form.Group>
           </Form>
         </Modal.Body>
