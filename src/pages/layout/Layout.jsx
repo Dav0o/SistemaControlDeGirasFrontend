@@ -146,6 +146,13 @@ function Layout() {
                 </a>
               </li>
 
+              <li className="nav-item">
+                <a className="nav-link" href="/workingTimeControl">
+                  <i className="fa-solid fa-id-card"></i>
+                  <span>Control Jornada</span>
+                </a>
+              </li>
+
 
               <li className="nav-item">
                 <a
@@ -181,6 +188,10 @@ function Layout() {
                   </div>
                 </div>
               </li>
+
+              
+
+             
 
               <li className="nav-item">
                 <a className="nav-link" href="/">

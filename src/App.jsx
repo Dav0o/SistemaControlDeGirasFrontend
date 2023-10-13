@@ -15,6 +15,12 @@ import EndorseRequest from './pages/endorseRequest/EndorseRequest'
 import ApproveRequest from './pages/approveRequest/ApproveRequest'
 import CheckedRequests from './pages/checkedRequests/CheckedRequests'
 import UserRole from './pages/users/components/UserRole'
+import RequestDays from './pages/requestDays/RequestDays'
+import RequestGasoline from './pages/requestGasoline/RequestGasoline'
+import WorkingTime from './pages/workingTimeControl/WorkingTime'
+import DriverLog from './pages/driverLog/DriverLog'
+
+
 
 
 
@@ -42,8 +48,12 @@ function App() {
         <Route path='/approveRequest' element={<ApproveRequest/>}/>
 
         <Route path='/checkedRequests' element={<CheckedRequests/>}/>
+       
+        <Route path='/workingTimeControl' element={<WorkingTime/>}/>
+        <Route path="/driverLogs/:id" element={<DriverLog/>} />
 
-        
+       <Route path='/requestDays/:requestDaysId' element={<RequestDays/>}/>
+       <Route path='/requestGasoline/:requestGasolineId' element={<RequestGasoline/>}/>
       </Route>
     </Routes>
     
