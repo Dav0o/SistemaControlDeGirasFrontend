@@ -15,6 +15,7 @@ import { useState } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
+
 function ApproveRequest() {
   const { data, isLoading, isError } = useQuery("requests", getRequests, {
     enabled: true,
@@ -24,11 +25,13 @@ function ApproveRequest() {
   
   
   const cancelMutation = useMutation("requests/cancel", cancel);
+  
   const handleCancel = async (requestId) => {
     const requestToCancel = data.find((request) => request.id === requestId);
     try {
       await cancelMutation.mutateAsync({ id: requestToCancel.id });
       MySwal.fire("Solicitud Cancelada", "", "success");
+    
     } catch (error) {
       console.error("Error al cancelar la solicitud", error);
       MySwal.fire("Error al cancelar la solicitud", error.message, "error");
@@ -88,7 +91,7 @@ function ApproveRequest() {
   }
 
   const filteredData = data.filter(
-    (request) => request.itsApprove === false && request.itsEndorse === true
+    (request) => request.itsApprove === false && request.itsEndorse === true  && request.itsCanceled=== false
   );
   return (
     <>

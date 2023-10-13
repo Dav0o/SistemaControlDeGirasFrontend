@@ -14,7 +14,7 @@ import { Link } from "react-router-dom"; import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
 function Users() {
-  const userDNI = useRef(0);
+  const userDni = useRef(0);
   const userName = useRef(null);
   const userLastName1 = useRef(null);
   const userLastName2 = useRef(null);
@@ -85,7 +85,7 @@ function Users() {
           text: '<i class="fa-solid fa-print" aria-hidden="true"></i>',
           className: "btn btn-info",
           exportOptions: {
-            columns: [0, 1, 2, 3],
+            columns: [0, 1, 2, 3, 4],
           },
           customize: function (win) {
             $(win.document.body)
@@ -102,7 +102,7 @@ function Users() {
           titleAttr: "Exportar a PDF",
           text: '<i class="fa-regular fa-file-pdf" aria-hidden="true"></i>',
           className: "btn btn-danger",
-          exportOptions: { columns: [0, 1, 2, 3] },
+          exportOptions: { columns: [0, 1, 2, 3, 4] },
           customize: function (doc) {
             doc.content[1].margin = [100, 0, 100, 0]; //left, top, right, bottom
           },
@@ -113,7 +113,7 @@ function Users() {
           titleAttr: "Exportar a Excel",
           text: '<i class="fa-solid fa-file-csv"></i>',
           className: "btn btn-success",
-          exportOptions: { columns: [0, 1, 2, 3] },
+          exportOptions: { columns: [0, 1, 2, 3, 4 ] },
         },
       ],
     });
@@ -125,7 +125,7 @@ function Users() {
 
   const handleSave = () => {
     let newUser = {
-      DNI: userDNI.parseInt(userDNI.current.value),
+      dni: parseInt(userDni.current.value),
       name: userName.current.value,
       lastName1: userLastName1.current.value,
       lastName2: userLastName2.current.value,
@@ -157,7 +157,7 @@ function Users() {
   const handleUpdate = () => {
     let updatedUser = {
       id: editingUser.id,
-      DNI: parseInt(userDNI.current.value),
+      dni: parseInt(userDni.current.value),
       name: userName.current.value,
       lastName1: userLastName1.current.value,
       lastName2: userLastName2.current.value,
@@ -225,7 +225,7 @@ function Users() {
                 {users.map((user) => (
                   <tr key={user.id}>
                     <td>{user.id}</td>
-                    <td>{user.DNI}</td>
+                    <td>{user.dni}</td>
                     <td>{user.name}</td>
                     <td>
                       {user.lastName1} {user.lastName2}
@@ -275,7 +275,7 @@ function Users() {
                 <Form.Control
                   type="number"
                   id="inputDNI"
-                  ref={userDNI}
+                  ref={userDni}
                 />
                 <Form.Label htmlFor="inputLastName1">
                   Primer Apellido
@@ -354,8 +354,8 @@ function Users() {
                 <Form.Control
                   type="number"
                   placeholder="Ingrese la cédula"
-                  defaultValue={editingUser ? editingUser.DNI : ""}
-                  ref={userDNI}
+                  defaultValue={editingUser ? editingUser.dni : ""}
+                  ref={userDni}
                 />
 
                 <Form.Label>Primer Apellido</Form.Label>
@@ -443,7 +443,7 @@ function Users() {
           {selectedUser && (
             <div>
               <p>
-                <strong>Cédula:</strong> {selectedUser.DNI}
+                <strong>Cédula:</strong> {selectedUser.dni}
               </p>
               <p>
                 <strong>Nombre:</strong> {selectedUser.name}
