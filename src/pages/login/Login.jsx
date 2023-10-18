@@ -8,7 +8,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
 function Login() {
-  const [token, setToken] = useState("");
+ 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
@@ -25,7 +25,7 @@ function Login() {
       .then((response) => {
         localStorage.setItem("token", response.data);
         console.log(localStorage);
-        setToken(response.data);
+        
         setLoggedIn(true);
         Swal.fire({
           position: 'top-end',
@@ -52,7 +52,7 @@ function Login() {
 
   useEffect(() => {
     if (loggedIn) {
-      navigate("/home");
+      navigate("/");
     }
   });
 
@@ -62,8 +62,8 @@ function Login() {
         <div className="login-main-text"></div>
       </div>
       <div className="main">
-        <div className="col-md-6 col-sm-12">
-          <div className="login-form">
+        <div className="col-md-5 col-sm-12 ">
+          <div className="login-form  p-4 ">
             <form action="" id="login" method="post" onSubmit={handleSubmit}>
               <div className="form-group">
                 <label>Correo Electronico</label>
@@ -86,8 +86,8 @@ function Login() {
                 />
               </div>
               <br />
-              <Button type="submit" variant="dark" className="bg-gradient-success text-light">
-                Login
+              <Button type="submit" variant="dark" className="">
+                Iniciar Sesión
               </Button>
             </form>
           </div>

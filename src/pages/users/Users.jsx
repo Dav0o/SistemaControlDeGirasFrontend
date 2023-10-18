@@ -10,8 +10,10 @@ import { useMutation, useQuery } from "react-query";
 import { create, getUsers } from "../../services/UserService";
 import Form from "react-bootstrap/Form";
 import { useEffect } from "react";
-import { Link } from "react-router-dom"; import Swal from "sweetalert2";
+import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import Accordion from "react-bootstrap/Accordion";
 
 function Users() {
   const userDni = useRef(0);
@@ -44,21 +46,19 @@ function Users() {
   {
     mutation.isError
       ? MySwal.fire({
-        icon: "error",
-        text: "Algo salio mal!",
-      }).then(mutation.reset)
+          icon: "error",
+          text: "Algo salio mal!",
+        }).then(mutation.reset)
       : null;
   }
   {
     mutation.isSuccess
       ? MySwal.fire({
-
-        icon: "success",
-        title: "Tu trabajo ha sido guardado!",
-        showConfirmButton: false,
-        timer: 1500,
-      })
-
+          icon: "success",
+          title: "Tu trabajo ha sido guardado!",
+          showConfirmButton: false,
+          timer: 1500,
+        })
       : null;
   }
   const [dataTable, setDataTable] = useState(null); // Estado para mantener la referencia del DataTable
@@ -70,8 +70,6 @@ function Users() {
     }
 
     // Inicializa el DataTable después de renderizar los datos
-
-
 
     const newDataTable = new DataTable("#tableUsers", {
       retrieve: true,
@@ -113,7 +111,7 @@ function Users() {
           titleAttr: "Exportar a Excel",
           text: '<i class="fa-solid fa-file-csv"></i>',
           className: "btn btn-success",
-          exportOptions: { columns: [0, 1, 2, 3, 4 ] },
+          exportOptions: { columns: [0, 1, 2, 3, 4] },
         },
       ],
     });
@@ -121,7 +119,6 @@ function Users() {
     // Actualiza el estado para mantener la referencia del DataTable
     setDataTable(newDataTable);
   }, [data]); // Vuelve a inicializar el DataTable cuando los datos cambien
-
 
   const handleSave = () => {
     let newUser = {
@@ -133,7 +130,7 @@ function Users() {
       licenseUNA: parseInt(userLicenseUNA.current.value),
       email: userEmail.current.value,
       password: userPassword.current.value,
-      state: userState.current.valueOf,
+      state: true,
     };
     mutation.mutateAsync(newUser);
   };
@@ -196,9 +193,111 @@ function Users() {
 
         <div className="card shadow mb-4">
           <div className="card-header py-3">
-            <div className="d-flex justify-content-between">
+            {/* <div className="mb-3">
               <div>Click en el botón para crear un usuario</div>
-              <Button
+            </div> */}
+            <div>
+              <Accordion defaultActiveKey="1">
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>Click en el botón para crear un usuario</Accordion.Header>
+                  <Accordion.Body>
+                    <Container>
+                      <Row className="mb-2">
+                        <Col>
+                          <Form.Label htmlFor="inputDNI">Cédula</Form.Label>
+                          <Form.Control
+                            type="number"
+                            id="inputDNI"
+                            ref={userDni}
+                          />
+                        </Col>
+                        <Col>
+                          <Form.Label htmlFor="inputLicenseUNA">
+                            Licencia UNA
+                          </Form.Label>
+                          <Form.Control
+                            type="number"
+                            id="inputLicenseUNA"
+                            ref={userLicenseUNA}
+                          />
+                        </Col>
+                      </Row>
+                      <Row className="mb-2">
+                        <Col>
+                          <Form.Label htmlFor="inputName">Nombre</Form.Label>
+                          <Form.Control
+                            type="text"
+                            id="inputName"
+                            ref={userName}
+                          />
+                        </Col>
+                        <Col>
+                          <Form.Label htmlFor="inputLastName1">
+                            Primer Apellido
+                          </Form.Label>
+                          <Form.Control
+                            type="text"
+                            id="inputLastName1"
+                            ref={userLastName1}
+                          />
+                        </Col>
+                        <Col>
+                          <Form.Label htmlFor="inputLastName2">
+                            Segundo Apellido
+                          </Form.Label>
+                          <Form.Control
+                            type="text"
+                            id="inputLastName2"
+                            ref={userLastName2}
+                          />
+                        </Col>
+                      </Row>
+
+                      <Form.Label htmlFor="inputPhoneNumber">
+                        Teléfono
+                      </Form.Label>
+                      <Form.Control
+                        type="number"
+                        id="inputPhoneNumber"
+                        ref={userPhoneNumber}
+                      />
+                      <Row>
+                        <Col>
+                          <Form.Label htmlFor="inputEmail">
+                            Correo electrónico
+                          </Form.Label>
+                          <Form.Control
+                            type="email"
+                            id="inputEmail"
+                            ref={userEmail}
+                          />
+                        </Col>
+                        <Col>
+                          <Form.Label htmlFor="inputPassword">
+                            Contraseña
+                          </Form.Label>
+                          <Form.Control
+                            type="password"
+                            id="inputPassword"
+                            ref={userPassword}
+                          />
+                        </Col>
+                      </Row>
+
+                      <Button
+                        variant="primary"
+                        onClick={handleSave}
+                        className="mt-3"
+                      >
+                        Guardar
+                      </Button>
+                    </Container>
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </div>
+
+            {/* <Button
                 variant="success"
                 className="bg-gradient-success text-light
                "
@@ -206,8 +305,7 @@ function Users() {
               >
                 {" "}
                 <i class="bi bi-plus-square"></i>
-              </Button>
-            </div>
+              </Button>  */}
           </div>
           <div className="card-body">
             <Table striped="columns" id="tableUsers">
@@ -232,7 +330,6 @@ function Users() {
                     </td>
                     <td>{user.email}</td>
                     <td>
-
                       <Button
                         variant="warning"
                         className="bg-gradient-warning mr-1 text-light"
@@ -249,10 +346,11 @@ function Users() {
                       </Button>
 
                       <Link
-                        to={`/users/UserRole/${user.id}`} className="btn btn-warning mr-1 text-light">
+                        to={`/users/UserRole/${user.id}`}
+                        className="btn btn-warning mr-1 text-light"
+                      >
                         <i className="bi bi-person-gear"></i>
                       </Link>
-
                     </td>
                   </tr>
                 ))}
@@ -270,13 +368,8 @@ function Users() {
           <Container>
             <Row>
               <Col>
-
                 <Form.Label htmlFor="inputDNI">Cédula</Form.Label>
-                <Form.Control
-                  type="number"
-                  id="inputDNI"
-                  ref={userDni}
-                />
+                <Form.Control type="number" id="inputDNI" ref={userDni} />
                 <Form.Label htmlFor="inputLastName1">
                   Primer Apellido
                 </Form.Label>
@@ -294,7 +387,6 @@ function Users() {
 
                 <Form.Label htmlFor="inputEmail">Correo electrónico</Form.Label>
                 <Form.Control type="email" id="inputEmail" ref={userEmail} />
-
 
                 <Form.Label htmlFor="inputState">Estado</Form.Label>
                 <Form.Control type="text" id="inputState" ref={userState} />
@@ -325,8 +417,6 @@ function Users() {
                   id="inputPassword"
                   ref={userPassword}
                 />
-
-
               </Col>
             </Row>
           </Container>
@@ -349,7 +439,6 @@ function Users() {
           <Form>
             <Row>
               <Col>
-
                 <Form.Label>Cédula</Form.Label>
                 <Form.Control
                   type="number"
@@ -365,7 +454,6 @@ function Users() {
                   defaultValue={editingUser ? editingUser.lastName1 : ""}
                   ref={userLastName1}
                 />
-
 
                 <Form.Label>Teléfono</Form.Label>
                 <Form.Control
@@ -420,7 +508,6 @@ function Users() {
                   defaultValue={editingUser ? editingUser.password : ""}
                   ref={userPassword}
                 />
-
               </Col>
             </Row>
           </Form>
