@@ -51,7 +51,7 @@ function ApproveRequest() {
     mutation.isSuccess
       ? MySwal.fire({
         icon: "success",
-        title: "Tu trabajo ha sido guardado!",
+        title: "¡Tu trabajo ha sido guardado!",
         showConfirmButton: false,
         timer: 1500,
       }).then(mutation.reset)
@@ -96,11 +96,11 @@ function ApproveRequest() {
   return (
     <>
       <Container className="container-fluid">
-        <h1 className="h3 mb-2 text-gray-800">Solicitudes a aprobar</h1>
-        <p class="mb-4">Lista de solicitudes por aprobar</p>
+        <h1 className="h3 mb-2 text-gray-800">Solicitudes pendientes</h1>
+        <p class="mb-4">Lista de solicitudes pendientes de aprobación o anulación.</p>
         <div className="card shadow mb-4">
           <div className="card-header py-3">
-            <p>Dé click en aprobar para seleccionar una solicitud</p>
+            <p>Dé click en aprobar o anular para seleccionar una solicitud.</p>
           </div>
           <div className="card-body">
             {filteredData.map((request) => (

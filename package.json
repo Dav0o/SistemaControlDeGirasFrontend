@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
     "@fortawesome/fontawesome-free": "^5.15.3",
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
@@ -27,6 +29,7 @@
     "react-content-loader": "^6.2.1",
     "react-data-table-component": "^7.5.4",
     "react-dom": "^18.2.0",
+    "react-material-ui-form-validator": "^3.0.1",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.15.0",
     "styled-components": "^6.0.8",

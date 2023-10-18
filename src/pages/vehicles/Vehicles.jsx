@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Modal, Form, Button, Table } from "react-bootstrap";
+import { Modal, Form, Button, Table, ModalFooter } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -10,28 +10,65 @@ import { useEffect } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
+
 
 export const Vehicles = () => {
   const mutation = useMutation("vehicles", create);
+  const [validated, setValidated] = useState(false);
+ 
 
+  const [imageUrl, setImageUrl] = useState('');
+  const apiKey = '6c4a708d4bdee0384fae9c67a8558f9e';
+
+
+  const handleImageUpload = async (e) => {
+    const imageInput = e.target.files[0];
+
+    if (imageInput) {
+      const formData = new FormData();
+      formData.append('image', imageInput);
+
+      try {
+        const response = await fetch(
+          `https://api.imgbb.com/1/upload?key=${apiKey}`,
+          {
+            method: 'POST',
+            body: formData,
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          const uploadedImageUrl = data.data.url;
+          setImageUrl(uploadedImageUrl);
+          console.log('Url = ', uploadedImageUrl);
+        } else {
+          console.error('Error al subir la imagen');
+        }
+      } catch (error) {
+        console.error('Error de solicitud', error);
+      }
+    }
+  };
   const MySwal = withReactContent(Swal);
 
   {
     mutation.isError
       ? MySwal.fire({
-          icon: "error",
-          text: "Algo salio mal!",
-        }).then(mutation.reset)
+        icon: "error",
+        text: "Algo salio mal!",
+      }).then(mutation.reset)
       : null;
   }
   {
     mutation.isSuccess
       ? MySwal.fire({
-          icon: "success",
-          title: "Tu trabajo ha sido guardado!",
-          showConfirmButton: false,
-          timer: 1500,
-        }).then(mutation.reset)
+        icon: "success",
+        title: "Tu trabajo ha sido guardado!",
+        showConfirmButton: false,
+        timer: 1500,
+      }).then(mutation.reset)
       : null;
   }
 
@@ -43,7 +80,15 @@ export const Vehicles = () => {
     enabled: true,
   });
 
-  const handleSave = () => {
+  const handleSave= (event) => {
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+        event.preventDefault();
+        event.stopPropagation();
+    } else {
+        setValidated(true);
+    }
+    if (form.checkValidity() === true) {
     let newVehicle = {
       plate_Number: plate_Number.current.value,
       make: make.current.value,
@@ -58,10 +103,11 @@ export const Vehicles = () => {
       fuel: fuel.current.value,
       oil_Change: "2023-09-01",
       status: true,
-      imageUrl: image_url.current.value,
+      image: imageUrl
     };
     mutation.mutateAsync(newVehicle);
   };
+};
 
   const plate_Number = useRef(null);
   const make = useRef(null);
@@ -104,7 +150,7 @@ export const Vehicles = () => {
       fuel: fuel.current.value,
       oil_Change: "2023-09-01",
       status: editingVehicle.status,
-      imageUrl: editingVehicle.imageUrl,
+      imageUrl: imageUrl,
     };
 
     mutation.mutateAsync(updatedVehicle).then(() => {
@@ -229,8 +275,7 @@ export const Vehicles = () => {
                   <th>Color</th>
                   <th>Capacidad</th>
                   <th>Año</th>
-                  <th>Tracción</th>
-
+                  {/* <th>Imagen</th>  */}
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -244,7 +289,10 @@ export const Vehicles = () => {
                     <td>{vehicle.color}</td>
                     <td>{vehicle.capacity}</td>
                     <td>{vehicle.year}</td>
-                    <td>{vehicle.traction}</td>
+                    {/* <img src={vehicle.image}
+                      alt="Vehicles"
+                      style={{ width: '150px', height: '150px' }} />   
+ */}
 
                     <td>
                       <Button
@@ -276,12 +324,14 @@ export const Vehicles = () => {
         </Modal.Header>
 
         <Modal.Body>
-          <Form>
+          <Form Validated = {validated} onSubmit={handleSave}>
             <div className="row">
               <div className="col-md-6">
                 <Form.Group controlId="formPlaca">
                   <Form.Label>Placa</Form.Label>
                   <Form.Control
+                  required
+                    
                     type="text"
                     placeholder="Ingrese la placa"
                     ref={plate_Number}
@@ -305,13 +355,16 @@ export const Vehicles = () => {
                     ref={capacity}
                   />
                 </Form.Group>
-                <Form.Group>
+
+                <Form.Group className="mb-2" controlId="formBasicPassword">
                   <Form.Label>Tracción</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Ingrese la categoria"
-                    ref={traction}
-                  />
+                  
+                  <Form.Control as= "select" ref={traction} >
+                  <option value="">Seleccione una opción</option>
+
+                  <option value="">4X2</option>
+                  <option value="">4X4</option>
+                    </Form.Control>
                 </Form.Group>
                 <Form.Group>
                   <Form.Label>Cilindraje</Form.Label>
@@ -381,29 +434,45 @@ export const Vehicles = () => {
                   />
                 </Form.Group>
               </div>
-              <Form.Group>
+
+              <Form.Group className="mb-3">
                 <Form.Label>Imagen</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Ingrese la imagen"
-                  ref={image_url}
-                />
+                <div className="custom-file">
+                  <input
+                    type="file"
+                    className="custom-file-input"
+                    id="customFile"
+
+                    onChange={handleImageUpload}
+                  />
+                  <label className="custom-file-label" htmlFor="customFile">
+                  </label>
+                </div>
+                {imageUrl && <img src={imageUrl} alt="Imagen subida" className="uploadedImg"
+                  style={{ maxWidth: '200px', maxHeight: '200px' }} />}
               </Form.Group>
             </div>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="danger" onClick={handleCloseFormModal}>
-            Cancelar
-          </Button>
-          <Button
-            variant="success"
-            className="bg-gradient-success"
-            onClick={handleSave}
-          >
-            Guardar
-          </Button>
-        </Modal.Footer>
+            </Form>
+            </Modal.Body>
+           
+            <ModalFooter>
+              <Button variant="danger" onClick={handleCloseFormModal}>
+                Cancelar
+              </Button>
+              <Button
+                variant="success"
+                className="bg-gradient-success"
+                type="submit"
+              >
+                Guardar
+              </Button>
+            </ModalFooter>
+         
+        
+
+
+
+
       </Modal>
 
       <Modal show={showEditModal} onHide={handleCloseEditModal} centered>
@@ -546,6 +615,7 @@ export const Vehicles = () => {
             </Row>
           </Form>
         </Modal.Body>
+
         <Modal.Footer>
           <Button variant="danger" onClick={handleCloseEditModal}>
             Cancelar

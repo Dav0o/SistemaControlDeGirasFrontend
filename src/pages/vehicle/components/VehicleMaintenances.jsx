@@ -89,7 +89,7 @@ function VehicleMaintenances() {
   const category = useRef(0);
   const status = useRef(null);
   const description = useRef(null);
- 
+
 
 
   const handleSave = () => {
@@ -113,6 +113,7 @@ function VehicleMaintenances() {
       (maintenance) => maintenance.id === maintenanceId
     );
     setEditingMaintenance(maintenanceToEdit);
+
     setShowEditModal(true);
   };
 
@@ -172,11 +173,12 @@ function VehicleMaintenances() {
       id: editingMaintenance.id,
       name: name.current.value,
       severity: severity.current.value,
-      date: date.current.value,
-      type: type.current.value,
+     
+      type: type.current.value, 
       category: 0,
       status: editingMaintenance.status,
       description: description.current.value,
+      image: imageUrl,
       vehicleId: vehicleId,
     };
 
@@ -259,9 +261,9 @@ function VehicleMaintenances() {
                     <td>{maintenance.name}</td>
                     <td>{maintenance.severity}</td>
                     <td>{maintenance.type}</td>
-                    <img src={maintenance.image} 
-                    alt="Mantenimiento" 
-                    style={{ width: '150px', height: '150px' }} />
+                    <img src={maintenance.image}
+                      alt="Mantenimiento"
+                      style={{ width: '150px', height: '150px' }} />
 
                     <td>
                       <Button
@@ -279,12 +281,12 @@ function VehicleMaintenances() {
                         <i class="bi bi-trash"></i>
                       </Button>{" "}
 
-                      
+
                     </td>
                   </tr>
                 ))}
               </tbody>
-              
+
             </Table>
           </div>
         </div>
@@ -358,14 +360,14 @@ function VehicleMaintenances() {
                   type="file"
                   className="custom-file-input"
                   id="customFile"
-                 
+
                   onChange={handleImageUpload}
                 />
                 <label className="custom-file-label" htmlFor="customFile">
                 </label>
               </div>
               {imageUrl && <img src={imageUrl} alt="Imagen subida" className="uploadedImg"
-              style={{ maxWidth: '200px', maxHeight: '200px' }} />}
+                style={{ maxWidth: '200px', maxHeight: '200px' }} />}
             </Form.Group>
           </Form>
         </Modal.Body>
@@ -397,8 +399,7 @@ function VehicleMaintenances() {
                     }
                     ref={name}
                   />
-                </Form.Group>
-
+                </Form.Group>  
                 <Form.Group controlId="formCategory">
                   <Form.Label>Categoría</Form.Label>
                   <Form.Control
@@ -410,6 +411,7 @@ function VehicleMaintenances() {
                     ref={category}
                   />
                 </Form.Group>
+
               </div>
               <div className="col-md-6">
                 <Form.Group controlId="formSeverity">
@@ -435,6 +437,18 @@ function VehicleMaintenances() {
                     ref={type}
                   />
                 </Form.Group>
+
+                {/* <Form.Group controlId="formPlaca">
+                  <Form.Label>Fecha</Form.Label>
+                  <Form.Control
+                    type="date"
+                    placeholder="Fecha de cuando sucedió"
+                    defaultValue={
+                      editingMaintenance ? editingMaintenance.date : ""
+                    }
+                    ref={date}
+                  />
+                </Form.Group> */}
               </div>
             </div>
             <Form.Group controlId="formDescription">
@@ -447,7 +461,17 @@ function VehicleMaintenances() {
                 }
                 ref={description}
               />
-            </Form.Group>
+            {/* </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Imagen</Form.Label>
+              {editingMaintenance && editingMaintenance.image && (
+  <img
+                    src={editingMaintenance.image}
+                    alt="Imagen actual del mantenimiento"
+                    style={{ width: '150px', height: '150px' }}
+                  />
+                )} */}
+              </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
