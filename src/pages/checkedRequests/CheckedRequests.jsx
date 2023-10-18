@@ -23,16 +23,16 @@ function CheckedRequests() {
 
   const filteredData = data.filter(
     (request) => request.itsEndorse === true && request.itsApprove === true ||
-                 request.itsEndorse === true && request.itsCanceled === true 
+      request.itsEndorse === true && request.itsCanceled === true
   );
   return (
     <>
       <Container className="mb-3">
-        <h1 className="h3 mb-2 text-gray-800">Solicitudes autorizadas</h1>
-        <p class="mb-4">Lista de solicitudes autorizadas</p>
+        <h1 className="h3 mb-2 text-gray-800">Solicitudes </h1>
+        <p class="mb-4">Lista de solicitudes procesadas</p>
         <div className="card shadow mb-4">
           <div className="card-header py-3">
-            <p>De click en detalles para seleccionar una solicitud</p>
+            <p>Dé click en detalles para seleccionar una solicitud</p>
           </div>
           <div className="card-body">
             {filteredData.map((request) => (
@@ -44,11 +44,33 @@ function CheckedRequests() {
                     Fecha de salida {request.departureDate} con el destino de{" "}
                     {request.destinyLocation}
                   </Card.Text>
+
                   <Button
                     variant="info"
                     className="bg-gradient-info text-light"
                   >
                     <i class="bi bi-info-square"></i>
+                  </Button>
+
+                  <Button
+                    variant={
+                      request.itsApprove
+                        ? "success"
+                        : request.itsCanceled
+                          ? "danger" 
+                          : "info" 
+                    }
+                    className="text-light rounded-circle"
+                    style={{
+                      float: "right",   
+                      backgroundColor: request.itsApprove
+                        ? "rgba(0, 255, 0, 0.5)" 
+                        : request.itsCanceled
+                          ? "rgba(255, 0, 0, 0.5)" 
+                          : "rgba(0, 0, 255, 0.5)" 
+                    }}
+                  >
+                    {request.itsApprove ? "Aprobada" : "Anulada"}
                   </Button>
                 </Card.Body>
               </Card>
