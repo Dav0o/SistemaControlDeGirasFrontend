@@ -2,13 +2,33 @@ import React, { useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Outlet, NavLink } from "react-router-dom";
 import { NavDropdown, Navbar } from "react-bootstrap";
-import Container from 'react-bootstrap/Container';
+import Container from "react-bootstrap/Container";
 import { Dropdown } from "react-bootstrap";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
+
+// import {
+//   ProSidebar,
+//   Menu,
+//   MenuItem,
+//   SubMenu,
+//   SidebarHeader,
+//   SidebarFooter,
+//   SidebarContent
+// } from 'react-pro-sidebar';
+// import {
+//   FaUser,
+//   FaAngleDoubleLeft,
+//   FaAngleDoubleRight,
+//   FaTachometerAlt,
+//   FaGem,
+//   FaList,
+//   FaRegLaughWink,
+//   FaHeart
+// } from 'react-icons/fa';
 
 const queryClient = new QueryClient();
 
-function Layout() {
+function Layout({ children }) {
   const queryClient = new QueryClient();
   const [sidebarToggled, setSidebarToggled] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(true);
@@ -23,21 +43,32 @@ function Layout() {
   };
 
   const sidebarStyle = {
-    
     transition: "width 0.3s", // Agregar transición suave al cambiar el ancho
   };
 
-  const sidebarClasses = ["navbar-nav", "sidebar", "sidebar-dark", "accordion", "bg-gradient-dark"];
+  const sidebarClasses = [
+    "navbar-nav",
+    "sidebar",
+    "sidebar-dark",
+    "accordion",
+    "bg-gradient-primary",
+  ];
   if (sidebarToggled) {
     sidebarClasses.push("toggled");
   }
 
-
   const navigate = useNavigate();
 
+  // const Sidebar = ({
+  //   image,
+  //   collapsed,
+  //   toggled,
+  //   handleToggleSidebar,
+  //   handleCollapsedChange
+  // }) => {
   return (
     <body id="page-top">
-      <Navbar
+       <Navbar
         className="navbar-light bg-white  shadow"
         expand="lg"
       >
@@ -54,7 +85,7 @@ function Layout() {
               Registrado como:{" "}
               <a href="#login">
                 <NavDropdown title="Nombre Usuario" id="basic-nav-dropdown">
-                  <NavDropdown.Item href="#action/3.1">
+                  <NavDropdown.Item href="/logout">
                     <button className="btn btn-danger">Cerrar Sesión</button>
                   </NavDropdown.Item>
                   <NavDropdown.Item href="#action/3.2">
@@ -65,8 +96,7 @@ function Layout() {
             </Navbar.Text>
           </Navbar.Collapse>
         </Container>
-      </Navbar>
-
+      </Navbar> 
       {/* Sidebar */}
       <div id="wrapper">
         <ul
@@ -81,7 +111,7 @@ function Layout() {
           <div className="position-sticky">
             <ul className="nav flex-column">
               <li className="nav-item">
-                <a className="nav-link" href="/home">
+                <a className="nav-link" href="/">
                   <i className="fa fa-house"></i>
                   <span>Inicio</span>
                 </a>
@@ -107,6 +137,13 @@ function Layout() {
                 <a className="nav-link" href="/users">
                   <i className="fa-solid fa-user"></i>
                   <span>Usuarios</span>
+                </a>
+              </li>
+
+              <li className="nav-item">
+                <a className="nav-link" href="/workingTimeControl">
+                  <i className="fa-solid fa-id-card"></i>
+                  <span>Control Jornada</span>
                 </a>
               </li>
 
@@ -145,12 +182,20 @@ function Layout() {
                 </div>
               </li>
 
-              <li className="nav-item">
+              
+
+             
+
+              
+
+             
+
+              {/* <li className="nav-item">
                 <a className="nav-link" href="/auth">
                   <i className="fa-solid fa-right-to-bracket"></i>
                   <span>Login</span>
                 </a>
-              </li>
+              </li> */}
               
 
               <hr className="sidebar-divider d-none d-md-block"></hr>
@@ -165,13 +210,14 @@ function Layout() {
             </ul>
           </div>
         </ul>
-
+        <div className="container m-4 d-flex justify-content-center">{children}</div>
         <main className="flex-grow-1 p-3">
           <QueryClientProvider client={queryClient}>
             <Outlet />
           </QueryClientProvider>
         </main>
       </div>
+      
       {/* <footer className="sticky-footer bg-white shadow" >
         <div className="container my-auto">
           <div className="copyright text-center my-auto">
@@ -185,5 +231,6 @@ function Layout() {
     </body>
   );
 }
+
 
 export default Layout;
