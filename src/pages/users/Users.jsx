@@ -14,6 +14,8 @@ import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Accordion from "react-bootstrap/Accordion";
+import 'datatables.net-responsive-dt';
+import '../../stylesheets/vies.css'
 
 function Users() {
   const userDni = useRef(0);
@@ -72,9 +74,10 @@ function Users() {
     // Inicializa el DataTable después de renderizar los datos
 
     const newDataTable = new DataTable("#tableUsers", {
-      retrieve: true,
+      dom: 'lfBrtip',
+      "bLengthChange": false,
       responsive: true,
-      dom: "<'row' <'col-md-12 float-right'B>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>",
+      
       buttons: [
         {
           extend: "print",
@@ -161,7 +164,7 @@ function Users() {
       phoneNumber: parseInt(userPhoneNumber.current.value),
       licenseUNA: parseInt(userLicenseUNA.current.value),
       email: userEmail.current.value,
-      password: userPassword.current.value,
+      password: editingUser.password,
       state: userState.current.value,
     };
 
@@ -192,7 +195,7 @@ function Users() {
         <p class="mb-4">Lista de usuarios</p>
 
         <div className="card shadow mb-4">
-          <div className="card-header py-3">
+          
             {/* <div className="mb-3">
               <div>Click en el botón para crear un usuario</div>
             </div> */}
@@ -297,18 +300,10 @@ function Users() {
               </Accordion>
             </div>
 
-            {/* <Button
-                variant="success"
-                className="bg-gradient-success text-light
-               "
-                onClick={handleShow}
-              >
-                {" "}
-                <i class="bi bi-plus-square"></i>
-              </Button>  */}
-          </div>
+            
+          
           <div className="card-body">
-            <Table striped="columns" id="tableUsers">
+            <Table responsive  className="display nowrap"  id="tableUsers">
               <thead>
                 <tr>
                   <th>Id</th>
@@ -359,77 +354,6 @@ function Users() {
           </div>
         </div>
       </Container>
-
-      <Modal show={modalCreate} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Crear Usuario</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Container>
-            <Row>
-              <Col>
-                <Form.Label htmlFor="inputDNI">Cédula</Form.Label>
-                <Form.Control type="number" id="inputDNI" ref={userDni} />
-                <Form.Label htmlFor="inputLastName1">
-                  Primer Apellido
-                </Form.Label>
-                <Form.Control
-                  type="text"
-                  id="inputLastName1"
-                  ref={userLastName1}
-                />
-                <Form.Label htmlFor="inputPhoneNumber">Teléfono</Form.Label>
-                <Form.Control
-                  type="number"
-                  id="inputPhoneNumber"
-                  ref={userPhoneNumber}
-                />
-
-                <Form.Label htmlFor="inputEmail">Correo electrónico</Form.Label>
-                <Form.Control type="email" id="inputEmail" ref={userEmail} />
-
-                <Form.Label htmlFor="inputState">Estado</Form.Label>
-                <Form.Control type="text" id="inputState" ref={userState} />
-              </Col>
-              <Col>
-                <Form.Label htmlFor="inputName">Nombre</Form.Label>
-                <Form.Control type="text" id="inputName" ref={userName} />
-
-                <Form.Label htmlFor="inputLastName2">
-                  Segundo Apellido
-                </Form.Label>
-                <Form.Control
-                  type="text"
-                  id="inputLastName2"
-                  ref={userLastName2}
-                />
-
-                <Form.Label htmlFor="inputLicenseUNA">Licencia UNA</Form.Label>
-                <Form.Control
-                  type="number"
-                  id="inputLicenseUNA"
-                  ref={userLicenseUNA}
-                />
-
-                <Form.Label htmlFor="inputPassword">Contraseña</Form.Label>
-                <Form.Control
-                  type="password"
-                  id="inputPassword"
-                  ref={userPassword}
-                />
-              </Col>
-            </Row>
-          </Container>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cerrar
-          </Button>
-          <Button variant="primary" onClick={handleSave}>
-            Guardar
-          </Button>
-        </Modal.Footer>
-      </Modal>
 
       <Modal show={showEditModal} onHide={handleCloseEditModal} centered>
         <Modal.Header closeButton>
@@ -501,13 +425,7 @@ function Users() {
                   defaultValue={editingUser ? editingUser.licenseUNA : ""}
                   ref={userLicenseUNA}
                 />
-                <Form.Label>Contraseña</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Ingrese la contraseña"
-                  defaultValue={editingUser ? editingUser.password : ""}
-                  ref={userPassword}
-                />
+                
               </Col>
             </Row>
           </Form>
