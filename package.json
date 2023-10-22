@@ -21,6 +21,7 @@
     "bootstrap-icons": "^1.11.1",
     "datatables.net-buttons-dt": "^2.4.2",
     "datatables.net-dt": "^1.13.6",
+    "datatables.net-responsive-dt": "^2.5.0",
     "jquery": "^3.6.0",
     "jquery.easing": "^1.4.1",
     "mdb-react-ui-kit": "^6.3.0",
@@ -30,12 +31,9 @@
     "react-content-loader": "^6.2.1",
     "react-data-table-component": "^7.5.4",
     "react-dom": "^18.2.0",
-
-    "react-material-ui-form-validator": "^3.0.1",
-
     "react-icons": "^4.11.0",
+    "react-material-ui-form-validator": "^3.0.1",
     "react-pro-sidebar": "^1.1.0-alpha.1",
-
     "react-query": "^3.39.3",
     "react-router-dom": "^6.15.0",
     "styled-components": "^6.0.8",
