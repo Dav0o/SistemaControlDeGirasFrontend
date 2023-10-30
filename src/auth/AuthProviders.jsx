@@ -1,11 +1,14 @@
 import axios from "axios";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import jwt from 'jwt-decode'
 
 const AuthContext = createContext();
 
 const AuthProviders = ({ children }) => {
   // State to hold the authentication token
   const [token, setToken_] = useState(localStorage.getItem("token"));
+
+  const [user, setUser] = useState(null);
 
   // Function to set the authentication token
   const setToken = (newToken) => {
@@ -15,10 +18,13 @@ const AuthProviders = ({ children }) => {
   useEffect(() => {
     if (token) {
       axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+      const _user = jwt(token);
+      setUser(_user)
       localStorage.setItem('token',token);
     } else {
       delete axios.defaults.headers.common["Authorization"];
-      localStorage.removeItem('token')
+      localStorage.removeItem('token');
+      setUser(null)
     }
   }, [token]);
 
@@ -26,9 +32,10 @@ const AuthProviders = ({ children }) => {
   const contextValue = useMemo(
     () => ({
       token,
+      user,
       setToken,
     }),
-    [token]
+    [token, user]
   );
 
   // Provide the authentication context to the children components

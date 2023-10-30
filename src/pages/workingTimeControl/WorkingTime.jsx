@@ -1,14 +1,31 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useQuery, useMutation } from "react-query";
-import { getRequests } from "../../services/RequestService";
+import { useQuery } from "react-query";
+import { create, getDriverLog } from "../../services/DriverLogService";
 import Container from "react-bootstrap/Container";
 import { Button, Table } from "react-bootstrap";
 import "datatables.net-buttons-dt";
+import Accordion from "react-bootstrap/Accordion";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Form from "react-bootstrap/Form";
+import "datatables.net-responsive-dt";
+import "../../stylesheets/vies.css";
+import Modal from "react-bootstrap/Modal";
+import { getUserByRole } from "../../services/UserService";
+import { useMutation } from "react-query";
 
 function WorkingTime() {
-  const { isLoading, data, isError } = useQuery("requests", getRequests, {
+  const { isLoading, data, isError } = useQuery("driverLogs", getDriverLog, {
+    enabled: true,
+  });
+
+  const {
+    isLoading: isLoadingUsers,
+    data: users,
+    isError: isErrorUsers,
+  } = useQuery("users/usersbyrole", () => getUserByRole('Chofer'), {
     enabled: true,
   });
 
@@ -22,9 +39,9 @@ function WorkingTime() {
 
     // Inicializa el DataTable después de renderizar los datos
     const newDataTable = new DataTable("#tableControlJornada", {
-      retrieve: true,
+      dom: "lfBrtip",
+      bLengthChange: false,
       responsive: true,
-      dom: "<'row' <'col-md-12 float-right'B>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>",
       buttons: [
         {
           extend: "print",
@@ -70,6 +87,36 @@ function WorkingTime() {
     setDataTable(newDataTable);
   }, [data]);
 
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = (log) => {
+    setSelectedLog(log);
+    setShow(true);
+  };
+
+  const [selectedLog, setSelectedLog] = useState(null);
+
+  const initialLogDate = useRef(null);
+  const ordinaryHours = useRef(null);
+  const userId = useRef(0);
+
+  const mutation = useMutation("driverLog", create, {
+    onSettled: () => queryClient.invalidateQueries("driverLogs"),
+    mutationKey: "driverLog",
+  });
+  const handleSave = () =>{
+    let newLog = {
+        initialLogDate: initialLogDate.current.value,
+        ordinaryHours: ordinaryHours.current.value,
+        bonusHours: 0,
+        extraHours: 0,
+        salary: 0,
+        userId: parseInt(userId.current.value)
+    };
+    mutation.mutateAsync(newLog);
+  }
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -77,35 +124,78 @@ function WorkingTime() {
   if (isError) {
     return <div>Error</div>;
   }
+  if (isLoadingUsers) {
+    return <div>Loading...</div>;
+  }
 
-  const LinkStyle = {
-    textDecoration: "none",
-    color: "white",
-  };
+  if (isErrorUsers) {
+    return <div>Error</div>;
+  }
+
+ 
 
   return (
     <>
-      <Container>
+      <Container className="container-fluid">
         <h1 className="h3 mb-2 text-gray-800">Control Jornada</h1>
-        <p>Lista de las solicitudes con el respectivo chófer encargado</p>
+        <p>Lista de los choferes con la respectiva jornada del mes</p>
         <div className="card shadow mb-4">
-          <div className="card-header py-3">
-            <p>
-              De click en el boton "detalles" para observar la jornada laboral
-              de cada chófer
-            </p>
+          <div>
+            <Accordion defaultActiveKey="1">
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  Click en el botón para crear una jornada laboral
+                </Accordion.Header>
+                <Accordion.Body>
+                  <Container>
+                    <Row className="mb-2">
+                      <Col>
+                        <Form.Label htmlFor="inputDNI">
+                          Cédula del chofer
+                        </Form.Label>
+                        <Form.Select aria-label="Default select example">
+                          <option>Choferes a seleccionar</option>
+                          {users.map((user) => (
+                            <option value={user.id} ref={userId}>{user.dni}-{user.name} {user.lastName1}</option>
+                          ))}
+                        </Form.Select>
+                      </Col>
+                    </Row>
+                    <Row className="mb-2">
+                      <Col>
+                        <Form.Label >
+                          Fecha de inicio
+                        </Form.Label>
+                        <Form.Control type="date"  ref={initialLogDate}/>
+                      </Col>
+                      <Col>
+                        <Form.Label >
+                          Horas Ordinarias
+                        </Form.Label>
+                        <Form.Control type="number"  ref={ordinaryHours}/>
+                      </Col>
+                    </Row>
+
+                    <Button variant="primary" className="mt-3" onClick={handleSave}>
+                      Guardar
+                    </Button>
+                  </Container>
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
           </div>
           <div className="card-body">
             <Table
-              striped="columns"
+              
               id="tableControlJornada"
-              className="display wrap table table-bordered"
+              className="display nowrap"
+              responsive
             >
               <thead>
                 <tr>
-                  <th>Número consecutivo</th>
-                  <th>Chófer</th>
-                  <th>Destino</th>
+                  <th>Fecha inicial</th>
+                  <th>Cedula chófer</th>
+                  <th>Nombre Chofer</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -113,21 +203,21 @@ function WorkingTime() {
               <tbody>
                 {data.map((request) => (
                   <tr key={request.id}>
-                    <td>{request.consecutiveNumber}</td>
-                    <td>{request.itsDriver}</td>
-                    <td>{request.DestinyLocation}</td>
+                    <td>{request.initialLogDate}</td>
+                    <td>{request.user.dni}</td>
                     <td>
-                      <Link
-                        to={`/driverLogs/${request.id}`}
-                        style={LinkStyle}
+                      {request.user.name} {request.user.lastName1}
+                    </td>
+                    <td>
+                      {/* <Link to={`/workingTimeControl/${request.id}`} style={LinkStyle}> */}
+                      <Button
+                        variant="info"
+                        className="bg-gradient-info text-light"
+                        onClick={() => handleShow(request)}
                       >
-                        <Button
-                          variant="info"
-                          className="bg-gradient-info text-light"
-                        >
-                          <i class="bi bi-info-square"></i>
-                        </Button>
-                      </Link>
+                        <i class="bi bi-info-square"></i>
+                      </Button>
+                      {/* </Link> */}
                     </td>
                   </tr>
                 ))}
@@ -136,6 +226,51 @@ function WorkingTime() {
           </div>
         </div>
       </Container>
+
+      <Modal
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+        show={show}
+        onHide={handleClose}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            Detalles de la jornada
+          </Modal.Title>
+        </Modal.Header>
+        {selectedLog && (
+          <>
+            <Modal.Body>
+              <h4>
+                {selectedLog.user.name} {selectedLog.user.lastName1} /{" "}
+                {selectedLog.initialLogDate}
+              </h4>
+              <Form.Label>Horas regulares</Form.Label>
+              <Form.Control
+                type="number"
+                disabled
+                value={selectedLog.ordinaryHours}
+              />
+              <Form.Label>Horas extra</Form.Label>
+              <Form.Control
+                type="number"
+                disabled
+                value={selectedLog.extraHours}
+              />
+              <Form.Label>Horas sobresueldo</Form.Label>
+              <Form.Control
+                type="number"
+                disabled
+                value={selectedLog.bonusHours}
+              />
+            </Modal.Body>
+            <Modal.Footer>
+              <Button onClick={handleClose}>Close</Button>
+            </Modal.Footer>
+          </>
+        )}
+      </Modal>
     </>
   );
 }

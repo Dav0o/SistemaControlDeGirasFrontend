@@ -19,6 +19,7 @@ import DriverLog from "../pages/driverLog/DriverLog";
 import RequestDays from "../pages/requestDays/RequestDays";
 import RequestGasoline from "../pages/requestGasoline/RequestGasoline";
 import Vehicle from "../pages/vehicle/Vehicle";
+import WorkingTimeDetails from "../pages/workingTimeControl/WorkingTimeDetails";
 
 const Routes = () => {
   const { token } = useAuth();
@@ -66,88 +67,88 @@ const Routes = () => {
           ),
         },
         {
-            path: "/vehicle",
-            element: (
-              <Layout>
-                <Vehicle/>
-              </Layout>
-            ),
-          },
-        {
-            path: "/vehicle/:vehicleId",
-            element: (
-              <Layout>
-                <VehicleMaintenances />
-              </Layout>
-            ),
+          path: "/vehicle",
+          element: (
+            <Layout>
+              <Vehicle />
+            </Layout>
+          ),
         },
         {
-            path: "/requestForm",
-            element: (
-              <Layout>
-                <RequestForm/>
-              </Layout>
-            ),
+          path: "/vehicle/:vehicleId",
+          element: (
+            <Layout>
+              <VehicleMaintenances />
+            </Layout>
+          ),
         },
         {
-            path: "/endorseRequest",
-            element: (
-              <Layout>
-                <EndorseRequest/>
-              </Layout>
-            ),
+          path: "/requestForm",
+          element: (
+            <Layout>
+              <RequestForm />
+            </Layout>
+          ),
         },
         {
-            path: "/approveRequest",
-            element: (
-              <Layout>
-                <ApproveRequest/>
-              </Layout>
-            ),
+          path: "/endorseRequest",
+          element: (
+            <Layout>
+              <EndorseRequest />
+            </Layout>
+          ),
         },
         {
-            path: "/checkedRequests",
-            element: (
-              <Layout>
-                <CheckedRequests/>
-              </Layout>
-            ),
+          path: "/approveRequest",
+          element: (
+            <Layout>
+              <ApproveRequest />
+            </Layout>
+          ),
         },
         {
-            path: "/workingTimeControl",
-            element: (
-              <Layout>
-                <WorkingTime/>
-              </Layout>
-            ),
+          path: "/checkedRequests",
+          element: (
+            <Layout>
+              <CheckedRequests />
+            </Layout>
+          ),
         },
         {
-            path: "/driverLogs",
-            element: (
-              <Layout>
-                <DriverLog/>
-              </Layout>
-            ),
+          path: "/workingTimeControl",
+          element: (
+            <Layout>
+              <WorkingTime />
+            </Layout>
+          ),
         },
         {
-            path: "/requestDays/:requestDaysId",
-            element: (
-              <Layout>
-                <RequestDays/>
-              </Layout>
-            ),
+          path: "/workingTimeControl/:driverLogId",
+          element: (
+            <Layout>
+              <WorkingTimeDetails />
+            </Layout>
+          ),
         },
         {
-            path: "/requestGasoline/:requestGasolineId",
-            element: (
-              <Layout>
-                <RequestGasoline/>
-              </Layout>
-            ),
+          path: "/requestDays/:requestDaysId",
+          element: (
+            <Layout>
+              <RequestDays />
+            </Layout>
+          ),
         },
         {
-            path: "/logout",
-            element: <Logout/>,
+          path: "/requestGasoline/:requestGasolineId",
+          element: (
+            <Layout>
+              <RequestGasoline />
+            </Layout>
+          ),
+        },
+        {
+          path: "/logout",
+          element: <Logout />,
         },
       ],
     },
@@ -157,7 +158,11 @@ const Routes = () => {
   const routesForNotAuthenticatedOnly = [
     {
       path: "/",
-      element: <Home />,
+      element: (
+        <Layout>
+          <Home />
+        </Layout>
+      ),
     },
     {
       path: "/login",

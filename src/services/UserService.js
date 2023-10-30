@@ -22,3 +22,8 @@ export const getByIdUser = async (userId) => {
     let data = await api.get(`users/${userId}`).then(result => result.data);
     return data;
 };
+
+export const getUserByRole = async (userRole) => {
+    let data = await api.get(`users/usersbyrole/${userRole}`).then(result => result.data);
+    return data;
+}

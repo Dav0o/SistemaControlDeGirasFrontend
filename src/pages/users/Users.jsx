@@ -6,7 +6,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Modal from "react-bootstrap/Modal";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { create, getUsers } from "../../services/UserService";
 import Form from "react-bootstrap/Form";
 import { useEffect } from "react";
@@ -14,8 +14,9 @@ import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Accordion from "react-bootstrap/Accordion";
-import 'datatables.net-responsive-dt';
-import '../../stylesheets/vies.css'
+import "datatables.net-responsive-dt";
+import "../../stylesheets/vies.css";
+
 
 function Users() {
   const userDni = useRef(0);
@@ -28,11 +29,6 @@ function Users() {
   const userPassword = useRef(null);
   const userState = useRef(true);
 
-  const [modalCreate, setModalCreate] = useState(false);
-
-  const handleClose = () => setModalCreate(false);
-  const handleShow = () => setModalCreate(true);
-
   const {
     isLoading: loadingUsers,
     data: users,
@@ -41,8 +37,13 @@ function Users() {
   const { data } = useQuery("users", getUsers, {
     enabled: true,
   });
+  const queryClient = useQueryClient();
 
-  const mutation = useMutation("users", create);
+  const mutation = useMutation("user", create, {
+    onSettled: () => queryClient.invalidateQueries("users"),
+    mutationKey: "user",
+  });
+
   const MySwal = withReactContent(Swal);
 
   {
@@ -74,10 +75,10 @@ function Users() {
     // Inicializa el DataTable después de renderizar los datos
 
     const newDataTable = new DataTable("#tableUsers", {
-      dom: 'lfBrtip',
-      "bLengthChange": false,
+      dom: "lfBrtip",
+      bLengthChange: false,
       responsive: true,
-      
+
       buttons: [
         {
           extend: "print",
@@ -150,6 +151,7 @@ function Users() {
 
   const handleCloseEditModal = () => {
     setShowEditModal(false);
+    
   };
 
   const [editingUser, setEditingUser] = useState(null);
@@ -164,8 +166,8 @@ function Users() {
       phoneNumber: parseInt(userPhoneNumber.current.value),
       licenseUNA: parseInt(userLicenseUNA.current.value),
       email: userEmail.current.value,
-      password: editingUser.password,
-      state: userState.current.value,
+      password: '1234',
+      state: editingUser.state,
     };
 
     mutation.mutateAsync(updatedUser);
@@ -179,6 +181,7 @@ function Users() {
     setSelectedUser(user);
     setShowDetailModal(true);
   };
+  
 
   if (loadingUsers) {
     return <div>Loading...</div>;
@@ -190,120 +193,118 @@ function Users() {
 
   return (
     <>
+
       <Container className="container-fluid">
         <h1 className="h3 mb-2 text-gray-800">Usuarios</h1>
         <p class="mb-4">Lista de usuarios</p>
 
         <div className="card shadow mb-4">
-          
-            {/* <div className="mb-3">
+          {/* <div className="mb-3">
               <div>Click en el botón para crear un usuario</div>
             </div> */}
-            <div>
-              <Accordion defaultActiveKey="1">
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>Click en el botón para crear un usuario</Accordion.Header>
-                  <Accordion.Body>
-                    <Container>
-                      <Row className="mb-2">
-                        <Col>
-                          <Form.Label htmlFor="inputDNI">Cédula</Form.Label>
-                          <Form.Control
-                            type="number"
-                            id="inputDNI"
-                            ref={userDni}
-                          />
-                        </Col>
-                        <Col>
-                          <Form.Label htmlFor="inputLicenseUNA">
-                            Licencia UNA
-                          </Form.Label>
-                          <Form.Control
-                            type="number"
-                            id="inputLicenseUNA"
-                            ref={userLicenseUNA}
-                          />
-                        </Col>
-                      </Row>
-                      <Row className="mb-2">
-                        <Col>
-                          <Form.Label htmlFor="inputName">Nombre</Form.Label>
-                          <Form.Control
-                            type="text"
-                            id="inputName"
-                            ref={userName}
-                          />
-                        </Col>
-                        <Col>
-                          <Form.Label htmlFor="inputLastName1">
-                            Primer Apellido
-                          </Form.Label>
-                          <Form.Control
-                            type="text"
-                            id="inputLastName1"
-                            ref={userLastName1}
-                          />
-                        </Col>
-                        <Col>
-                          <Form.Label htmlFor="inputLastName2">
-                            Segundo Apellido
-                          </Form.Label>
-                          <Form.Control
-                            type="text"
-                            id="inputLastName2"
-                            ref={userLastName2}
-                          />
-                        </Col>
-                      </Row>
+          <div>
+            <Accordion defaultActiveKey="1">
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  Click en el botón para crear un usuario
+                </Accordion.Header>
+                <Accordion.Body>
+                  <Container>
+                    <Row className="mb-2">
+                      <Col>
+                        <Form.Label htmlFor="inputDNI">Cédula</Form.Label>
+                        <Form.Control
+                          type="number"
+                          id="inputDNI"
+                          ref={userDni}
+                        />
+                      </Col>
+                      <Col>
+                        <Form.Label htmlFor="inputLicenseUNA">
+                          Licencia UNA
+                        </Form.Label>
+                        <Form.Control
+                          type="number"
+                          id="inputLicenseUNA"
+                          ref={userLicenseUNA}
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="mb-2">
+                      <Col>
+                        <Form.Label htmlFor="inputName">Nombre</Form.Label>
+                        <Form.Control
+                          type="text"
+                          id="inputName"
+                          ref={userName}
+                        />
+                      </Col>
+                      <Col>
+                        <Form.Label htmlFor="inputLastName1">
+                          Primer Apellido
+                        </Form.Label>
+                        <Form.Control
+                          type="text"
+                          id="inputLastName1"
+                          ref={userLastName1}
+                        />
+                      </Col>
+                      <Col>
+                        <Form.Label htmlFor="inputLastName2">
+                          Segundo Apellido
+                        </Form.Label>
+                        <Form.Control
+                          type="text"
+                          id="inputLastName2"
+                          ref={userLastName2}
+                        />
+                      </Col>
+                    </Row>
 
-                      <Form.Label htmlFor="inputPhoneNumber">
-                        Teléfono
-                      </Form.Label>
-                      <Form.Control
-                        type="number"
-                        id="inputPhoneNumber"
-                        ref={userPhoneNumber}
-                      />
-                      <Row>
-                        <Col>
-                          <Form.Label htmlFor="inputEmail">
-                            Correo electrónico
-                          </Form.Label>
-                          <Form.Control
-                            type="email"
-                            id="inputEmail"
-                            ref={userEmail}
-                          />
-                        </Col>
-                        <Col>
-                          <Form.Label htmlFor="inputPassword">
-                            Contraseña
-                          </Form.Label>
-                          <Form.Control
-                            type="password"
-                            id="inputPassword"
-                            ref={userPassword}
-                          />
-                        </Col>
-                      </Row>
+                    <Form.Label htmlFor="inputPhoneNumber">Teléfono</Form.Label>
+                    <Form.Control
+                      type="number"
+                      id="inputPhoneNumber"
+                      ref={userPhoneNumber}
+                    />
+                    <Row>
+                      <Col>
+                        <Form.Label htmlFor="inputEmail">
+                          Correo electrónico
+                        </Form.Label>
+                        <Form.Control
+                          type="email"
+                          id="inputEmail"
+                          ref={userEmail}
+                        />
+                      </Col>
+                      <Col>
+                        <Form.Label htmlFor="inputPassword">
+                          Contraseña
+                        </Form.Label>
+                        <Form.Control
+                          type="password"
+                          id="inputPassword"
+                          ref={userPassword}
+                        />
+                      </Col>
+                    </Row>
 
-                      <Button
-                        variant="primary"
-                        onClick={handleSave}
-                        className="mt-3"
-                      >
-                        Guardar
-                      </Button>
-                    </Container>
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </div>
+                    <Button
+                      variant="primary"
+                      onClick={handleSave}
+                      className="mt-3"
+                    >
+                      Guardar
+                    </Button>
+                  </Container>
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+          </div>
 
-            
-          
           <div className="card-body">
-            <Table responsive  className="display nowrap"  id="tableUsers">
+            <Table responsive className="display nowrap" id="tableUsers">
               <thead>
                 <tr>
                   <th>Id</th>
@@ -329,6 +330,7 @@ function Users() {
                         variant="warning"
                         className="bg-gradient-warning mr-1 text-light"
                         onClick={() => handleEditClick(user.id)}
+                        
                       >
                         <i class="bi bi-pencil-square"></i>
                       </Button>
@@ -393,14 +395,6 @@ function Users() {
                   defaultValue={editingUser ? editingUser.email : ""}
                   ref={userEmail}
                 />
-
-                <Form.Label>Estado</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Ingrese el estado"
-                  defaultValue={editingUser ? editingUser.state : ""}
-                  ref={userState}
-                />
               </Col>
               <Col>
                 <Form.Label>Nombre</Form.Label>
@@ -425,7 +419,6 @@ function Users() {
                   defaultValue={editingUser ? editingUser.licenseUNA : ""}
                   ref={userLicenseUNA}
                 />
-                
               </Col>
             </Row>
           </Form>
@@ -480,6 +473,9 @@ function Users() {
           </Button>
         </Modal.Footer>
       </Modal>
+      
+
+     
     </>
   );
 }

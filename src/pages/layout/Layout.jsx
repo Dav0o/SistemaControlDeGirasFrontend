@@ -8,11 +8,47 @@ import { useNavigate } from "react-router-dom";
 import "../../stylesheets/sidebar.css";
 import "../../js/sidebar";
 import logo from "../../assets/LOGO-UNAHorizontal-BLANCO .png";
+import { useAuth } from "../../auth/AuthProviders";
+import { useState } from "react";
 
 function Layout({ children }) {
+  const { user } = useAuth();
+
   const queryClient = new QueryClient();
 
   const navigate = useNavigate();
+
+  const [userRoles, setUserRoles] = useState([]);
+
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    {
+      $(document).ready(function () {
+        $("#sidebarCollapse").on("click", function () {
+          $("#sidebar").toggleClass("active");
+        });
+      });
+    }
+  }, []);
+  
+  useEffect(() => {
+    if (user) {
+      const roles = [];
+      for (const claim in user) {
+        if (claim.endsWith("/role")) {
+          roles.push(user[claim]);
+        }
+      }
+      setUserRoles(roles);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (userRoles.length > 0) {
+      setIsAdmin(userRoles[0].includes("Admin"));
+    }
+  }, [userRoles]);
 
   return (
     <>
@@ -28,39 +64,44 @@ function Layout({ children }) {
             <li>
               <a href="/">Inicio</a>
             </li>
-            <li>
-              <a href="/vehicles">Vehículos</a>
-            </li>
-            <li>
-              <a href="/vehicle">Mantenimientos</a>
-            </li>
-            <li>
-              <a href="/users">Usuarios</a>
-            </li>
-            <li>
-              <a href="/workingTimeControl">Jornada</a>
-            </li>
-            <li>
-              <a
-                href="#pageSubmenu"
-                data-toggle="collapse"
-                aria-expanded="false"
-                className="dropdown-toggle"
-              >
-                Solicitudes
-              </a>
-              <ul className="collapse list-unstyled" id="pageSubmenu">
+            {isAdmin && (
+              <>
                 <li>
-                  <a href="/endorseRequest">Avalar</a>
+                  <a href="/vehicles">Vehículos</a>
                 </li>
                 <li>
-                  <a href="/approveRequest">Aprobar</a>
+                  <a href="/vehicle">Mantenimientos</a>
                 </li>
                 <li>
-                  <a href="/checkedRequests">Ver</a>
+                  <a href="/users">Usuarios</a>
                 </li>
-              </ul>
-            </li>
+                <li>
+                  <a href="/workingTimeControl">Jornada</a>
+                </li>
+                <li>
+                  <a
+                    href="#pageSubmenu"
+                    data-toggle="collapse"
+                    aria-expanded="false"
+                    className="dropdown-toggle"
+                  >
+                    Solicitudes
+                  </a>
+                  <ul className="collapse list-unstyled" id="pageSubmenu">
+                    <li>
+                      <a href="/endorseRequest">Avalar</a>
+                    </li>
+                    <li>
+                      <a href="/approveRequest">Aprobar</a>
+                    </li>
+                    <li>
+                      <a href="/checkedRequests">Ver</a>
+                    </li>
+                  </ul>
+                </li>
+              </>
+            )}
+
             <li>
               <a href="/requestForm">Formulario Solicitud</a>
             </li>
@@ -96,17 +137,11 @@ function Layout({ children }) {
                 id="navbarSupportedContent"
               >
                 <ul className="nav navbar-nav ml-auto">
-                  
-                
-              <a href="#login">
-                <NavDropdown title="Nombre Usuario" id="basic-nav-dropdown">
-                  <NavDropdown.Item href="/logout">
-                    <button className="btn btn-danger">Cerrar Sesión</button>
-                  </NavDropdown.Item>
-                  
-                </NavDropdown>
-              </a>
-            
+                  <NavDropdown title="Nombre Usuario" id="basic-nav-dropdown">
+                    <NavDropdown.Item href="/logout">
+                      <button className="btn btn-danger">Cerrar Sesión</button>
+                    </NavDropdown.Item>
+                  </NavDropdown>
                 </ul>
               </div>
             </div>
@@ -117,11 +152,11 @@ function Layout({ children }) {
         </div>
       </div>
 
-      <main classNameName="flex-grow-1 p-3">
+      {/* <main className="flex-grow-1 p-3">
         <QueryClientProvider client={queryClient}>
           <Outlet />
         </QueryClientProvider>
-      </main>
+      </main> */}
     </>
   );
 }
