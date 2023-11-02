@@ -23,6 +23,8 @@ function VehicleMaintenances() {
   );
   const mutation = useMutation("maintenances", create);
 
+  const [validated, setValidated] = useState(false);
+
   const [imageUrl, setImageUrl] = useState('');
   const apiKey = '6c4a708d4bdee0384fae9c67a8558f9e';
 
@@ -92,21 +94,31 @@ function VehicleMaintenances() {
 
 
 
-  const handleSave = () => {
-    let newMaintenance = {
-      name: name.current.value,
-      severity: severity.current.value,
-      date: date.current.value,
-      type: type.current.value,
-      category: 0,
-      status: true,
-      description: description.current.value,
-      image: imageUrl,
-      vehicleId: vehicleId,
+  const handleSave = (event) => {
 
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    } else {
+      setValidated(true);
+    }
+    if (form.checkValidity() === true) {
+      let newMaintenance = {
+        name: name.current.value,
+        severity: severity.current.value,
+        date: date.current.value,
+        type: type.current.value,
+        status: true,
+        description: description.current.value,
+        image: imageUrl,
+        vehicleId: vehicleId,
+
+      };
+      mutation.mutateAsync(newMaintenance);
     };
-    mutation.mutateAsync(newMaintenance);
-  };
+  }
+
 
   const handleEditClick = (maintenanceId) => {
     const maintenanceToEdit = data.maintenances.find(
@@ -116,6 +128,7 @@ function VehicleMaintenances() {
 
     setShowEditModal(true);
   };
+
 
   const [modalCreate, setModalCreate] = useState(false);
 
@@ -173,9 +186,7 @@ function VehicleMaintenances() {
       id: editingMaintenance.id,
       name: name.current.value,
       severity: severity.current.value,
-     
-      type: type.current.value, 
-      category: 0,
+      type: type.current.value,
       status: editingMaintenance.status,
       description: description.current.value,
       image: imageUrl,
@@ -304,72 +315,121 @@ function VehicleMaintenances() {
         </Modal.Header>
 
         <Modal.Body>
-          <Form>
-            <div className="row">
-              <div className="col-md-6">
-                <Form.Group controlId="formPlaca">
-                  <Form.Label>Nombre</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Ingrese el daño"
-                    ref={name}
-                  />
-                </Form.Group>
+          <Form validated={validated} onSubmit={handleSave}>
 
-                <Form.Group controlId="formPlaca">
-                  <Form.Label>Fecha</Form.Label>
-                  <Form.Control
-                    type="date"
-                    placeholder="Fecha de cuando sucedió"
-                    ref={date}
-                  />
-                </Form.Group>
-              </div>
-              <div className="col-md-6">
-                <Form.Group controlId="formColor">
-                  <Form.Label>Gravedad</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Ingrese la gravedad"
-                    ref={severity}
-                  />
-                </Form.Group>
+            <Form>
 
-                <Form.Group controlId="formColor">
-                  <Form.Label>Tipo</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Ingrese el tipo"
-                    ref={type}
-                  />
-                </Form.Group>
-              </div>
-            </div>
-            <Form.Group controlId="formColor">
-              <Form.Label>Descripción</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingrese la descripción del suceso"
-                ref={description}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Imagen</Form.Label>
-              <div className="custom-file">
-                <input
-                  type="file"
-                  className="custom-file-input"
-                  id="customFile"
 
-                  onChange={handleImageUpload}
-                />
-                <label className="custom-file-label" htmlFor="customFile">
-                </label>
-              </div>
-              {imageUrl && <img src={imageUrl} alt="Imagen subida" className="uploadedImg"
-                style={{ maxWidth: '200px', maxHeight: '200px' }} />}
-            </Form.Group>
+              <Row>
+                <Col md={6}>
+                  <div className="mb-3 mt-3">
+                    <label htmlFor="inputName"
+                      className="form-label">Nombre</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Ingrese el nombre"
+                      name="name"
+                      ref={name}
+                      required
+                    />
+                    <div className="valid-feedback"></div>
+                    <div className="invalid-feedback">El campo es requerido.
+                    </div>
+                  </div>
+                </Col>
+
+                <Col md={6}>
+                  <div className="mb-3 mt-3">
+                    <label htmlFor="inputGr"
+                      className="form-label">Gravedad</label>
+                    <select class="form-select" id="inputSeverity" ref={severity} required>
+                      <option select disable value="">Seleccione una opción</option>
+                      <option value="Leve">Leve</option>
+                      <option value="Moderado">Moderado</option>
+                      <option value="Grave">Grave</option>
+                      <option value="Critico">Crítico</option>
+                    </select>
+                    <div class="invalid-feedback">
+                      Por favor, seleccione una opción.
+                    </div>
+                  </div>
+                </Col>
+
+                <Row>
+                  <Col md={6}>
+                    <div className="mb-3 mt-3">
+                      <label htmlFor="inputType"
+                        className="form-label">Tipo</label>
+                      <select class="form-select" id="inputType" ref={type} required>
+                        <option select disable value="">Seleccione una opción</option>
+                        <option value="Mantenimiento">Mantenimiento</option>
+                        <option value="Incidente">Incidente</option>
+                      </select>
+                      <div class="invalid-feedback">
+                        Por favor, seleccione una opción.
+                      </div>
+                    </div>
+                  </Col>
+
+                  <Col md={6}>
+                    <div className="mb-3 mt-3">
+                      <label htmlFor="inputDate"
+                        className="form-label">Fecha</label>
+                      <input
+                        type="date"
+                        className="form-control"
+                        name="date"
+                        ref={date}
+                        required
+                      />
+                    </div>
+                  </Col>
+                </Row>
+
+                <Row>
+                  <Col md={6}>
+                    <div className="mb-3 mt-3">
+                      <label htmlFor="inputDescription"
+                        className="form-label">Descripción</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Ingrese la descripción"
+                        name="description"
+                        ref={description}
+                      />
+                      <div className="valid-feedback"></div>
+                    </div>
+                  </Col>
+
+
+                  <Col md={6}>
+
+                    <div className="mb-3 mt-3">
+                      <div>
+                        <Form.Label>Imagen</Form.Label>
+                        <div className="custom-file">
+                          <input
+                            type="file"
+                            className="custom-file-input"
+                            id="customFile"
+
+                            onChange={handleImageUpload}
+                          />
+                          <label className="custom-file-label" htmlFor="customFile">
+                          </label>
+                        </div>
+                        {imageUrl && <img src={imageUrl} alt="Imagen subida" className="uploadedImg"
+                          style={{ maxWidth: '200px', maxHeight: '200px' }} />}
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+              </Row>
+            </Form>
           </Form>
+
         </Modal.Body>
         <Modal.Footer>
           <Button variant="danger" onClick={handleCloseFormModal}>
@@ -386,9 +446,12 @@ function VehicleMaintenances() {
           <Modal.Title>Editar mantenimiento</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
-            <div className="row">
-              <div className="col-md-6">
+
+
+
+        <form class="was-validated" >
+            <Row>
+              <Col md={6}>
                 <Form.Group controlId="formName">
                   <Form.Label>Nombre</Form.Label>
                   <Form.Control
@@ -398,45 +461,39 @@ function VehicleMaintenances() {
                       editingMaintenance ? editingMaintenance.name : ""
                     }
                     ref={name}
+                    required
                   />
-                </Form.Group>  
-                <Form.Group controlId="formCategory">
-                  <Form.Label>Categoría</Form.Label>
-                  <Form.Control
-                    type="number"
-                    placeholder="Ingrese la categoría"
-                    defaultValue={
-                      editingMaintenance ? editingMaintenance.category : 0
-                    }
-                    ref={category}
-                  />
+                  <div className="valid-feedback"></div>
+                  <div className="invalid-feedback">El campo es requerido.
+                  </div>
                 </Form.Group>
+              </Col>
 
-              </div>
-              <div className="col-md-6">
-                <Form.Group controlId="formSeverity">
-                  <Form.Label>Gravedad</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Ingrese la gravedad"
-                    defaultValue={
-                      editingMaintenance ? editingMaintenance.severity : ""
-                    }
-                    ref={severity}
-                  />
-                </Form.Group>
-
+              <Col md={6}>
                 <Form.Group controlId="formType">
                   <Form.Label>Tipo</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Ingrese el tipo"
-                    defaultValue={
-                      editingMaintenance ? editingMaintenance.type : ""
-                    }
-                    ref={type}
-                  />
+                  <Form.Control as="select" ref={type}
+                    defaultValue={editingMaintenance ? editingMaintenance.type : ""}>
+                    <option value="Mantenimiento">Mantenimiento</option>
+                    <option value="Incidente">Incidente</option>
+                  </Form.Control>
                 </Form.Group>
+              </Col>
+
+              <Row>
+                <Col md={6}>
+                  <Form.Group controlId="formSeverity">
+                    <Form.Label>Gravedad</Form.Label>
+                    <Form.Control as="select" ref={severity} defaultValue={editingMaintenance ? editingMaintenance.severity : ""}>
+                      <option value="Leve">Leve</option>
+                      <option value="Moderado">Moderado</option>
+                      <option value="Grave">Grave</option>
+                      <option value="Critico">Crítico</option>
+                    </Form.Control>
+                  </Form.Group>
+
+                </Col>
+
 
                 {/* <Form.Group controlId="formPlaca">
                   <Form.Label>Fecha</Form.Label>
@@ -449,19 +506,21 @@ function VehicleMaintenances() {
                     ref={date}
                   />
                 </Form.Group> */}
-              </div>
-            </div>
-            <Form.Group controlId="formDescription">
-              <Form.Label>Descripción</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingrese la descripción"
-                defaultValue={
-                  editingMaintenance ? editingMaintenance.description : ""
-                }
-                ref={description}
-              />
-            {/* </Form.Group>
+
+                <Col md={6}>
+                  <Form.Label>Descripción</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Ingrese la descripción"
+                    defaultValue={
+                      editingMaintenance ? editingMaintenance.description : ""
+                    }
+                    ref={description}
+                  />
+
+                </Col>
+              </Row>
+              {/* </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Imagen</Form.Label>
               {editingMaintenance && editingMaintenance.image && (
@@ -471,8 +530,12 @@ function VehicleMaintenances() {
                     style={{ width: '150px', height: '150px' }}
                   />
                 )} */}
-              </Form.Group>
-          </Form>
+              {/* </Form.Group> */}
+            </Row>
+          </form>
+
+
+
         </Modal.Body>
         <Modal.Footer>
           <Button variant="danger" onClick={handleCloseEditModal}>
@@ -482,7 +545,9 @@ function VehicleMaintenances() {
             Actualizar
           </Button>
         </Modal.Footer>
-      </Modal>
+      </Modal >
+
+
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title>Confirmar eliminación</Modal.Title>
