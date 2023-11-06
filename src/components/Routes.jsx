@@ -20,6 +20,7 @@ import RequestDays from "../pages/requestDays/RequestDays";
 import RequestGasoline from "../pages/requestGasoline/RequestGasoline";
 import Vehicle from "../pages/vehicle/Vehicle";
 import WorkingTimeDetails from "../pages/workingTimeControl/WorkingTimeDetails";
+import RequestList from "../pages/requestManagement/RequestList";
 
 const Routes = () => {
   const { token } = useAuth();
@@ -143,6 +144,14 @@ const Routes = () => {
           element: (
             <Layout>
               <RequestGasoline />
+            </Layout>
+          ),
+        },
+        {
+          path: "/requestManagement",
+          element: (
+            <Layout>
+              <RequestList />
             </Layout>
           ),
         },
