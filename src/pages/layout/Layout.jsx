@@ -105,6 +105,9 @@ function Layout({ children }) {
             <li>
               <a href="/requestForm">Formulario Solicitud</a>
             </li>
+            <li>
+              <a href="/requestManagement">Bitacora de Solicitudes</a>
+            </li>
           </ul>
         </nav>
 
@@ -146,7 +149,7 @@ function Layout({ children }) {
               </div>
             </div>
           </nav>
-          <div className="container m-4 d-flex justify-content-center">
+          <div className="container">
             {children}
           </div>
         </div>
