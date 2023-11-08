@@ -6,13 +6,20 @@ import Container from "react-bootstrap/Container";
 import { Dropdown } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import "../../stylesheets/sidebar.css";
-import "../../js/sidebar";
+
 import logo from "../../assets/LOGO-UNAHorizontal-BLANCO .png";
 import { useAuth } from "../../auth/AuthProviders";
 import { useState } from "react";
 
 function Layout({ children }) {
   const { user } = useAuth();
+  const [sidebarActive, setSidebarActive] = useState(false);
+
+  const toggleSidebar = () => {
+    setSidebarActive(!sidebarActive);
+  };
+
+  const sidebarClass = sidebarActive ? 'active' : '';
 
   const queryClient = new QueryClient();
 
@@ -22,15 +29,7 @@ function Layout({ children }) {
 
   const [isAdmin, setIsAdmin] = useState(false);
 
-  useEffect(() => {
-    {
-      $(document).ready(function () {
-        $("#sidebarCollapse").on("click", function () {
-          $("#sidebar").toggleClass("active");
-        });
-      });
-    }
-  }, []);
+  
   
   useEffect(() => {
     if (user) {
@@ -54,7 +53,7 @@ function Layout({ children }) {
     <>
       <div className="wrapper">
         {/* <!-- Sidebar  --> */}
-        <nav id="sidebar">
+        <nav id="sidebar" className={sidebarClass}>
           <div className="sidebar-header">
             <img className="logo-una" src={logo} alt="" />
           </div>
@@ -122,6 +121,7 @@ function Layout({ children }) {
                 type="button"
                 id="sidebarCollapse"
                 className="btn btn-info"
+                onClick={toggleSidebar}
               >
                 <i className="fas fa-align-left"></i>
                 <span></span>

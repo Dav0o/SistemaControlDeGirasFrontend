@@ -12,6 +12,7 @@ import withReactContent from "sweetalert2-react-content";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { Accordion } from "react-bootstrap";
 
+
 export const Vehicles = () => {
   const mutation = useMutation("vehicles", create);
 
