@@ -239,7 +239,7 @@ function VehicleMaintenances() {
         <h1 className="h3 mb-2 text-gray-800">
           Lista de Mantenimiento del Vehículo
         </h1>
-        <p class="mb-4">Lista de mantenimientos o incidentes</p>
+        <p className="mb-4">Lista de mantenimientos o incidentes</p>
         <div className="card shadow mb-4">
           <div className="card-header py-3">
             <div className="d-flex justify-content-between">
@@ -250,7 +250,7 @@ function VehicleMaintenances() {
                 "
                 onClick={handleShowFormModal}
               >
-                <i class="bi bi-plus-square"></i>
+                <i className="bi bi-plus-square"></i>
               </Button>
             </div>
           </div>
@@ -282,14 +282,14 @@ function VehicleMaintenances() {
                         className="bg-gradient-warning mr-1 text-light"
                         onClick={() => handleEditClick(maintenance.id)}
                       >
-                        <i class="bi bi-pencil-square"></i>
+                        <i className="bi bi-pencil-square"></i>
                       </Button>
                       <Button
                         variant="danger"
                         className="bg-gradient-danger mr-1 text-light"
                         onClick={() => handleOpenModal(maintenance.id)}
                       >
-                        <i class="bi bi-trash"></i>
+                        <i className="bi bi-trash"></i>
                       </Button>{" "}
 
 

@@ -79,6 +79,9 @@ function Layout({ children }) {
                   <a href="/workingTimeControl">Jornada</a>
                 </li>
                 <li>
+                  <a href="/stadisticControl">Estadísticas</a>
+                </li>
+                <li>
                   <a
                     href="#pageSubmenu"
                     data-toggle="collapse"
@@ -121,7 +124,7 @@ function Layout({ children }) {
                 className="btn btn-info"
               >
                 <i className="fas fa-align-left"></i>
-                <span>Toggle Sidebar</span>
+                <span></span>
               </button>
               <button
                 className="btn btn-dark d-inline-block d-lg-none ml-auto"

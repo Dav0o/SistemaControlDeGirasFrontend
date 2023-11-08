@@ -97,7 +97,7 @@ function ApproveRequest() {
     <>
       <Container className="container-fluid">
         <h1 className="h3 mb-2 text-gray-800">Solicitudes pendientes</h1>
-        <p class="mb-4">Lista de solicitudes pendientes de aprobación o anulación.</p>
+        <p className="mb-4">Lista de solicitudes pendientes de aprobación o anulación.</p>
         <div className="card shadow mb-4">
           <div className="card-header py-3">
             <p>Dé click en aprobar o anular para seleccionar una solicitud.</p>

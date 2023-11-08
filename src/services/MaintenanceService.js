@@ -1,5 +1,11 @@
 import api from "../api/config";
 
+
+export const getMaintenance = async () => {
+  let data = await api.get('maintenances').then(result => result.data);
+  return data;
+};
+
 export const create = async (maintenance) => { 
     if (maintenance.id) {
         let data = await api.put(`maintenances/${maintenance.id}`, maintenance).then(result => result.data);

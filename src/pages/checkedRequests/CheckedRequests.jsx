@@ -29,7 +29,7 @@ function CheckedRequests() {
     <>
       <Container className="mb-3">
         <h1 className="h3 mb-2 text-gray-800">Solicitudes </h1>
-        <p class="mb-4">Lista de solicitudes procesadas</p>
+        <p className="mb-4">Lista de solicitudes procesadas</p>
         <div className="card shadow mb-4">
           <div className="card-header py-3">
             <p>Dé click en detalles para seleccionar una solicitud</p>
