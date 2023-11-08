@@ -128,7 +128,7 @@ function Vehicle() {
                           variant="info"
                           className="bg-gradient-info text-light"
                         >
-                          <i class="bi bi-info-square"></i>
+                          <i className="bi bi-info-square"></i>
                         </Button>
                       </Link>
                     </td>

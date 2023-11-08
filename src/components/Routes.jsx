@@ -19,8 +19,10 @@ import DriverLog from "../pages/driverLog/DriverLog";
 import RequestDays from "../pages/requestDays/RequestDays";
 import RequestGasoline from "../pages/requestGasoline/RequestGasoline";
 import Vehicle from "../pages/vehicle/Vehicle";
+import StadisticControl from "../pages/stadisticControl/StadisticControl";
 import WorkingTimeDetails from "../pages/workingTimeControl/WorkingTimeDetails";
 import RequestList from "../pages/requestManagement/RequestList";
+
 
 const Routes = () => {
   const { token } = useAuth();
@@ -60,6 +62,14 @@ const Routes = () => {
           ),
         },
         {
+          path: "/stadisticControl",
+          element: (
+            <Layout>
+              <StadisticControl />
+            </Layout>
+          ),
+        },
+        {
           path: "/vehicles",
           element: (
             <Layout>
@@ -67,6 +77,7 @@ const Routes = () => {
             </Layout>
           ),
         },
+       
         {
           path: "/vehicle",
           element: (

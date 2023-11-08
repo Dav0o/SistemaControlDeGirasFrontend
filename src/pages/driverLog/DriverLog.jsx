@@ -171,7 +171,7 @@ const LinkStyle = {
       <h1 className="h3 mb-2 text-gray-800">
         Control Jornada de los Chóferes
       </h1>
-      <p class="mb-4">Lista de la jornada laboral del chófer</p>
+      <p className="mb-4">Lista de la jornada laboral del chófer</p>
       <div className="card shadow mb-4">
         <div className="card-header py-3">
           <div className="d-flex justify-content-between">
@@ -216,7 +216,7 @@ const LinkStyle = {
                       className="bg-gradient-warning mr-1 text-light"
                       onClick={() => handleEditClick(driverLog.id)}
                     >
-                      <i class="bi bi-pencil-square"></i>
+                      <i className="bi bi-pencil-square"></i>
                     </Button>
                     {/* <Link to={`/requestsDays/${requestDays.id}``/requestsGasoline/${requestGasoline.id}`} style={LinkStyle}>
                         <Button

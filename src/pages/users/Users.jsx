@@ -196,7 +196,7 @@ function Users() {
 
       <Container className="container-fluid">
         <h1 className="h3 mb-2 text-gray-800">Usuarios</h1>
-        <p class="mb-4">Lista de usuarios</p>
+        <p className="mb-4">Lista de usuarios</p>
 
         <div className="card shadow mb-4">
           {/* <div className="mb-3">
@@ -332,14 +332,14 @@ function Users() {
                         onClick={() => handleEditClick(user.id)}
                         
                       >
-                        <i class="bi bi-pencil-square"></i>
+                        <i className="bi bi-pencil-square"></i>
                       </Button>
                       <Button
                         variant="info"
                         className="bg-gradient-info text-light"
                         onClick={() => handleShowDetailModal(user)}
                       >
-                        <i class="bi bi-info-square"></i>
+                        <i className="bi bi-info-square"></i>
                       </Button>
 
                       <Link

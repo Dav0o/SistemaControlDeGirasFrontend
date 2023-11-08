@@ -140,7 +140,7 @@ function EndorseRequest() {
     <>
       <Container className="container-fluid">
         <h1 className="h3 mb-2 text-gray-800">Solicitudes a avalar</h1>
-        <p class="mb-4">Lista de solicitudes por avalar</p>
+        <p className="mb-4">Lista de solicitudes por avalar</p>
         <div className="card shadow mb-4">
           <div className="card-header py-3">
             <p>Dé click en avalar para seleccionar una solicitud</p>

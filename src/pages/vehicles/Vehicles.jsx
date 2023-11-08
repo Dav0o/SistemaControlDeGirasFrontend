@@ -321,7 +321,7 @@ export const Vehicles = () => {
     <>
       <Container className="container-fluid">
         <h1 className="h3 mb-2 text-gray-800">Vehículos</h1>
-        <p class="mb-4">Lista de vehículos</p>
+        <p className="mb-4">Lista de vehículos</p>
         <div className="card shadow mb-4">
 
           {/* <div className="d-flex justify-content-between"> */}
@@ -357,7 +357,7 @@ export const Vehicles = () => {
                           <div className="mb-3 mt-3">
                             <label htmlFor="inputCategory"
                               className="form-label">Categoría</label>
-                            <select class="form-select" id="inputCategory"
+                            <select className="form-select" id="inputCategory"
                               value={selectedCategory}
                               onChange={handleCategoryChange}
                               ref={category}
@@ -372,7 +372,7 @@ export const Vehicles = () => {
                               <option value="Moto Electrica">Motocicleta eléctrica</option>
                               <option value="Auto Electrico">Automóvil eléctrico</option>
                             </select>
-                            <div class="invalid-feedback">
+                            <div className="invalid-feedback">
                               Por favor, seleccione una opción.
                             </div>
                           </div>
@@ -417,7 +417,7 @@ export const Vehicles = () => {
                                   </option>
                                 ))}
                             </select>
-                            <div class="invalid-feedback">
+                            <div className="invalid-feedback">
                               Por favor, seleccione una opción.
                             </div>
                           </div>
@@ -446,7 +446,7 @@ export const Vehicles = () => {
                           <div className="mb-3 mt-3">
                             <label htmlFor="inputColor"
                               className="form-label">Color</label>
-                            <select class="form-select" id="inputColor" ref={color} required>
+                            <select className="form-select" id="inputColor" ref={color} required>
                               <option select disable value="">Seleccione una opción</option>
                               <option value="Blanco">Blanco</option>
                               <option value="Negro">Negro</option>
@@ -457,7 +457,7 @@ export const Vehicles = () => {
                               <option value="Plateado">Plateado</option>
                               <option value="Dorado">Dorado</option>
                             </select>
-                            <div class="invalid-feedback">
+                            <div className="invalid-feedback">
                               Por favor, seleccione una opción.
                             </div>
                           </div>
@@ -498,7 +498,7 @@ export const Vehicles = () => {
                               <option value="Diesel">Diésel</option>
                               <option value="Electrico">Eléctrico</option>
                             </select>
-                            <div class="invalid-feedback">
+                            <div className="invalid-feedback">
                               Por favor, seleccione una opción.
                             </div>
                           </div>
@@ -508,7 +508,7 @@ export const Vehicles = () => {
                           <div className="mb-3 mt-3">
                             <label htmlFor="inputTraction"
                               className="form-label">Tracción</label>
-                            <select class="form-select" id="inputTraction" ref={traction} required>
+                            <select className="form-select" id="inputTraction" ref={traction} required>
                               <option select disable value="">Seleccione una opción</option>
                               <option value="FWD">Tracción delantera (FWD)</option>
                               <option value="4X4">Tracción en las cuatro ruedas(4X4)</option>
@@ -518,7 +518,7 @@ export const Vehicles = () => {
                               <option value="part-time 4WD">Tracción integral (part-time 4WD)</option>
                               <option value="full-time 4WD">Tracción integral (full-time 4WD)</option>
                             </select>
-                            <div class="invalid-feedback">
+                            <div className="invalid-feedback">
                               Por favor, seleccione una opción.
                             </div>
                           </div>
@@ -642,7 +642,7 @@ export const Vehicles = () => {
                   onClick={handleShowFormModal}
                 >
                   {" "}
-                  <i class="bi bi-plus-square"></i>
+                  <i className="bi bi-plus-square"></i>
                 </Button>
               </div>
             </div> */}
@@ -687,14 +687,14 @@ export const Vehicles = () => {
                         className="bg-gradient-warning mr-1 text-light"
                         onClick={() => handleEditClick(vehicle.id)}
                       >
-                        <i class="bi bi-pencil-square"></i>
+                        <i className="bi bi-pencil-square"></i>
                       </Button>
                       <Button
                         variant="info"
                         className="bg-gradient-info text-light"
                         onClick={() => handleShowInfoModal(vehicle)}
                       >
-                        <i class="bi bi-info-square"></i>
+                        <i className="bi bi-info-square"></i>
                       </Button>
                     </td>
                   </tr>
@@ -737,7 +737,7 @@ export const Vehicles = () => {
                 <div className="mb-3 mt-3">
                   <label htmlFor="inputMake"
                     className="form-label">Marca</label>
-                  <select class="form-select" id="inputMake" data-live-search="true" ref={make} required>
+                  <select className="form-select" id="inputMake" data-live-search="true" ref={make} required>
                     <option select disable value="">Seleccione una opción</option>
                     <option value="Toyota">Toyota</option>
                     <option value="Tucson">Tucson</option>
@@ -747,7 +747,7 @@ export const Vehicles = () => {
                     <option value="Suzuki">Suzuki</option>
 
                   </select>
-                  <div class="invalid-feedback">
+                  <div className="invalid-feedback">
                     Por favor, seleccione una opción.
                   </div>
                 </div>
@@ -757,7 +757,7 @@ export const Vehicles = () => {
                 <div className="mb-3 mt-3">
                   <label htmlFor="inputModel"
                     className="form-label">Modelo</label>
-                  <select class="form-select" id="inputModel" data-live-search="true" ref={model} required>
+                  <select className="form-select" id="inputModel" data-live-search="true" ref={model} required>
                     <option select disable value="">Seleccione una opción</option>
                     <option value="Hilux">Hilux</option>
                     <option value="Yaris">Yaris</option>
@@ -767,7 +767,7 @@ export const Vehicles = () => {
                     <option value="Suzuki">Suzuki</option>
 
                   </select>
-                  <div class="invalid-feedback">
+                  <div className="invalid-feedback">
                     Por favor, seleccione una opción.
                   </div>
                 </div>
@@ -796,7 +796,7 @@ export const Vehicles = () => {
                 <div className="mb-3 mt-3">
                   <label htmlFor="inputCategory"
                     className="form-label">Categoría</label>
-                  <select class="form-select" id="inputCategoria" ref={category} required>
+                  <select className="form-select" id="inputCategoria" ref={category} required>
                     <option select disable value="">Seleccione una opción</option>
                     <option value="Automovil">Automóvil</option>
                     <option value="PickUp">Pick-Up</option>
@@ -807,7 +807,7 @@ export const Vehicles = () => {
                     <option value="Moto Electrica">Motocicleta eléctrica</option>
                     <option value="Auto Electrico">Automóvil eléctrico</option>
                   </select>
-                  <div class="invalid-feedback">
+                  <div className="invalid-feedback">
                     Por favor, seleccione una opción.
                   </div>
                 </div>
@@ -817,7 +817,7 @@ export const Vehicles = () => {
                 <div className="mb-3 mt-3">
                   <label htmlFor="inputColor"
                     className="form-label">Color</label>
-                  <select class="form-select" id="inputColor" ref={color} required>
+                  <select className="form-select" id="inputColor" ref={color} required>
                     <option select disable value="">Seleccione una opción</option>
                     <option value="Blanco">Blanco</option>
                     <option value="Negro">Negro</option>
@@ -828,7 +828,7 @@ export const Vehicles = () => {
                     <option value="Plateado">Plateado</option>
                     <option value="Dorado">Dorado</option>
                   </select>
-                  <div class="invalid-feedback">
+                  <div className="invalid-feedback">
                     Por favor, seleccione una opción.
                   </div>
                 </div>
@@ -868,7 +868,7 @@ export const Vehicles = () => {
                     <option value="Diesel">Diésel</option>
                     <option value="Electrico">Eléctrico</option>
                   </select>
-                  <div class="invalid-feedback">
+                  <div className="invalid-feedback">
                     Por favor, seleccione una opción.
                   </div>
                 </div>
@@ -878,7 +878,7 @@ export const Vehicles = () => {
                 <div className="mb-3 mt-3">
                   <label htmlFor="inputTraction"
                     className="form-label">Tracción</label>
-                  <select class="form-select" id="inputTraction" ref={traction} required>
+                  <select className="form-select" id="inputTraction" ref={traction} required>
                     <option select disable value="">Seleccione una opción</option>
                     <option value="FWD">Tracción delantera (FWD)</option>
                     <option value="4X4">Tracción en las cuatro ruedas(4X4)</option>
@@ -888,7 +888,7 @@ export const Vehicles = () => {
                     <option value="part-time 4WD">Tracción integral (part-time 4WD)</option>
                     <option value="full-time 4WD">Tracción integral (full-time 4WD)</option>
                   </select>
-                  <div class="invalid-feedback">
+                  <div className="invalid-feedback">
                     Por favor, seleccione una opción.
                   </div>
                 </div>
@@ -1027,7 +1027,7 @@ export const Vehicles = () => {
                   <Form.Group>
                     <Form.Label>Marca</Form.Label>
                     <select 
-                    class="form-select"
+                    className="form-select"
                       value={selectedMake}
                       onChange={(e) => setSelectedMake(e.target.value)}
                       required
@@ -1136,7 +1136,7 @@ export const Vehicles = () => {
                   <Form.Group>
                     <Form.Label>Modelo</Form.Label>
                     <select
-                     class="form-select" id="inputModel"
+                     className="form-select" id="inputModel"
                      value={selectedModel}
                      onChange={(e) => setSelectedModel(e.target.value)}
                       required
