@@ -143,7 +143,7 @@ const Routes = () => {
           ),
         },
         {
-          path: "/requestDays/:requestDaysId",
+          path: "/requestDays/:requestId",
           element: (
             <Layout>
               <RequestDays />
@@ -151,7 +151,7 @@ const Routes = () => {
           ),
         },
         {
-          path: "/requestGasoline/:requestGasolineId",
+          path: "/requestGasoline/:requestId",
           element: (
             <Layout>
               <RequestGasoline />

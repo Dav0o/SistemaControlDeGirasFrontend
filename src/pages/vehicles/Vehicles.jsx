@@ -1290,7 +1290,7 @@ export const Vehicles = () => {
                 </Col>
                 <Col md={3} className="text-right">
 
-                  <strong>Imagen</strong>
+                  
                   {selectedVehicle.image && (
                     <img
                       src={selectedVehicle.image}

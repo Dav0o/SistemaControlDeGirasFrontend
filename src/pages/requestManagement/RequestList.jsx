@@ -4,13 +4,13 @@ import { useQuery } from "react-query";
 import { getRequests } from "../../services/RequestService";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
+import { Link } from "react-router-dom";
 
 function RequestList() {
   const { data, isLoading, isError } = useQuery("requests", getRequests, {
     enabled: true,
   });
 
-  
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -20,8 +20,9 @@ function RequestList() {
   }
 
   const filteredData = data.filter(
-    (request) => request.itsEndorse === true && request.itsApprove === true ||
-      request.itsEndorse === true && request.itsCanceled === true
+    (request) =>
+      (request.itsEndorse === true && request.itsApprove === true) ||
+      (request.itsEndorse === true && request.itsCanceled === true)
   );
 
   return (
@@ -32,29 +33,36 @@ function RequestList() {
       </p>
 
       <div className="card shadow mb-4">
-      <div className="card-body">
-            {filteredData.map((request) => (
-              <Card key={request.id}>
-                <Card.Header>{request.consecutiveNumber}</Card.Header>
-                <Card.Body>
-                  <Card.Title>{request.objective}</Card.Title>
-                  <Card.Text>
-                    Fecha de salida {request.departureDate} con el destino de{" "}
-                    {request.destinyLocation}
-                  </Card.Text>
-
+        <div className="card-body">
+          {filteredData.map((request) => (
+            <Card key={request.id}>
+              <Card.Header>{request.consecutiveNumber}</Card.Header>
+              <Card.Body>
+                <Card.Title>{request.objective}</Card.Title>
+                <Card.Text>
+                  Fecha de salida {request.departureDate} con el destino de{" "}
+                  {request.destinyLocation}
+                </Card.Text>
+                <Link to={`/requestDays/${request.id}`}>
                   <Button
                     variant="info"
+                    className="bg-gradient-info text-light mr-2"
+                  >
+                    Horario de Trabajo
+                  </Button>
+                </Link>
+                <Link to={`/requestGasoline/${request.id}`}>
+                  <Button
+                    variant="warning"
                     className="bg-gradient-info text-light"
                   >
-                    <i class="bi bi-info-square"></i>
+                    Suministro de Combustible
                   </Button>
-
-                
-                </Card.Body>
-              </Card>
-            ))}
-          </div>
+                </Link>
+              </Card.Body>
+            </Card>
+          ))}
+        </div>
       </div>
     </Container>
   );
