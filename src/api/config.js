@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: 'https://controldegirasapi.azurewebsites.net/api/',
+    baseURL: 'https://control-de-giras.azurewebsites.net/api/',
 });
 
 
