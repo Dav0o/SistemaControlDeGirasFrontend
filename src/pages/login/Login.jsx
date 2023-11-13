@@ -39,7 +39,7 @@ function Login() {
       .catch((error) => {
         MySwal.fire({
           icon: "error",
-          text: "Algo salio mal!",
+          text: "¡Algo salió mal!",
         });
         if (error.response) {
           console.log(error.response);
@@ -66,7 +66,7 @@ function Login() {
           <div className="login-form  p-4 ">
             <form action="" id="login" method="post" onSubmit={handleSubmit}>
               <div className="form-group">
-                <label>Correo Electronico</label>
+                <label>Correo electrónico</label>
                 <input
                   type="email"
                   className="form-control"

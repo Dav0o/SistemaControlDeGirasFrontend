@@ -1,3 +1,5 @@
+
+const VehiclesMarcas =
 {
   "Automovil": {
     "Toyota": [
@@ -24,7 +26,9 @@
     "Formula": [
       " 4T 200",
       "LX200"
-     
+
     ]
-    }
+  }
 }
+
+export default VehiclesMarcas;

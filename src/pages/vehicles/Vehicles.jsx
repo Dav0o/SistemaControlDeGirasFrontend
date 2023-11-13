@@ -16,7 +16,57 @@ import { Accordion } from "react-bootstrap";
 export const Vehicles = () => {
   const mutation = useMutation("vehicles", create);
 
-
+  const VehiclesMarcas =
+  {
+    "Automovil": {
+      "Toyota": [
+        "Corolla",
+        "Camry"
+      ],
+  
+      "Hyundai": [
+        "Elantra",
+        "Kona"
+      ],
+  
+      "Honda": [
+        "Civic",
+        "Accord",
+        "Fit"
+      ]
+    },
+  
+    "PickUp": {
+      "Toyota": [
+        "Hilux"
+        
+      ]
+     },
+  
+     "SUV": {
+      "Toyota": [
+        "Rav4"
+      ],
+     
+      "Hyundai": [
+        "Tucson",
+        "Santa Fe"
+      ],
+      "Honda": [
+        "CR-V"
+        
+      ]
+    },
+  
+    "Motocicleta": {
+      "Formula": [
+        " 4T 200",
+        "LX200"
+       
+      ]
+      }
+  }
+  
   const [vehicleData, setVehicleData] = useState({});
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedMake, setSelectedMake] = useState('');
@@ -24,11 +74,13 @@ export const Vehicles = () => {
 
   useEffect(() => {
 
-    fetch("/src/pages/data/vehicleJSON.json")
+    setVehicleData(VehiclesMarcas)
+
+    /* fetch("/src/pages/data/vehicleJSON.json")
       .then((response) => response.json())
       .then((data) =>
         setVehicleData(data))
-      .catch((error) => console.error("Error al cargar los datos", error));
+      .catch((error) => console.error("Error al cargar los datos", error)); */
   }, []);
 
   //reinicia la selección
