@@ -19,7 +19,7 @@ function Layout({ children }) {
     setSidebarActive(!sidebarActive);
   };
 
-  const sidebarClass = sidebarActive ? 'active' : '';
+  const sidebarClass = sidebarActive ? "active" : "";
 
   const queryClient = new QueryClient();
 
@@ -29,8 +29,6 @@ function Layout({ children }) {
 
   const [isAdmin, setIsAdmin] = useState(false);
 
-  
-  
   useEffect(() => {
     if (user) {
       const roles = [];
@@ -66,11 +64,24 @@ function Layout({ children }) {
             {isAdmin && (
               <>
                 <li>
-                  <a href="/vehicles">Vehículos</a>
+                  <a
+                    href="#vehicleSubmenu"
+                    data-toggle="collapse"
+                    aria-expanded="false"
+                    className="dropdown-toggle"
+                  >
+                    Vehículos
+                  </a>
+                  <ul className="collapse list-unstyled" id="vehicleSubmenu">
+                    <li>
+                      <a href="/vehicles">Listado Vehículos</a>
+                    </li>
+                    <li>
+                      <a href="/vehicle">Mantenimientos</a>
+                    </li>
+                  </ul>
                 </li>
-                <li>
-                  <a href="/vehicle">Mantenimientos</a>
-                </li>
+
                 <li>
                   <a href="/users">Usuarios</a>
                 </li>
@@ -99,17 +110,16 @@ function Layout({ children }) {
                     <li>
                       <a href="/checkedRequests">Ver</a>
                     </li>
+                    <li>
+                      <a href="/requestForm">Formulario Solicitud</a>
+                    </li>
+                    <li>
+                      <a href="/requestManagement">Bitacora de Solicitudes</a>
+                    </li>
                   </ul>
                 </li>
               </>
             )}
-
-            <li>
-              <a href="/requestForm">Formulario Solicitud</a>
-            </li>
-            <li>
-              <a href="/requestManagement">Bitacora de Solicitudes</a>
-            </li>
           </ul>
         </nav>
 
@@ -152,9 +162,7 @@ function Layout({ children }) {
               </div>
             </div>
           </nav>
-          <div className="container">
-            {children}
-          </div>
+          <div className="container">{children}</div>
         </div>
       </div>
 

@@ -27,3 +27,8 @@ export const getUserByRole = async (userRole) => {
     let data = await api.get(`users/usersbyrole/${userRole}`).then(result => result.data);
     return data;
 }
+
+export const changePassword = async (user) => {
+    let data = await api.patch(`users`, user).then(result =>  result.data);
+    return data;
+}

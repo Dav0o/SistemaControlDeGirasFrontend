@@ -14,9 +14,8 @@ import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Accordion from "react-bootstrap/Accordion";
-import "datatables.net-responsive-dt";
-import "../../stylesheets/vies.css";
 
+import "../../stylesheets/vies.css";
 
 function Users() {
   const userDni = useRef(0);
@@ -44,26 +43,6 @@ function Users() {
     mutationKey: "user",
   });
 
-  const MySwal = withReactContent(Swal);
-
-  {
-    mutation.isError
-      ? MySwal.fire({
-          icon: "error",
-          text: "Algo salio mal!",
-        }).then(mutation.reset)
-      : null;
-  }
-  {
-    mutation.isSuccess
-      ? MySwal.fire({
-          icon: "success",
-          title: "Tu trabajo ha sido guardado!",
-          showConfirmButton: false,
-          timer: 1500,
-        })
-      : null;
-  }
   const [dataTable, setDataTable] = useState(null); // Estado para mantener la referencia del DataTable
 
   useEffect(() => {
@@ -75,6 +54,7 @@ function Users() {
     // Inicializa el DataTable después de renderizar los datos
 
     const newDataTable = new DataTable("#tableUsers", {
+      retrieve: true,
       dom: "lfBrtip",
       bLengthChange: false,
       responsive: true,
@@ -151,7 +131,6 @@ function Users() {
 
   const handleCloseEditModal = () => {
     setShowEditModal(false);
-    
   };
 
   const [editingUser, setEditingUser] = useState(null);
@@ -166,7 +145,7 @@ function Users() {
       phoneNumber: parseInt(userPhoneNumber.current.value),
       licenseUNA: parseInt(userLicenseUNA.current.value),
       email: userEmail.current.value,
-      password: '1234',
+
       state: editingUser.state,
     };
 
@@ -181,7 +160,6 @@ function Users() {
     setSelectedUser(user);
     setShowDetailModal(true);
   };
-  
 
   if (loadingUsers) {
     return <div>Loading...</div>;
@@ -193,7 +171,6 @@ function Users() {
 
   return (
     <>
-
       <Container className="container-fluid">
         <h1 className="h3 mb-2 text-gray-800">Usuarios</h1>
         <p className="mb-4">Lista de usuarios</p>
@@ -330,13 +307,12 @@ function Users() {
                         variant="warning"
                         className="bg-gradient-warning mr-1 text-light"
                         onClick={() => handleEditClick(user.id)}
-                        
                       >
                         <i className="bi bi-pencil-square"></i>
                       </Button>
                       <Button
                         variant="info"
-                        className="bg-gradient-info text-light"
+                        className="bg-gradient-info text-light mr-1"
                         onClick={() => handleShowDetailModal(user)}
                       >
                         <i className="bi bi-info-square"></i>
@@ -344,9 +320,17 @@ function Users() {
 
                       <Link
                         to={`/users/UserRole/${user.id}`}
-                        className="btn btn-warning mr-1 text-light"
+                        className="btn btn-secondary mr-1 text-light"
                       >
                         <i className="bi bi-person-gear"></i>
+                      </Link>
+                      <Link to={`/ChangePassword`}>
+                        <Button
+                          variant="success"
+                          className="bg-gradient-info text-light mr-1"
+                        >
+                          <i class="bi bi-shield-lock"></i>
+                        </Button>
                       </Link>
                     </td>
                   </tr>
@@ -473,9 +457,6 @@ function Users() {
           </Button>
         </Modal.Footer>
       </Modal>
-      
-
-     
     </>
   );
 }

@@ -33,7 +33,8 @@ function Vehicle() {
     const newDataTable = new DataTable("#tableMaintenance", {
       retrieve: true,
       responsive: true,
-      dom: "<'row' <'col-md-12 float-right'B>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>",
+      bLengthChange: false,
+      dom: "lfBrtip",
       buttons: [
         {
           extend: "print",

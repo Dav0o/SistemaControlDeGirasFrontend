@@ -22,6 +22,7 @@ import Vehicle from "../pages/vehicle/Vehicle";
 import StadisticControl from "../pages/stadisticControl/StadisticControl";
 import WorkingTimeDetails from "../pages/workingTimeControl/WorkingTimeDetails";
 import RequestList from "../pages/requestManagement/RequestList";
+import ChangePassword from "../pages/users/components/ChangePassword";
 
 
 const Routes = () => {
@@ -163,6 +164,14 @@ const Routes = () => {
           element: (
             <Layout>
               <RequestList />
+            </Layout>
+          ),
+        },
+        {
+          path: "/ChangePassword",
+          element: (
+            <Layout>
+              <ChangePassword />
             </Layout>
           ),
         },
