@@ -23,6 +23,7 @@ import StadisticControl from "../pages/stadisticControl/StadisticControl";
 import WorkingTimeDetails from "../pages/workingTimeControl/WorkingTimeDetails";
 import RequestList from "../pages/requestManagement/RequestList";
 import ChangePassword from "../pages/users/components/ChangePassword";
+import HoursControl from "../pages/workingTimeControl/components/HoursControl";
 
 
 const Routes = () => {
@@ -92,6 +93,14 @@ const Routes = () => {
           element: (
             <Layout>
               <VehicleMaintenances />
+            </Layout>
+          ),
+        },
+        {
+          path: "/hourscontrol/:logId",
+          element: (
+            <Layout>
+              <HoursControl />
             </Layout>
           ),
         },

@@ -108,7 +108,7 @@ function WorkingTime() {
   const handleSave = () =>{
     let newLog = {
         initialLogDate: initialLogDate.current.value,
-        ordinaryHours: ordinaryHours.current.value,
+        ordinaryHours: 0,
         bonusHours: 0,
         extraHours: 0,
         salary: 0,
@@ -162,18 +162,13 @@ function WorkingTime() {
                       </Col>
                     </Row>
                     <Row className="mb-2">
-                      <Col>
+                    
                         <Form.Label >
                           Fecha de inicio
                         </Form.Label>
                         <Form.Control type="date"  ref={initialLogDate}/>
-                      </Col>
-                      <Col>
-                        <Form.Label >
-                          Horas Ordinarias
-                        </Form.Label>
-                        <Form.Control type="number"  ref={ordinaryHours}/>
-                      </Col>
+                      
+                      
                     </Row>
 
                     <Button variant="primary" className="mt-3" onClick={handleSave}>
@@ -209,15 +204,25 @@ function WorkingTime() {
                       {request.user.name} {request.user.lastName1}
                     </td>
                     <td>
-                      {/* <Link to={`/workingTimeControl/${request.id}`} style={LinkStyle}> */}
+                     
                       <Button
                         variant="info"
-                        className="bg-gradient-info text-light"
+                        className="bg-gradient-info text-light mr-2"
                         onClick={() => handleShow(request)}
                       >
                         <i class="bi bi-info-square"></i>
                       </Button>
-                      {/* </Link> */}
+                      <Link to={`/hourscontrol/${request.id}`}>
+                      <Button
+                        variant="warning"
+                        className="bg-gradient-info text-light"
+                        
+                      >
+                        <i class="bi bi-clock"></i>
+                      </Button>
+                      </Link>
+                      
+                     
                     </td>
                   </tr>
                 ))}
