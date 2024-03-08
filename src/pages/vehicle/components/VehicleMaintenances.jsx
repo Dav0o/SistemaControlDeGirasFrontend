@@ -7,16 +7,16 @@ import Col from "react-bootstrap/Col";
 import { useQuery, useMutation } from "react-query";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { getByIdVehicle } from "../../../services/VehicleService";
-import {
-  create,
-  deleteMaintenance,
-} from "../../../services/MaintenanceService";
+import { create, deleteMaintenance } from "../../../services/MaintenanceService";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { useEffect } from "react";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import { Accordion } from "react-bootstrap";
+
 
 function VehicleMaintenances() {
+
   const { vehicleId } = useParams();
   const { isLoading, data, isError } = useQuery(["vehicles", vehicleId], () =>
     getByIdVehicle(vehicleId)
@@ -25,8 +25,11 @@ function VehicleMaintenances() {
 
   const [validated, setValidated] = useState(false);
 
+  const [newImages, setNewImages] = useState([]);
   const [imageUrl, setImageUrl] = useState('');
   const apiKey = '6c4a708d4bdee0384fae9c67a8558f9e';
+
+
 
 
   const handleImageUpload = async (e) => {
@@ -48,8 +51,7 @@ function VehicleMaintenances() {
         if (response.ok) {
           const data = await response.json();
           const uploadedImageUrl = data.data.url;
-          setImageUrl(uploadedImageUrl);
-          console.log('Url = ', uploadedImageUrl);
+          setImageUrl([...imageUrl, uploadedImageUrl]);
         } else {
           console.error('Error al subir la imagen');
         }
@@ -60,13 +62,67 @@ function VehicleMaintenances() {
   };
 
 
+  /////////////////////editar imagen//////////////////
+  const handleEditImageUpload = async (e) => {
+    const imageInput = e.target.files[0];
+
+    if (imageInput) {
+      try {
+        const formData = new FormData();
+        formData.append('image', imageInput);
+
+        const response = await fetch(
+          `https://api.imgbb.com/1/upload?key=${apiKey}`,
+          {
+            method: 'POST',
+            body: formData,
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          const uploadedImageUrl = data.data.url;
+
+          setNewImages((prevImages) => [...prevImages, uploadedImageUrl]);
+
+          console.log('Url = ', uploadedImageUrl);
+        } else {
+          console.error('error al subir la imagen');
+        }
+      } catch (error) {
+        console.error('error de solicitud', error);
+      }
+    }
+  };
+  ///////////////////////////////////////////////////
+  const removeImage = (indexToRemove) => {
+
+    setEditingMaintenance((prevMaintenance) => {
+      const updatedImages = prevMaintenance.image.split(',');
+      updatedImages.splice(indexToRemove, 1);
+      const serializedImages = updatedImages.join(',');
+
+      return {
+        ...prevMaintenance,
+        image: serializedImages,
+      };
+    });
+
+
+    Swal.fire('Imagen removida', 'Para confirmar su eliminación presione el botón "Actualizar"', 'success');
+
+  };
+
+  ////////////////////////////////////////////////
+
+
   const MySwal = withReactContent(Swal);
 
   {
     mutation.isError
       ? MySwal.fire({
         icon: "error",
-        text: "Algo salio mal!",
+        text: "¡Algo salió mal!",
       }).then(mutation.reset)
       : null;
   }
@@ -94,30 +150,67 @@ function VehicleMaintenances() {
 
 
 
-  const handleSave = (event) => {
+  const handleSave = () => {
 
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    } else {
-      setValidated(true);
+
+    if (!name.current.value.trim()) {
+      
+      Swal.fire({
+        icon: 'error', title: 'Error', text: 'El nombre es requerido'
+      });
+      return;
     }
-    if (form.checkValidity() === true) {
-      let newMaintenance = {
-        name: name.current.value,
-        severity: severity.current.value,
-        date: date.current.value,
-        type: type.current.value,
-        status: true,
-        description: description.current.value,
-        image: imageUrl,
-        vehicleId: vehicleId,
+    else if (!/^[a-zA-Z\s]*$/.test(name.current.value.trim())) {
 
-      };
-      mutation.mutateAsync(newMaintenance);
+      Swal.fire({ icon: 'error', title: 'Error', text: 'El nombre solo puede contener letras' });
+      return; 
+    }
+
+    if (!severity.current.value.trim()) {
+
+      Swal.fire({
+        icon: 'error', title: 'Error', text: 'La gravedad es requerida'
+      });
+      return;
+    }
+
+    if (!type.current.value.trim()) {
+
+      Swal.fire({
+        icon: 'error', title: 'Error', text: 'El tipo es requerido'
+      });
+      return;
+    }
+
+    if (!date.current.value.trim()) {
+      Swal.fire({
+        icon: 'error', title: 'Error', text: 'La fecha es requerida'
+      });
+      return;
+    }
+
+    let updatedImageString = '';
+    if (Array.isArray(imageUrl)) {
+      updatedImageString = imageUrl.filter(Boolean).join(',');
+    } else {
+      updatedImageString = imageUrl || '';
+    }
+    const dateValue = date.current.value;
+
+    let newMaintenance = {
+      name: name.current.value,
+      severity: severity.current.value,
+      date: dateValue,
+      type: type.current.value,
+      status: true,
+      description: description.current.value,
+      image: updatedImageString,
+      vehicleId: vehicleId,
+
     };
-  }
+    mutation.mutateAsync(newMaintenance);
+  };
+
 
 
   const handleEditClick = (maintenanceId) => {
@@ -182,14 +275,31 @@ function VehicleMaintenances() {
   const [showEditModal, setShowEditModal] = useState(false);
 
   const handleUpdate = () => {
+    if (!name.current.value.trim()) {
+      
+      Swal.fire({
+        icon: 'error', title: 'Error', text: 'El nombre es requerido'
+      });
+      return;
+    }
+    else if (!/^[a-zA-Z\s]*$/.test(name.current.value.trim())) {
+
+      Swal.fire({ icon: 'error', title: 'Error', text: 'El nombre solo puede contener letras' });
+      return; 
+    }
+
+    const updatedImages = [...editingMaintenance.image.split(','), ...newImages];
+    const updatedImageString = updatedImages.filter(Boolean).join(',');
+
     const updatedMaintenance = {
       id: editingMaintenance.id,
       name: name.current.value,
       severity: severity.current.value,
       type: type.current.value,
+      date: date.current.value,
       status: editingMaintenance.status,
       description: description.current.value,
-      image: imageUrl,
+      image: updatedImageString,
       vehicleId: vehicleId,
     };
 
@@ -233,27 +343,154 @@ function VehicleMaintenances() {
     color: "white",
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const formattedDate = date.toISOString().split('T')[0];
+    return formattedDate;
+  };
+
   return (
     <>
       <Container className="container-fluid">
-        <h1 className="h3 mb-2 text-gray-800">
-          Lista de Mantenimiento del Vehículo
-        </h1>
-        <p className="mb-4">Lista de mantenimientos o incidentes</p>
+        <h1 className="h3 mb-2 text-gray-800">Lista de Mantenimiento del Vehículo</h1>
+        <p class="mb-4">Lista de mantenimientos o incidentes</p>
         <div className="card shadow mb-4">
-          <div className="card-header py-3">
-            <div className="d-flex justify-content-between">
-              <div>Clik en el botón para crear un mantenimiento</div>
-              <Button
-                variant="success"
-                className="bg-gradient-success text-light
-                "
-                onClick={handleShowFormModal}
-              >
-                <i className="bi bi-plus-square"></i>
-              </Button>
-            </div>
-          </div>
+
+          <Accordion defaultActiveKey="1">
+            <Accordion.Item eventKey="0">
+              <Accordion.Header>Click en el botón para crear un vehículo</Accordion.Header>
+              <Accordion.Body>
+                <Form validated={validated} onSubmit={handleSave}>
+
+                  <Row>
+                    <Col md={6}>
+                      <div className="mb-3 mt-3">
+                        <label htmlFor="inputName"
+                          className="form-label">Nombre</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Ingrese el nombre"
+                          name="name"
+                          ref={name}
+                          required
+                        />
+                        <div className="valid-feedback"></div>
+                        <div className="invalid-feedback">El campo es requerido.
+                        </div>
+                      </div>
+                    </Col>
+
+                    <Col md={6}>
+                      <div className="mb-3 mt-3">
+                        <label htmlFor="inputGr"
+                          className="form-label">Gravedad</label>
+                        <select class="form-select" id="inputSeverity" ref={severity} required>
+                          <option select disable value="">Seleccione una opción</option>
+                          <option value="Leve">Leve</option>
+                          <option value="Moderado">Moderado</option>
+                          <option value="Grave">Grave</option>
+                          <option value="Critico">Crítico</option>
+                        </select>
+                        <div class="invalid-feedback">
+                          Por favor, seleccione una opción.
+                        </div>
+                      </div>
+                    </Col>
+
+                    <Row>
+                      <Col md={6}>
+                        <div className="mb-3 mt-3">
+                          <label htmlFor="inputType"
+                            className="form-label">Tipo</label>
+                          <select class="form-select" id="inputType" ref={type} required>
+                            <option select disable value="">Seleccione una opción</option>
+                            <option value="Mantenimiento">Mantenimiento</option>
+                            <option value="Incidente">Incidente</option>
+                          </select>
+                          <div class="invalid-feedback">
+                            Por favor, seleccione una opción.
+                          </div>
+                        </div>
+                      </Col>
+
+                      <Col md={6}>
+                        <div className="mb-3 mt-3">
+                          <label htmlFor="inputDate"
+                            className="form-label">Fecha</label>
+                          <input
+                            type="date"
+                            className="form-control"
+                            name="date"
+                            ref={date}
+                            required
+                          />
+                        </div>
+                      </Col>
+                    </Row>
+
+                    <Row>
+                      <Col md={6}>
+                        <div className="mb-3 mt-3">
+                          <label htmlFor="inputDescription"
+                            className="form-label">Descripción</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Ingrese la descripción"
+                            name="description"
+                            ref={description}
+                          />
+                          <div className="valid-feedback"></div>
+                        </div>
+                      </Col>
+
+
+                      <Col md={6}>
+
+                        <div className="mb-3 mt-3">
+                          <div>
+                            <Form.Label>Imagen</Form.Label>
+                            <div className="custom-file">
+                              <input
+                                type="file"
+                                className="custom-file-input"
+                                id="customFile"
+
+                                onChange={handleImageUpload}
+                                multiple
+                              />
+                              <label className="custom-file-label" htmlFor="customFile">
+                                Click para seleccionar una o más imágenes</label>
+                            </div>
+                            {Array.isArray(imageUrl) && imageUrl.map((url, index) => (
+                              <img
+                                key={index}
+                                src={url}
+                                alt={`Imagen ${index + 1}`}
+                                className="uploadedImg"
+                                style={{ maxWidth: '200px', maxHeight: '200px', marginRight: '10px', marginBottom: '10px' }}
+                              />
+                            ))}</div>
+                        </div>
+                      </Col>
+                    </Row>
+                  </Row>
+                </Form>
+                <Button variant="danger" onClick={handleCloseFormModal} style={{ marginRight: '10px' }}>
+                  Cancelar
+                </Button>
+
+                <Button variant="success" onClick={handleSave}>
+                  Guardar
+                </Button>
+
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
+
+
+
           <div className="card-body">
             <Table striped="columns">
               <thead>
@@ -282,14 +519,14 @@ function VehicleMaintenances() {
                         className="bg-gradient-warning mr-1 text-light"
                         onClick={() => handleEditClick(maintenance.id)}
                       >
-                        <i className="bi bi-pencil-square"></i>
+                        <i class="bi bi-pencil-square"></i>
                       </Button>
                       <Button
                         variant="danger"
                         className="bg-gradient-danger mr-1 text-light"
                         onClick={() => handleOpenModal(maintenance.id)}
                       >
-                        <i className="bi bi-trash"></i>
+                        <i class="bi bi-trash"></i>
                       </Button>{" "}
 
 
@@ -309,139 +546,8 @@ function VehicleMaintenances() {
         </Link>
       </Container>
 
-      <Modal show={modalCreate} onHide={handleCloseFormModal} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Crear mantenimiento</Modal.Title>
-        </Modal.Header>
 
-        <Modal.Body>
-          <Form validated={validated} onSubmit={handleSave}>
-
-            <Form>
-
-
-              <Row>
-                <Col md={6}>
-                  <div className="mb-3 mt-3">
-                    <label htmlFor="inputName"
-                      className="form-label">Nombre</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Ingrese el nombre"
-                      name="name"
-                      ref={name}
-                      required
-                    />
-                    <div className="valid-feedback"></div>
-                    <div className="invalid-feedback">El campo es requerido.
-                    </div>
-                  </div>
-                </Col>
-
-                <Col md={6}>
-                  <div className="mb-3 mt-3">
-                    <label htmlFor="inputGr"
-                      className="form-label">Gravedad</label>
-                    <select class="form-select" id="inputSeverity" ref={severity} required>
-                      <option select disable value="">Seleccione una opción</option>
-                      <option value="Leve">Leve</option>
-                      <option value="Moderado">Moderado</option>
-                      <option value="Grave">Grave</option>
-                      <option value="Critico">Crítico</option>
-                    </select>
-                    <div class="invalid-feedback">
-                      Por favor, seleccione una opción.
-                    </div>
-                  </div>
-                </Col>
-
-                <Row>
-                  <Col md={6}>
-                    <div className="mb-3 mt-3">
-                      <label htmlFor="inputType"
-                        className="form-label">Tipo</label>
-                      <select class="form-select" id="inputType" ref={type} required>
-                        <option select disable value="">Seleccione una opción</option>
-                        <option value="Mantenimiento">Mantenimiento</option>
-                        <option value="Incidente">Incidente</option>
-                      </select>
-                      <div class="invalid-feedback">
-                        Por favor, seleccione una opción.
-                      </div>
-                    </div>
-                  </Col>
-
-                  <Col md={6}>
-                    <div className="mb-3 mt-3">
-                      <label htmlFor="inputDate"
-                        className="form-label">Fecha</label>
-                      <input
-                        type="date"
-                        className="form-control"
-                        name="date"
-                        ref={date}
-                        required
-                      />
-                    </div>
-                  </Col>
-                </Row>
-
-                <Row>
-                  <Col md={6}>
-                    <div className="mb-3 mt-3">
-                      <label htmlFor="inputDescription"
-                        className="form-label">Descripción</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Ingrese la descripción"
-                        name="description"
-                        ref={description}
-                      />
-                      <div className="valid-feedback"></div>
-                    </div>
-                  </Col>
-
-
-                  <Col md={6}>
-
-                    <div className="mb-3 mt-3">
-                      <div>
-                        <Form.Label>Imagen</Form.Label>
-                        <div className="custom-file">
-                          <input
-                            type="file"
-                            className="custom-file-input"
-                            id="customFile"
-
-                            onChange={handleImageUpload}
-                          />
-                          <label className="custom-file-label" htmlFor="customFile">
-                          </label>
-                        </div>
-                        {imageUrl && <img src={imageUrl} alt="Imagen subida" className="uploadedImg"
-                          style={{ maxWidth: '200px', maxHeight: '200px' }} />}
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
-              </Row>
-            </Form>
-          </Form>
-
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="danger" onClick={handleCloseFormModal}>
-            Cancelar
-          </Button>
-          <Button variant="dark" onClick={handleSave}>
-            Guardar
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      <Modal show={showEditModal} onHide={handleCloseEditModal} centered>
+      <Modal show={showEditModal} onHide={handleCloseEditModal} size="lg" centered>
         <Modal.Header closeButton>
           <Modal.Title>Editar mantenimiento</Modal.Title>
         </Modal.Header>
@@ -449,7 +555,7 @@ function VehicleMaintenances() {
 
 
 
-        <form class="was-validated" >
+          <form class="was-validated" >
             <Row>
               <Col md={6}>
                 <Form.Group controlId="formName">
@@ -464,12 +570,12 @@ function VehicleMaintenances() {
                     required
                   />
                   <div className="valid-feedback"></div>
-                  <div className="invalid-feedback">El campo es requerido.
+                  <div className="invalid-feedback">
                   </div>
                 </Form.Group>
-              </Col>
 
-              <Col md={6}>
+
+
                 <Form.Group controlId="formType">
                   <Form.Label>Tipo</Form.Label>
                   <Form.Control as="select" ref={type}
@@ -478,60 +584,79 @@ function VehicleMaintenances() {
                     <option value="Incidente">Incidente</option>
                   </Form.Control>
                 </Form.Group>
-              </Col>
-
-              <Row>
-                <Col md={6}>
-                  <Form.Group controlId="formSeverity">
-                    <Form.Label>Gravedad</Form.Label>
-                    <Form.Control as="select" ref={severity} defaultValue={editingMaintenance ? editingMaintenance.severity : ""}>
-                      <option value="Leve">Leve</option>
-                      <option value="Moderado">Moderado</option>
-                      <option value="Grave">Grave</option>
-                      <option value="Critico">Crítico</option>
-                    </Form.Control>
-                  </Form.Group>
-
-                </Col>
 
 
-                {/* <Form.Group controlId="formPlaca">
+
+                <Form.Group controlId="formSeverity">
+                  <Form.Label>Gravedad</Form.Label>
+                  <Form.Control as="select" ref={severity} defaultValue={editingMaintenance ? editingMaintenance.severity : ""}>
+                    <option value="Leve">Leve</option>
+                    <option value="Moderado">Moderado</option>
+                    <option value="Grave">Grave</option>
+                    <option value="Critico">Crítico</option>
+                  </Form.Control>
+                </Form.Group>
+
+
+
+
+                <Form.Label>Descripción</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingrese la descripción"
+                  defaultValue={
+                    editingMaintenance ? editingMaintenance.description : ""
+                  }
+                  ref={description}
+                />
+
+
+                <Form.Group controlId="formDate">
                   <Form.Label>Fecha</Form.Label>
                   <Form.Control
                     type="date"
                     placeholder="Fecha de cuando sucedió"
                     defaultValue={
-                      editingMaintenance ? editingMaintenance.date : ""
+                      editingMaintenance ? formatDate(editingMaintenance.date) : ""
                     }
                     ref={date}
                   />
-                </Form.Group> */}
+                </Form.Group>
+              </Col>
 
-                <Col md={6}>
-                  <Form.Label>Descripción</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Ingrese la descripción"
-                    defaultValue={
-                      editingMaintenance ? editingMaintenance.description : ""
-                    }
-                    ref={description}
-                  />
-
-                </Col>
-              </Row>
-              {/* </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Imagen</Form.Label>
-              {editingMaintenance && editingMaintenance.image && (
-  <img
-                    src={editingMaintenance.image}
-                    alt="Imagen actual del mantenimiento"
-                    style={{ width: '150px', height: '150px' }}
-                  />
-                )} */}
-              {/* </Form.Group> */}
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>Imágenes </Form.Label>
+                  <div className='styled-table'>
+                    <div style={{ display: 'flex', overflowX: 'auto', gap: '10px' }}>
+                      {editingMaintenance && editingMaintenance.image && editingMaintenance.image.split(',').map((imageUrl, index) => (
+                        <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                          <td>
+                            <img
+                              src={imageUrl}
+                              alt={`Imagen ${index}`}
+                              style={{ maxWidth: '200px', maxHeight: '200px' }}
+                            />
+                          </td>
+                          <td>
+                            <Button variant='danger' onClick={() => removeImage(index)}>
+                              Eliminar
+                            </Button>
+                          </td>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <br>
+                  </br>
+                  <input type='file' accept='image/*' className='form-control-file' onChange={handleEditImageUpload} multiple />
+                  {newImages.map((imageUrl, index) => (
+                    <div key={index}>Nueva imagen {index + 1}</div>
+                  ))}
+                </Form.Group>
+              </Col>
             </Row>
+
           </form>
 
 
