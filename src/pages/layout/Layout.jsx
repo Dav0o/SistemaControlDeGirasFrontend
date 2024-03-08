@@ -13,6 +13,7 @@ import { useState } from "react";
 
 function Layout({ children }) {
   const { user } = useAuth();
+  
   const [sidebarActive, setSidebarActive] = useState(false);
 
   const toggleSidebar = () => {

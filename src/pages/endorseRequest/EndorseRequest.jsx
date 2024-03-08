@@ -13,6 +13,7 @@ import { getVehicles } from "../../services/VehicleService";
 import { useRef } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { useEffect } from "react";
 
 function EndorseRequest() {
   const { data, isLoading, isError } = useQuery("requests", getRequests, {
@@ -101,7 +102,7 @@ function EndorseRequest() {
       executingUnit: executingUnit.current.value,
       typeRequest: typeRequest.current.value,
       condition: condition.current.value,
-      priority: parseInt(priority.current.value),
+      priority: priority.current.value,
       personsAmount: parseInt(personsAmount.current.value),
       objective: objective.current.value,
       departureDate: departureDate.current.value,
@@ -135,6 +136,9 @@ function EndorseRequest() {
   }
 
   const filteredData = data.filter((item) => item.itsEndorse === false);
+
+  
+
 
   return (
     <>
@@ -183,7 +187,7 @@ function EndorseRequest() {
         </Modal.Header>
 
         <Modal.Body>
-          {selectedRequest && (
+          {selectedRequest && ( 
             <Form>
               <Form.Group>
                 <Form.Label>
@@ -222,13 +226,37 @@ function EndorseRequest() {
                 <Form.Label>
                   Seleccione el vehículo para la solicitud
                 </Form.Label>
-                <Form.Select aria-label="Default select example">
-                  <option>Lista de Vehículos</option>
-                  {vehicles.map((vehicle) => (
-                    <option value={vehicle.id} ref={vehicleId}>
-                      {vehicle.plate_Number} - {vehicle.category}
-                    </option>
-                  ))}
+                <Form.Select aria-label="Default select example" ref={vehicleId}>
+                  <option>Lista de Vehículos</option> 
+                  {/* -------------------------------------------------------------------------------------------------- */}
+                  {vehicles.map((vehicle) => {
+      // Verificar disponibilidad del vehículo
+      const isAvailable = data.every(request => {
+        // Convertir las fechas a objetos Date
+        const requestStartDate = new Date(request.departureDate);
+        const requestEndDate = new Date(request.arriveDate);
+
+        const selectedStartDate = new Date(selectedRequest.departureDate);
+        const selectedEndDate = new Date(selectedRequest.arriveDate);
+
+        // Comprobar si hay solapamiento de fechas
+        return (
+          (request.vehicleId !== vehicle.id || request.id === selectedRequest.id) || // Ignorar la solicitud actual si se está editando
+          (selectedStartDate >= requestEndDate || selectedEndDate <= requestStartDate)
+        );
+      });
+
+      // Si el vehículo está disponible, mostrarlo en la lista
+      if (isAvailable) {
+        return (
+          <option key={vehicle.id} value={vehicle.id}  >
+            {vehicle.plate_Number} - {vehicle.category}
+          </option>
+        );
+      } else {
+        return null; // No mostrar el vehículo si no está disponible
+      }
+    })}
                 </Form.Select>
               </Form.Group>
             </Form>
@@ -411,14 +439,7 @@ function EndorseRequest() {
                 </Col>
               </Row>
 
-              <Form.Group className="mb-2" controlId="formBasicPassword">
-                <Form.Label>Prioridad</Form.Label>
-                <Form.Control
-                  type="text"
-                  ref={priority}
-                  defaultValue={selectedRequest ? selectedRequest.priority : ""}
-                />
-              </Form.Group>
+            
 
               <Form.Group className="mb-2" controlId="formBasicPassword">
               <Form.Label>Prioridad</Form.Label>

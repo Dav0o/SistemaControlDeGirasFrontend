@@ -1,5 +1,6 @@
-body {
+/* body {
     font-family: "Lato", sans-serif;
+    
 }
 
 
@@ -40,6 +41,7 @@ body {
 @media screen and (min-width: 768px){
     .main{
         margin-left: 40%; 
+        
     }
 
     .sidenav{
@@ -51,7 +53,10 @@ body {
     }
 
     .login-form{
-        margin-top: 80%;
+        justify-content: center;
+        margin-top: 28%;
+        height: 45vh;
+        width: 100vh;
     }
 
     .register-form{
@@ -74,3 +79,4 @@ body {
     background-color: #000 !important;
     color: #fff;
 }
+ */
