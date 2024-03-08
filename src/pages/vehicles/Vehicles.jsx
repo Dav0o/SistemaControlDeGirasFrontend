@@ -134,6 +134,10 @@ export const Vehicles = () => {
       }
     }
   };
+
+
+
+
   const MySwal = withReactContent(Swal);
 
   {
@@ -233,6 +237,7 @@ export const Vehicles = () => {
     }
     if (form.checkValidity() === true) {
 
+      
       let updatedVehicle = {
         id: editingVehicle.id,
         plate_Number: plate_Number.current.value,
@@ -258,6 +263,18 @@ export const Vehicles = () => {
 
   }
   
+
+  //////////////editar imagen 
+  useEffect(() => {
+    getByIdVehicle(Vehicles, (vehicleData) => {
+      const imagesArray = vehicleDataData.image.split(',');
+      vehicleDataData.image = imagesArray;
+      setVehicleData(vehicleDataData);
+    });
+  }, [Vehicles]);
+  ////////////////////
+
+
   useEffect(() => {
     if (editingVehicle) {
       setSelectedCategory(editingVehicle.category);
@@ -686,20 +703,6 @@ export const Vehicles = () => {
           </div>
 
 
-
-          {/* </ModalFooter>
-                
-                <Button
-                  variant="success"
-                  className="bg-gradient-success text-light
-                  "
-                  onClick={handleShowFormModal}
-                >
-                  {" "}
-                  <i className="bi bi-plus-square"></i>
-                </Button>
-              </div>
-            </div> */}
 
 
           <div className="card-body">
@@ -1154,17 +1157,21 @@ export const Vehicles = () => {
                     </Form.Control>
                   </Form.Group>
 
-                  {/* <Form.Group>
-                  <Form.Label>Imagen</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Ingrese la imagen"
-                    defaultValue={
-                      editingVehicle ? editingVehicle.image : ""
-                    }
-                    ref={image}
-                  />
-                </Form.Group> */}
+                  <Form.Group>
+                    <Form.Label>Imagen</Form.Label>
+                    <Form.Control
+                      type="file"
+                      onChange={handleImageUpload}
+                    />
+                    {editingVehicle && editingVehicle.image && (
+                      <img
+                        src={editingVehicle.image}
+                        alt="Imagen del vehículo"
+                        className="uploadedImg"
+                        style={{ maxWidth: '200px', maxHeight: '200px' }}
+                      />
+                    )}
+                  </Form.Group>
                 </Col>
 
 
@@ -1262,6 +1269,7 @@ export const Vehicles = () => {
                       ref={oil_Change}
                     />
                   </Form.Group>
+
                 </Col>
               </Row>
             </Form>

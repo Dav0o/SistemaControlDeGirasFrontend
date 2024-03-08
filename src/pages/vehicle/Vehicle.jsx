@@ -92,12 +92,12 @@ function Vehicle() {
     <>
       <Container>
         <h1 className="h3 mb-2 text-gray-800">Mantenimiento</h1>
-        <p>Lista de vehiculos con su respectiva lista de mantenimiento</p>
+        <p>Lista de vehículos con su respectiva lista de mantenimiento</p>
         <div className="card shadow mb-4">
           <div className="card-header py-3">
             <p>
-              De click en el boton "detalles" para observar el mantenimiento de
-              cada vehiculo
+              Dé click en el botón "detalles" para observar el mantenimiento de
+              cada vehículo
             </p>
           </div>
           <div className="card-body">

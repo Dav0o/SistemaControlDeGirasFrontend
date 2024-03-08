@@ -27,6 +27,12 @@ function Users() {
   const userPassword = useRef(null);
   const userState = useRef(true);
 
+  const [showPassword, setShowPassword] = useState(false);
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+
   const {
     isLoading: loadingUsers,
     data: users,
@@ -103,7 +109,76 @@ function Users() {
     setDataTable(newDataTable);
   }, [data]); // Vuelve a inicializar el DataTable cuando los datos cambien
 
+//VALIDACIONES
+  const validateUserFields = (dni,licenseUNA, name, lastName1, lastName2, phoneNumber, email, password) => {
+    // Validación de la cédula
+    if (dni.length < 9 || dni.length > 15 || !/^[0-9a-zA-Z]+$/.test(dni)) {
+      return 'La cédula debe tener una longitud entre 9 y 15 caracteres y contener solo números y letras';
+    }
+
+     
+    if (!licenseUNA.trim() || !  /^[0-9]{6}$/.test(licenseUNA)) {
+      return 'La licencia debe contener 6 dígitos numerales';
+    }
+  
+    // Validación del nombre
+    if (!name.trim() || !/^[a-zA-Z\s]+$/.test(name)) {
+      return 'El nombre es requerido y solo puede contener letras';
+    }
+  
+    // Validación del primer apellido
+    if (!lastName1.trim() || !/^[a-zA-Z\s]+$/.test(lastName1)) {
+      return 'El primer apellido es requerido y solo puede contener letras';
+    }
+  
+    // Validación del segundo apellido
+    if (!lastName2.trim() || !/^[a-zA-Z\s]+$/.test(lastName2)) {
+      return 'El segundo apellido es requerido y solo puede contener letras';
+    }
+  
+    // Validación del número de teléfono
+    const phoneNumberRegex = /^\d{8}$/;
+    if (!phoneNumber.trim() || !phoneNumberRegex.test(phoneNumber)) {
+      return 'El teléfono debe contener exactamente 8 dígitos';
+    }
+  
+    // Validación del correo electrónico
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    if (!email.trim() || !emailRegex.test(email)) {
+      return 'El correo electrónico no es válido';
+    }
+  
+    // Validación de la contraseña
+    if (!password.trim()) {
+      return 'La contraseña es requerida';
+    }
+  
+  
+    return null;
+  };
+
   const handleSave = () => {
+
+    const validationError = validateUserFields(
+      userDni.current.value,
+      userLicenseUNA.current.value,
+      userName.current.value,
+      userLastName1.current.value,
+      userLastName2.current.value,
+      userPhoneNumber.current.value,
+      userEmail.current.value,
+      userPassword.current.value
+    );
+  
+    if (validationError) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: validationError,
+      });
+      return;
+    }
+  
     let newUser = {
       dni: parseInt(userDni.current.value),
       name: userName.current.value,
@@ -115,7 +190,24 @@ function Users() {
       password: userPassword.current.value,
       state: true,
     };
-    mutation.mutateAsync(newUser);
+    try
+    {
+       mutation.mutateAsync(newUser);
+     
+       Swal.fire({
+        icon: 'success',
+        title: 'Usuario creado',
+        text: 'El usuario se ha creado exitosamente',
+      });
+  
+ 
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Hubo un error al crear el usuario',
+      });
+    }
   };
 
   const handleEditClick = (UserId) => {
@@ -135,6 +227,7 @@ function Users() {
   const [editingUser, setEditingUser] = useState(null);
 
   const handleUpdate = () => {
+    
     let updatedUser = {
       id: editingUser.id,
       dni: parseInt(userDni.current.value),
@@ -168,6 +261,21 @@ function Users() {
   if (errorUsers) {
     return <div>Error</div>;
   }
+  /////////////generar contraseña automaticamente///////////////
+  const getPassword = () => {
+    userPassword.current.value = autoCreate(8);
+  };
+
+  function autoCreate(plength) {
+    var chars = "abcdefghijklmnopqrstubwsyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-._*/";
+    var password = '';
+    for (var i = 0; i < plength; i++) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+
+    return password;
+  }
+  /////////////////////////////////////////////////////////////////
 
   return (
     <>
@@ -192,6 +300,7 @@ function Users() {
                         <Form.Label htmlFor="inputDNI">Cédula</Form.Label>
                         <Form.Control
                           type="number"
+                          placeholder="101110111"
                           id="inputDNI"
                           ref={userDni}
                         />
@@ -245,28 +354,45 @@ function Users() {
                       ref={userPhoneNumber}
                     />
                     <Row>
-                      <Col>
+                      <Col xs={5}>
                         <Form.Label htmlFor="inputEmail">
                           Correo electrónico
                         </Form.Label>
                         <Form.Control
                           type="email"
+                          placeholder="example@ex.com"
                           id="inputEmail"
                           ref={userEmail}
                         />
                       </Col>
-                      <Col>
-                        <Form.Label htmlFor="inputPassword">
-                          Contraseña
-                        </Form.Label>
-                        <Form.Control
-                          type="password"
-                          id="inputPassword"
-                          ref={userPassword}
-                        />
-                      </Col>
-                    </Row>
-
+                         <Col xs={4}>
+                          <Form.Label htmlFor="inputPassword">
+                            Contraseña
+                          </Form.Label>
+                          <Form.Control
+                            type={showPassword ? "text" : "password"}
+                            id="inputPassword"
+                            ref={userPassword}
+                          />
+                        </Col>
+                         <Col xs={1}>
+                          <br></br>
+                          <Button variant="ligth" onClick={togglePasswordVisibility}>
+                            {showPassword ? (
+                              <i className="bi bi-eye-slash"></i>
+                            ) : (
+                              <i className="bi bi-eye"></i>
+                            )}
+                          </Button>
+                        </Col>
+                         <Col xs={1}>
+                         <br></br>
+                          <Button onClick={getPassword} variant="outline-primary">
+                            Generar clave
+                          </Button>
+                        </Col>
+                      </Row>
+                   
                     <Button
                       variant="primary"
                       onClick={handleSave}
@@ -288,7 +414,7 @@ function Users() {
                   <th>Cédula</th>
                   <th>Nombre</th>
                   <th>Apellidos</th>
-                  <th>Correo Electronico</th>
+                  <th>Correo Electrónico</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
