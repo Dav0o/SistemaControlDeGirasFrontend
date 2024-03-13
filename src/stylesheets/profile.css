@@ -1,0 +1,22 @@
+.img-profile{
+    width: 20%;
+}
+
+.container-profile{
+    display: flex;
+    align-items: center;
+}
+
+.card-profile{
+    display: flex;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .buttons-profile{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+}
+

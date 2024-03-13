@@ -67,10 +67,38 @@ function RequestForm() {
   const observations = useRef(null);
   const typeOfVehicle = useRef(null);
   const itsDriver = useRef(false);
+  const driverId = useRef(0);
+
+  function obtenerFechaYHora() {
+    // Obtener la fecha actual
+    const fecha = new Date();
+
+    // Obtener los componentes de la fecha
+    const anio = fecha.getFullYear();
+    const mes = fecha.getMonth() + 1; // Los meses comienzan desde 0
+    const dia = fecha.getDate();
+
+    // Obtener los componentes de la hora
+    const horas = fecha.getHours();
+    const minutos = fecha.getMinutes();
+
+    // Formatear los componentes para que tengan dos dígitos
+    const mesFormateado = mes < 10 ? '0' + mes : mes;
+    const diaFormateado = dia < 10 ? '0' + dia : dia;
+    const horasFormateadas = horas < 10 ? '0' + horas : horas;
+    const minutosFormateados = minutos < 10 ? '0' + minutos : minutos;
+
+    // Crear la cadena de texto con la fecha y la hora
+    const cadenaFechaHora = `${anio}${mesFormateado}${diaFormateado}${horasFormateadas}${minutosFormateados}`;
+
+    return cadenaFechaHora;
+}
+
+
 
   const handleSave = () => {
     let newRequest = {
-      consecutiveNumber: 20230000,
+      consecutiveNumber: obtenerFechaYHora()         ,
       executingUnit: executingUnit.current.value,
       typeRequest: typeRequest.current.value,
       condition: condition.current.value,
@@ -84,7 +112,8 @@ function RequestForm() {
       itinerary: itinerary.current.value,
       observations: observations.current.value,
       typeOfVehicle: typeOfVehicle.current.value,
-      itsDriver: itsDriver.current.valueOf,
+      itsDriver: itsDriver.current.value,
+      driverId: driverId.current.value,
     };
     mutation.mutate(newRequest);
     
@@ -182,13 +211,13 @@ function RequestForm() {
                   <Form.Label>Requiere chófer</Form.Label>
                   <Form.Check
                     type="checkbox"
-                    ref={itsDriver}
+                
                     onChange={handleDriverCheckboxChange} // Maneja el cambio de checkbox
                   />
                 </Form.Group>
                 {showDriverOptions && (
                   <Form.Group className="mb-2" controlId="driverSelect">
-                    <Form.Control as="select">
+                    <Form.Control as="select" ref={driverId}>
                       {drivers.map((driver) => (
                         <option key={driver.id} value={driver.id}>
                          {driver.dni} - {driver.name} {driver.lastName1} {driver.lastName2}

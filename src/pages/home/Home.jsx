@@ -1,13 +1,15 @@
 import React from "react";
 import "../../stylesheets/home.css";
 import { useEffect } from "react";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Button } from "react-bootstrap";
 import Image from 'react-bootstrap/Image';
 import { useAuth } from "../../auth/AuthProviders";
 import { useNavigate } from "react-router-dom";
 
+
 function Home() {
 
+  
   useEffect(() => {
     $(".carousel .carousel-item").each(function () {
       var minPerSlide = 4;
@@ -130,6 +132,8 @@ function Home() {
             </Row>
           </div>
         </Row>
+
+
       </div>
     </>
   );

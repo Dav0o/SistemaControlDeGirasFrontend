@@ -140,7 +140,7 @@ function UserRole() {
         ) : (
           <div>
             <div>
-              {rolesData.map((role) => (
+              {rolesData ? rolesData.map((role) => (
                 <div key={role.id}>
                   <label>
                     <input
@@ -152,7 +152,7 @@ function UserRole() {
                     {role.name}
                   </label>
                 </div>
-              ))}
+              )): ''}
             </div>
             <div>
               <Button

@@ -9,6 +9,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { create } from "../../services/MaintenanceService";
 import { useState, useEffect } from "react";
 import "datatables.net-buttons-dt";
+import Spinner from 'react-bootstrap/Spinner';
 
 function Vehicle() {
   const LinkStyle = {
@@ -81,7 +82,11 @@ function Vehicle() {
   }, [data]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+    );
   }
 
   if (isError) {

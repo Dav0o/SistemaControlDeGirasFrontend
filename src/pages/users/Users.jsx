@@ -300,7 +300,7 @@ function Users() {
                         <Form.Label htmlFor="inputDNI">Cédula</Form.Label>
                         <Form.Control
                           type="number"
-                          placeholder="101110111"
+                          placeholder=""
                           id="inputDNI"
                           ref={userDni}
                         />
@@ -450,14 +450,7 @@ function Users() {
                       >
                         <i className="bi bi-person-gear"></i>
                       </Link>
-                      <Link to={`/ChangePassword`}>
-                        <Button
-                          variant="success"
-                          className="bg-gradient-info text-light mr-1"
-                        >
-                          <i class="bi bi-shield-lock"></i>
-                        </Button>
-                      </Link>
+                    
                     </td>
                   </tr>
                 ))}
@@ -571,9 +564,7 @@ function Users() {
               <p>
                 <strong>Correo electrónico:</strong> {selectedUser.email}
               </p>
-              <p>
-                <strong>Estado:</strong> {selectedUser.state}
-              </p>
+             
             </div>
           )}
         </Modal.Body>

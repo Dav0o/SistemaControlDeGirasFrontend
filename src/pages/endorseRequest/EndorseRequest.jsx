@@ -14,6 +14,8 @@ import { useRef } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { useEffect } from "react";
+import SeeRequest from "../../components/SeeRequest";
+
 
 function EndorseRequest() {
   const { data, isLoading, isError } = useQuery("requests", getRequests, {
@@ -137,9 +139,6 @@ function EndorseRequest() {
 
   const filteredData = data.filter((item) => item.itsEndorse === false);
 
-  
-
-
   return (
     <>
       <Container className="container-fluid">
@@ -160,20 +159,27 @@ function EndorseRequest() {
                     <strong>{request.destinyLocation}</strong> y sale desde{" "}
                     <strong>{request.departureLocation}</strong>
                   </Card.Text>
-                  <Button
-                    variant="success"
-                    className="bg-gradient-success text-light mr-1"
-                    onClick={() => handleShowEndorse(request.id)}
-                  >
-                    Avalar
-                  </Button>
-                  <Button
-                    variant="dark"
-                    className="bg-gradient-secondary"
-                    onClick={() => handleShowEdit(request.id)}
-                  >
-                    Editar
-                  </Button>
+
+                  <div className="d-flex justify-content-between">
+                    <div>
+                      <Button
+                        variant="success"
+                        className="bg-gradient-success text-light mr-1"
+                        onClick={() => handleShowEndorse(request.id)}
+                      >
+                        Avalar
+                      </Button>
+                      <Button
+                        variant="dark"
+                        className="bg-gradient-secondary"
+                        onClick={() => handleShowEdit(request.id)}
+                      >
+                        Editar
+                      </Button>
+                    </div>
+
+                    <SeeRequest data={request}/>
+                  </div>
                 </Card.Body>
               </Card>
             ))}
@@ -187,7 +193,7 @@ function EndorseRequest() {
         </Modal.Header>
 
         <Modal.Body>
-          {selectedRequest && ( 
+          {selectedRequest && (
             <Form>
               <Form.Group>
                 <Form.Label>
@@ -226,37 +232,46 @@ function EndorseRequest() {
                 <Form.Label>
                   Seleccione el vehículo para la solicitud
                 </Form.Label>
-                <Form.Select aria-label="Default select example" ref={vehicleId}>
-                  <option>Lista de Vehículos</option> 
+                <Form.Select
+                  aria-label="Default select example"
+                  ref={vehicleId}
+                >
+                  <option>Lista de Vehículos</option>
                   {/* -------------------------------------------------------------------------------------------------- */}
                   {vehicles.map((vehicle) => {
-      // Verificar disponibilidad del vehículo
-      const isAvailable = data.every(request => {
-        // Convertir las fechas a objetos Date
-        const requestStartDate = new Date(request.departureDate);
-        const requestEndDate = new Date(request.arriveDate);
+                    // Verificar disponibilidad del vehículo
+                    const isAvailable = data.every((request) => {
+                      // Convertir las fechas a objetos Date
+                      const requestStartDate = new Date(request.departureDate);
+                      const requestEndDate = new Date(request.arriveDate);
 
-        const selectedStartDate = new Date(selectedRequest.departureDate);
-        const selectedEndDate = new Date(selectedRequest.arriveDate);
+                      const selectedStartDate = new Date(
+                        selectedRequest.departureDate
+                      );
+                      const selectedEndDate = new Date(
+                        selectedRequest.arriveDate
+                      );
 
-        // Comprobar si hay solapamiento de fechas
-        return (
-          (request.vehicleId !== vehicle.id || request.id === selectedRequest.id) || // Ignorar la solicitud actual si se está editando
-          (selectedStartDate >= requestEndDate || selectedEndDate <= requestStartDate)
-        );
-      });
+                      // Comprobar si hay solapamiento de fechas
+                      return (
+                        request.vehicleId !== vehicle.id ||
+                        request.id === selectedRequest.id || // Ignorar la solicitud actual si se está editando
+                        selectedStartDate >= requestEndDate ||
+                        selectedEndDate <= requestStartDate
+                      );
+                    });
 
-      // Si el vehículo está disponible, mostrarlo en la lista
-      if (isAvailable) {
-        return (
-          <option key={vehicle.id} value={vehicle.id}  >
-            {vehicle.plate_Number} - {vehicle.category}
-          </option>
-        );
-      } else {
-        return null; // No mostrar el vehículo si no está disponible
-      }
-    })}
+                    // Si el vehículo está disponible, mostrarlo en la lista
+                    if (isAvailable) {
+                      return (
+                        <option key={vehicle.id} value={vehicle.id}>
+                          {vehicle.plate_Number} - {vehicle.category}
+                        </option>
+                      );
+                    } else {
+                      return null; // No mostrar el vehículo si no está disponible
+                    }
+                  })}
                 </Form.Select>
               </Form.Group>
             </Form>
@@ -308,9 +323,7 @@ function EndorseRequest() {
                       }
                     />
                   </Form.Group>
-
                 </Col>
-               
               </Row>
 
               <Form.Group className="mb-2" controlId="formBasicPassword">
@@ -399,8 +412,6 @@ function EndorseRequest() {
                 />
               </Form.Group>
 
-              
-
               <Form.Group className="mb-2" controlId="formBasicPassword">
                 <Form.Label>Itinerario</Form.Label>
                 <Form.Control
@@ -439,17 +450,20 @@ function EndorseRequest() {
                 </Col>
               </Row>
 
-            
-
               <Form.Group className="mb-2" controlId="formBasicPassword">
-              <Form.Label>Prioridad</Form.Label>
-              <Form.Control as= "select" ref={priority} >
-              <option value="">Seleccione una opción</option>
-              <option value="Objetivos administrativos, académicos-administrativos y paraacadémicos">Objetivos administrativos, académicos-administrativos y paraacadémicos</option>
-              <option value="Cumplen con objetivos de cursos de docencia, según plan de estudios y programa del curso">Cumplen con objetivos de cursos de docencia, según plan de estudios y programa del curso</option>
-              </Form.Control>
-            </Form.Group>
-
+                <Form.Label>Prioridad</Form.Label>
+                <Form.Control as="select" ref={priority}>
+                  <option value="">Seleccione una opción</option>
+                  <option value="Objetivos administrativos, académicos-administrativos y paraacadémicos">
+                    Objetivos administrativos, académicos-administrativos y
+                    paraacadémicos
+                  </option>
+                  <option value="Cumplen con objetivos de cursos de docencia, según plan de estudios y programa del curso">
+                    Cumplen con objetivos de cursos de docencia, según plan de
+                    estudios y programa del curso
+                  </option>
+                </Form.Control>
+              </Form.Group>
 
               <Form.Group className="mb-2" controlId="formBasicPassword">
                 <Form.Label>Observaciones</Form.Label>

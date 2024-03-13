@@ -1,19 +1,28 @@
 import React, { useEffect } from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import { Outlet, NavLink } from "react-router-dom";
 import { NavDropdown, Navbar } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
-import { Dropdown } from "react-bootstrap";
+import { Dropdown, Nav } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import "../../stylesheets/sidebar.css";
 
 import logo from "../../assets/LOGO-UNAHorizontal-BLANCO .png";
 import { useAuth } from "../../auth/AuthProviders";
 import { useState } from "react";
+import { getByIdUser } from "../../services/UserService";
 
 function Layout({ children }) {
   const { user } = useAuth();
-  
+
+  const [userId, setUserId] = useState(0);
+
+  const {
+    isLoading: userLoading,
+    data: userData,
+    isError: userError,
+  } = useQuery(["users", userId], () => getByIdUser(userId));
+
   const [sidebarActive, setSidebarActive] = useState(false);
 
   const toggleSidebar = () => {
@@ -30,12 +39,20 @@ function Layout({ children }) {
 
   const [isAdmin, setIsAdmin] = useState(false);
 
+  // const [data, isLoading, isError] = useQuery('user', ()=>getByIdUser(user.claim));
+
   useEffect(() => {
     if (user) {
       const roles = [];
       for (const claim in user) {
         if (claim.endsWith("/role")) {
           roles.push(user[claim]);
+        }
+      }
+      for (const claim in user) {
+        if (claim.endsWith("/nameidentifier")) {
+         
+          setUserId(user[claim]);
         }
       }
       setUserRoles(roles);
@@ -47,6 +64,14 @@ function Layout({ children }) {
       setIsAdmin(userRoles[0].includes("Admin"));
     }
   }, [userRoles]);
+
+
+  if (userLoading) {
+    <div>isLoading...</div>;
+  }
+  if (userError) {
+    <div>isError...</div>;
+  }
 
   return (
     <>
@@ -61,6 +86,10 @@ function Layout({ children }) {
             <p>Control de Giras</p>
             <li>
               <a href="/">Inicio</a>
+            </li>
+
+            <li>
+              <a href="/requestForm">Formulario Solicitud</a>
             </li>
             {isAdmin && (
               <>
@@ -111,12 +140,8 @@ function Layout({ children }) {
                     <li>
                       <a href="/checkedRequests">Ver</a>
                     </li>
-                    <li>
-                      <a href="/requestForm">Formulario Solicitud</a>
-                    </li>
-                    <li>
-                      <a href="/requestManagement">Bitacora de Solicitudes</a>
-                    </li>
+
+                    
                   </ul>
                 </li>
               </>
@@ -126,7 +151,7 @@ function Layout({ children }) {
 
         {/* <!-- Page Content  --> */}
         <div id="content">
-          <nav className="navbar navbar-expand-lg navbar-light bg-light">
+          <nav className="navbar navbar-expand-lg navbar-light bg-light shadow">
             <div className="container-fluid">
               <button
                 type="button"
@@ -154,10 +179,30 @@ function Layout({ children }) {
                 id="navbarSupportedContent"
               >
                 <ul className="nav navbar-nav ml-auto">
-                  <NavDropdown title="Nombre Usuario" id="basic-nav-dropdown">
-                    <NavDropdown.Item href="/logout">
-                      <button className="btn btn-danger">Cerrar Sesión</button>
-                    </NavDropdown.Item>
+                  <NavDropdown
+                    title={
+                      userData
+                        ? `${userData.name} ${userData.lastName1}`
+                        : "..."
+                    }
+                    id="basic-nav-dropdown"
+                  >
+                    {userData ? (
+                      <>
+                        <NavDropdown.Item href="/profile">
+                          Mi perfil
+                        </NavDropdown.Item>
+                        <NavDropdown.Item href="/logout">
+                          Cerrar Sesión
+                        </NavDropdown.Item>
+                      </>
+                    ) : (
+                      <NavDropdown.Item href="/login">
+                        <button className="btn btn-success">
+                          Iniciar Sesión
+                        </button>
+                      </NavDropdown.Item>
+                    )}
                   </NavDropdown>
                 </ul>
               </div>
