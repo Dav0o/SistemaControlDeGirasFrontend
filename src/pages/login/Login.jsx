@@ -18,6 +18,7 @@ import {
   MDBIcon,
   MDBInput,
 } from "mdb-react-ui-kit";
+import { Link } from "react-router-dom";
 
 function Login() {
   const { setNewUser } = useAuth();
@@ -105,7 +106,8 @@ function Login() {
 
                   <MDBInput
                     wrapperClass="mb-4"
-                    label="Correo electronico"
+                    placeholder="Correo electrónico"
+
                     id="formControlLg"
                     type="email"
                     size="lg"
@@ -114,7 +116,7 @@ function Login() {
                   />
                   <MDBInput
                     wrapperClass="mb-4"
-                    label="Contraseña"
+                    placeholder="Contraseña"
                     id="formControlLg"
                     type="password"
                     size="lg"
@@ -125,18 +127,12 @@ function Login() {
                     Iniciar Sesión
                   </Button>
 
-                  <a className="small text-muted" href="#!">
-                    Forgot password?
-                  </a>
+                  <br />
+                  <Link to="/PasswordRecovery" className="small text-muted">
+                    ¿Olvidaste tu contraseña?
+                  </Link>
 
-                  <div className="d-flex flex-row justify-content-start">
-                    <a href="#!" className="small text-muted me-1">
-                      Terms of use.
-                    </a>
-                    <a href="#!" className="small text-muted">
-                      Privacy policy
-                    </a>
-                  </div>
+
                 </MDBCardBody>
               </MDBCol>
             </MDBRow>
