@@ -7,11 +7,19 @@ import Col from "react-bootstrap/Col";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
+import SeeRequest from "../../components/SeeRequest";
+import ButtonPDF from "../../components/ButtonPDF";
+
+
+
 
 function CheckedRequests() {
   const { data, isLoading, isError } = useQuery("requests", getRequests, {
     enabled: true,
   });
+
+  
+
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -41,16 +49,12 @@ function CheckedRequests() {
                 <Card.Body>
                   <Card.Title>{request.objective}</Card.Title>
                   <Card.Text>
-                    Fecha de salida {request.departureDate} con el destino de{" "}
+                    Fecha de salida {(request.departureDate).substring(0,10)} con el destino de{" "}
                     {request.destinyLocation}
                   </Card.Text>
 
-                  <Button
-                    variant="info"
-                    className="bg-gradient-info text-light"
-                  >
-                    <i class="bi bi-info-square"></i>
-                  </Button>
+                  <SeeRequest data={request}/>
+                 <ButtonPDF formData={request}/>
 
                   <Button
                     variant={

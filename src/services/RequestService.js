@@ -41,3 +41,8 @@ export const getRequests = async () => {
     let data = await api.get('requests').then(result => result.data);
     return data;
 };
+
+export const getRequestByUserId = async (userId) => {
+    let data = await api.get(`requests/byuser/${userId}`).then(result => result.data);
+    return data;
+}

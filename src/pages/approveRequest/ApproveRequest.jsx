@@ -1,5 +1,5 @@
 import React from "react";
-import { approve,cancel, getRequests } from "../../services/RequestService";
+import { approve, cancel, getRequests } from "../../services/RequestService";
 import { useMutation, useQuery } from "react-query";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -14,7 +14,7 @@ import { useRef } from "react";
 import { useState } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-
+import SeeRequest from "../../components/SeeRequest";
 
 function ApproveRequest() {
   const { data, isLoading, isError } = useQuery("requests", getRequests, {
@@ -22,16 +22,14 @@ function ApproveRequest() {
   });
 
   const mutation = useMutation("requests/approve", approve);
-  
-  
+
   const cancelMutation = useMutation("requests/cancel", cancel);
-  
+
   const handleCancel = async (requestId) => {
     const requestToCancel = data.find((request) => request.id === requestId);
     try {
       await cancelMutation.mutateAsync({ id: requestToCancel.id });
       MySwal.fire("Solicitud Cancelada", "", "success");
-    
     } catch (error) {
       console.error("Error al cancelar la solicitud", error);
       MySwal.fire("Error al cancelar la solicitud", error.message, "error");
@@ -42,29 +40,27 @@ function ApproveRequest() {
   {
     mutation.isError
       ? MySwal.fire({
-        icon: "error",
-        text: "Algo salió mal!",
-      }).then(mutation.reset)
+          icon: "error",
+          text: "Algo salió mal!",
+        }).then(mutation.reset)
       : null;
   }
   {
     mutation.isSuccess
       ? MySwal.fire({
-        icon: "success",
-        title: "¡Tu trabajo ha sido guardado!",
-        showConfirmButton: false,
-        timer: 1500,
-      }).then(mutation.reset)
+          icon: "success",
+          title: "¡Tu trabajo ha sido guardado!",
+          showConfirmButton: false,
+          timer: 1500,
+        }).then(mutation.reset)
       : null;
   }
 
-  
-  
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [showApproveModal, setShowApproveModal] = useState(false);
- 
+
   const handleClose = () => setShowApproveModal(false);
-  
+
   const handleShowApprove = (requestId) => {
     const requestToApprove = data.find((request) => request.id === requestId);
     setSelectedRequest(requestToApprove);
@@ -79,9 +75,6 @@ function ApproveRequest() {
     mutation.mutateAsync(updateRequest);
   };
 
-
-
-
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -91,13 +84,18 @@ function ApproveRequest() {
   }
 
   const filteredData = data.filter(
-    (request) => request.itsApprove === false && request.itsEndorse === true  && request.itsCanceled=== false
+    (request) =>
+      request.itsApprove === false &&
+      request.itsEndorse === true &&
+      request.itsCanceled === false
   );
   return (
     <>
       <Container className="container-fluid">
         <h1 className="h3 mb-2 text-gray-800">Solicitudes pendientes</h1>
-        <p className="mb-4">Lista de solicitudes pendientes de aprobación o anulación.</p>
+        <p className="mb-4">
+          Lista de solicitudes pendientes de aprobación o anulación.
+        </p>
         <div className="card shadow mb-4">
           <div className="card-header py-3">
             <p>Dé click en aprobar o anular para seleccionar una solicitud.</p>
@@ -112,23 +110,32 @@ function ApproveRequest() {
                     Fecha de salida {request.departureDate} con el destino de{" "}
                     {request.destinyLocation}
                   </Card.Text>
-                  <Button
-                    variant="success"
-                    className="bg-gradient-success text-light 
+                  <div className="d-flex flex-row justify-content-between">
+                    <div className="">
+                      <Button
+                        variant="success"
+                        className="bg-gradient-success text-light 
                     "
-                    onClick={() => handleShowApprove(request.id)}
-                  >
-                    Aprobar
-                  </Button>
+                        onClick={() => handleShowApprove(request.id)}
+                      >
+                        Aprobar
+                      </Button>
 
-                  <Button
-                    variant="danger"
-                    className="bg-gradient-danger text-light"
-                    onClick={() => handleCancel(request.id)}
-                  >
-                    Anular
-                  </Button>
-
+                      <Button
+                        variant="danger"
+                        className="bg-gradient-danger text-light"
+                        onClick={() => handleCancel(request.id)}
+                      >
+                        Anular
+                      </Button>
+                    </div>
+                    <div>
+                      <Button>
+                        {" "}
+                        <SeeRequest data={request} />
+                      </Button>
+                    </div>
+                  </div>
                 </Card.Body>
               </Card>
             ))}

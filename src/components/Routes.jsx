@@ -24,8 +24,14 @@ import WorkingTimeDetails from "../pages/workingTimeControl/WorkingTimeDetails";
 import RequestList from "../pages/requestManagement/RequestList";
 import ChangePassword from "../pages/users/components/ChangePassword";
 import HoursControl from "../pages/workingTimeControl/components/HoursControl";
+
 import PasswordRecovery from "../pages/login/PasswordRecovery";
 import ResetPassword from "../pages/login/ResetPassword";
+
+import MyProfile from "../pages/profile/MyProfile";
+import MyRequests from "../pages/profile/components/MyRequests";
+
+
 
 const Routes = () => {
   const { token } = useAuth();
@@ -53,6 +59,22 @@ const Routes = () => {
           element: (
             <Layout>
               <Users />
+            </Layout>
+          ),
+        },
+        {
+          path: "/profile",
+          element: (
+            <Layout>
+              <MyProfile />
+            </Layout>
+          ),
+        },
+        {
+          path: "/profile/requests",
+          element: (
+            <Layout>
+              <MyRequests />
             </Layout>
           ),
         },

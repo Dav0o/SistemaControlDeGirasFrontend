@@ -5,118 +5,36 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useMutation, useQuery } from "react-query";
-import { create, getByIdVehicle, getVehicles } from "../../services/VehicleService";
+import {
+  changeStatus,
+  create,
+  getByIdVehicle,
+  getVehicles,
+} from "../../services/VehicleService";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { Accordion } from "react-bootstrap";
 
-
 export const Vehicles = () => {
   const mutation = useMutation("vehicles", create);
-
-  const VehiclesMarcas =
-  {
-    "Automovil": {
-      "Toyota": [
-        "Corolla",
-        "Camry"
-      ],
-  
-      "Hyundai": [
-        "Elantra",
-        "Kona"
-      ],
-  
-      "Honda": [
-        "Civic",
-        "Accord",
-        "Fit"
-      ]
-    },
-  
-    "PickUp": {
-      "Toyota": [
-        "Hilux"
-        
-      ]
-     },
-  
-     "SUV": {
-      "Toyota": [
-        "Rav4"
-      ],
-     
-      "Hyundai": [
-        "Tucson",
-        "Santa Fe"
-      ],
-      "Honda": [
-        "CR-V"
-        
-      ]
-    },
-  
-    "Motocicleta": {
-      "Formula": [
-        " 4T 200",
-        "LX200"
-       
-      ]
-      }
-  }
-  
-  const [vehicleData, setVehicleData] = useState({});
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedMake, setSelectedMake] = useState('');
-  const [selectedModel, setSelectedModel] = useState('');
-
-  useEffect(() => {
-
-    setVehicleData(VehiclesMarcas)
-
-    /* fetch("/src/pages/data/vehicleJSON.json")
-      .then((response) => response.json())
-      .then((data) =>
-        setVehicleData(data))
-      .catch((error) => console.error("Error al cargar los datos", error)); */
-  }, []);
-
-  //reinicia la selección
-  const handleCategoryChange = (event) => {
-    setSelectedCategory(event.target.value);
-    setSelectedMake('');
-    setSelectedModel('');
-  };
-
-  useEffect(() => {
-    if (selectedCategory) {
-      const makes = Object.keys(vehicleData[selectedCategory] || {});
-
-      console.log("Marcas disponibles:", makes);
-
-    }
-  }, [selectedCategory]);
-
-
-
-
-  const [imageUrl, setImageUrl] = useState('');
-  const apiKey = '6c4a708d4bdee0384fae9c67a8558f9e';
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const apiKey = "6c4a708d4bdee0384fae9c67a8558f9e";
 
   const handleImageUpload = async (e) => {
     const imageInput = e.target.files[0];
 
     if (imageInput) {
       const formData = new FormData();
-      formData.append('image', imageInput);
+      formData.append("image", imageInput);
 
       try {
         const response = await fetch(
           `https://api.imgbb.com/1/upload?key=${apiKey}`,
           {
-            method: 'POST',
+            method: "POST",
             body: formData,
           }
         );
@@ -125,37 +43,34 @@ export const Vehicles = () => {
           const data = await response.json();
           const uploadedImageUrl = data.data.url;
           setImageUrl(uploadedImageUrl);
-          console.log('Url = ', uploadedImageUrl);
+          console.log("Url = ", uploadedImageUrl);
         } else {
-          console.error('Error al subir la imagen');
+          console.error("Error al subir la imagen");
         }
       } catch (error) {
-        console.error('Error de solicitud', error);
+        console.error("Error de solicitud", error);
       }
     }
   };
-
-
-
 
   const MySwal = withReactContent(Swal);
 
   {
     mutation.isError
       ? MySwal.fire({
-        icon: "error",
-        text: "Algo salió mal!",
-      }).then(mutation.reset)
+          icon: "error",
+          text: "Algo salió mal!",
+        }).then(mutation.reset)
       : null;
   }
   {
     mutation.isSuccess
       ? MySwal.fire({
-        icon: "success",
-        title: "Tu trabajo ha sido guardado!",
-        showConfirmButton: false,
-        timer: 1500,
-      }).then(mutation.reset)
+          icon: "success",
+          title: "Tu trabajo ha sido guardado!",
+          showConfirmButton: false,
+          timer: 1500,
+        }).then(mutation.reset)
       : null;
   }
 
@@ -167,38 +82,25 @@ export const Vehicles = () => {
     enabled: true,
   });
 
-  const [validated, setValidated] = useState(false);
-
   const handleSave = (event) => {
-
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-
-    } else {
-      setValidated(true);
-    }
-    if (form.checkValidity() === true) {
-      let newVehicle = {
-        plate_Number: plate_Number.current.value,
-        make: make.current.value,
-        model: model.current.value,
-        category: category.current.value,
-        traction: traction.current.value,
-        year: parseInt(year.current.value),
-        color: color.current.value,
-        capacity: parseInt(capacity.current.value),
-        engine_capacity: parseInt(engine_capacity.current.value),
-        mileage: parseInt(mileage.current.value),
-        fuel: fuel.current.value,
-        oil_Change: "2023-09-01",
-        status: true,
-        image: imageUrl
-      };
-      mutation.mutateAsync(newVehicle);
+    let newVehicle = {
+      plate_Number: plate_Number.current.value,
+      make: make.current.value,
+      model: model.current.value,
+      category: category.current.value,
+      traction: traction.current.value,
+      year: parseInt(year.current.value),
+      color: color.current.value,
+      capacity: parseInt(capacity.current.value),
+      engine_capacity: parseInt(engine_capacity.current.value),
+      mileage: parseInt(mileage.current.value),
+      fuel: fuel.current.value,
+      oil_Change: oil_Change.current.value,
+      status: true,
+      image: imageUrl,
     };
-  }
+    mutation.mutateAsync(newVehicle);
+  };
 
   const plate_Number = useRef(null);
   const make = useRef(null);
@@ -214,7 +116,6 @@ export const Vehicles = () => {
   const oil_Change = useRef(null);
   const status = useRef(true);
 
-
   const handleEditClick = (vehicleId) => {
     const vehicleToEdit = data.find((vehicle) => vehicle.id === vehicleId);
     setEditingVehicle(vehicleToEdit);
@@ -226,60 +127,42 @@ export const Vehicles = () => {
   };
 
   const handleUpdate = (event) => {
-
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-
-    } else {
-      setValidated(true);
-    }
-    if (form.checkValidity() === true) {
-
-      
-      let updatedVehicle = {
-        id: editingVehicle.id,
-        plate_Number: plate_Number.current.value,
-        make: make.current.value,
-        model: model.current.value,
-        category: category.current.value,
-        traction: traction.current.value,
-        year: year.current.value,
-        color: color.current.value,
-        capacity: capacity.current.value,
-        engine_capacity: engine_capacity.current.value,
-        mileage: mileage.current.value,
-        fuel: fuel.current.value,
-        oil_Change: "2023-09-01",
-        status: editingVehicle.status,
-        image: imageUrl,
-      };
-
-      mutation.mutateAsync(updatedVehicle).then(() => {
-        setShowEditModal(false);
-      });
+    let updatedVehicle = {
+      id: editingVehicle.id,
+      plate_Number: plate_Number.current.value,
+      make: make.current.value,
+      model: model.current.value,
+      category: category.current.value,
+      traction: traction.current.value,
+      year: year.current.value,
+      color: color.current.value,
+      capacity: capacity.current.value,
+      engine_capacity: engine_capacity.current.value,
+      mileage: mileage.current.value,
+      fuel: fuel.current.value,
+      oil_Change: oil_Change.current.value,
+      status: editingVehicle.status,
+      image: imageUrl,
     };
 
-  }
-  
+    mutation.mutateAsync(updatedVehicle).then(() => {
+      setShowEditModal(false);
+    });
+  };
 
-  //////////////editar imagen 
+  //////////////editar imagen
   useEffect(() => {
     getByIdVehicle(Vehicles, (vehicleData) => {
-      const imagesArray = vehicleDataData.image.split(',');
+      const imagesArray = vehicleDataData.image.split(",");
       vehicleDataData.image = imagesArray;
       setVehicleData(vehicleDataData);
     });
   }, [Vehicles]);
   ////////////////////
 
-
   useEffect(() => {
     if (editingVehicle) {
       setSelectedCategory(editingVehicle.category);
-      setSelectedMake(editingVehicle.make);
-      setSelectedModel(editingVehicle.model);
     }
   }, [editingVehicle]);
 
@@ -303,24 +186,23 @@ export const Vehicles = () => {
   const handleCapacity = (e) => {
     const rangeCapacity = e.target.value;
     if (rangeCapacity > 80 || rangeCapacity < 1) {
-      capacity.current.value = '';
+      capacity.current.value = "";
     }
   };
 
   const handleYear = (e) => {
     const inputValue = e.target.value;
 
-
     const currentYear = new Date().getFullYear();
 
     if (inputValue < 1980 || inputValue > currentYear) {
-      e.target.setCustomValidity('El año debe estar entre 1980 y ' + currentYear);
+      e.target.setCustomValidity(
+        "El año debe estar entre 1980 y " + currentYear
+      );
     } else {
-      e.target.setCustomValidity('');
+      e.target.setCustomValidity("");
     }
   };
-
-
 
   useEffect(() => {
     if (dataTable) {
@@ -379,6 +261,13 @@ export const Vehicles = () => {
     setDataTable(newDataTable);
   }, [data]); // Vuelve a inicializar el DataTable cuando los datos cambien
 
+  const mutationStatus = useMutation("vehicles", changeStatus);
+
+  function handleStatus(id) {
+    mutationStatus.mutateAsync(id);
+    window.location.reload();
+  }
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -387,30 +276,33 @@ export const Vehicles = () => {
     return <div>Error</div>;
   }
 
-
   return (
     <>
       <Container className="container-fluid">
         <h1 className="h3 mb-2 text-gray-800">Vehículos</h1>
         <p className="mb-4">Lista de vehículos</p>
         <div className="card shadow mb-4">
-
           {/* <div className="d-flex justify-content-between"> */}
           {/* <div>Click en el botón para crear un vehículo</div>
               <div> */}
           <div>
             <Accordion defaultActiveKey="1">
               <Accordion.Item eventKey="0">
-                <Accordion.Header>Click en el botón para crear un vehículo</Accordion.Header>
+                <Accordion.Header>
+                  Click en el botón para crear un vehículo
+                </Accordion.Header>
                 <Accordion.Body>
-                  <Form validated={validated} onSubmit={handleSave}>
+                  <Form onSubmit={handleSave}>
                     <Container>
                       <Row>
-
                         <Col md={4}>
                           <div className="mb-3 mt-3">
-                            <label htmlFor="inputplate_Number"
-                              className="form-label">Placa</label>
+                            <label
+                              htmlFor="inputplate_Number"
+                              className="form-label"
+                            >
+                              Placa
+                            </label>
                             <input
                               type="text"
                               className="form-control"
@@ -420,28 +312,41 @@ export const Vehicles = () => {
                               required
                             />
                             <div className="valid-feedback"></div>
-                            <div className="invalid-feedback">El campo es requerido.</div>
+                            <div className="invalid-feedback">
+                              El campo es requerido.
+                            </div>
                           </div>
                         </Col>
 
                         <Col md={4}>
                           <div className="mb-3 mt-3">
-                            <label htmlFor="inputCategory"
-                              className="form-label">Categoría</label>
-                            <select className="form-select" id="inputCategory"
-                              value={selectedCategory}
-                              onChange={handleCategoryChange}
+                            <label
+                              htmlFor="inputCategory"
+                              className="form-label"
+                            >
+                              Categoría
+                            </label>
+                            <select
+                              className="form-select"
+                              id="inputCategory"
                               ref={category}
-                              required>
-                              <option select disable value="">Seleccione una opción</option>
+                              required
+                            >
+                              <option select disable value="">
+                                Seleccione una opción
+                              </option>
                               <option value="Automovil">Automóvil</option>
                               <option value="PickUp">Pick-Up</option>
                               <option value="Motocicleta">Motocicleta</option>
                               <option value="Buseta">Buseta</option>
                               <option value="Bus">Bus</option>
                               <option value="SUV">SUV</option>
-                              <option value="Moto Electrica">Motocicleta eléctrica</option>
-                              <option value="Auto Electrico">Automóvil eléctrico</option>
+                              <option value="Moto Electrica">
+                                Motocicleta eléctrica
+                              </option>
+                              <option value="Auto Electrico">
+                                Automóvil eléctrico
+                              </option>
                             </select>
                             <div className="invalid-feedback">
                               Por favor, seleccione una opción.
@@ -451,20 +356,17 @@ export const Vehicles = () => {
 
                         <Col md={4}>
                           <div className="mb-3 mt-3">
-                            <label htmlFor="inputMake"
-                              className="form-label">Marca</label>
-                            <select class="form-select" value={selectedMake}
-                              onChange={(e) => setSelectedMake(e.target.value)}
+                            <label htmlFor="inputMake" className="form-label">
+                              Marca
+                            </label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Ingrese la marca"
+                              name="plate_Number"
+                              ref={make}
                               required
-                              ref={make}>
-                              <option select disable value="">Seleccione una opción</option>
-
-                              {Object.keys(vehicleData[selectedCategory] || {}).map((make) => (
-                                <option key={make} value={make}>
-                                  {make}
-                                </option>
-                              ))}
-                            </select>
+                            />
                             <div class="invalid-feedback">
                               Por favor, seleccione una opción.
                             </div>
@@ -472,22 +374,17 @@ export const Vehicles = () => {
                         </Col>
                         <Col md={4}>
                           <div className="mb-3 mt-3">
-                            <label htmlFor="inputModel"
-                              className="form-label">Modelo</label>
-                            <select class="form-select" id="inputModel"
-                              value={selectedModel}
-                              onChange={(e) => setSelectedModel(e.target.value)}
+                            <label htmlFor="inputModel" className="form-label">
+                              Modelo
+                            </label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Ingrese el modelo"
+                              name="plate_Number"
+                              ref={model}
                               required
-                              ref={model} >
-                              <option select disable value="">Seleccione una opción</option>
-                              {vehicleData[selectedCategory] &&
-                                vehicleData[selectedCategory][selectedMake] &&
-                                vehicleData[selectedCategory][selectedMake].map((model) => (
-                                  <option key={model} value={model}>
-                                    {model}
-                                  </option>
-                                ))}
-                            </select>
+                            />
                             <div className="invalid-feedback">
                               Por favor, seleccione una opción.
                             </div>
@@ -496,8 +393,9 @@ export const Vehicles = () => {
 
                         <Col md={4}>
                           <div className="mb-3 mt-3">
-                            <label htmlFor="inputYear"
-                              className="form-label">Año</label>
+                            <label htmlFor="inputYear" className="form-label">
+                              Año
+                            </label>
                             <input
                               type="number"
                               className="form-control"
@@ -506,19 +404,28 @@ export const Vehicles = () => {
                               ref={year}
                               onChange={handleYear}
                               required
-
                             />
                             <div className="valid-feedback"></div>
-                            <div className="invalid-feedback">El año debe estar entre 1980 y el año actual.</div>
+                            <div className="invalid-feedback">
+                              El año debe estar entre 1980 y el año actual.
+                            </div>
                           </div>
                         </Col>
 
                         <Col md={4}>
                           <div className="mb-3 mt-3">
-                            <label htmlFor="inputColor"
-                              className="form-label">Color</label>
-                            <select className="form-select" id="inputColor" ref={color} required>
-                              <option select disable value="">Seleccione una opción</option>
+                            <label htmlFor="inputColor" className="form-label">
+                              Color
+                            </label>
+                            <select
+                              className="form-select"
+                              id="inputColor"
+                              ref={color}
+                              required
+                            >
+                              <option select disable value="">
+                                Seleccione una opción
+                              </option>
                               <option value="Blanco">Blanco</option>
                               <option value="Negro">Negro</option>
                               <option value="Gris">Gris</option>
@@ -537,8 +444,12 @@ export const Vehicles = () => {
                       <Row>
                         <Col md={4}>
                           <div className="mb-3 mt-3">
-                            <label htmlFor="inputCapacity"
-                              className="form-label">Capacidad</label>
+                            <label
+                              htmlFor="inputCapacity"
+                              className="form-label"
+                            >
+                              Capacidad
+                            </label>
                             <input
                               type="number"
                               className="form-control"
@@ -550,20 +461,29 @@ export const Vehicles = () => {
                               size="2"
                               onInput={handleCapacity}
                               required
-
-
                             />
                             <div className="valid-feedback"></div>
-                            <div className="invalid-feedback">Digite un número que se encuentre en el rango de 1 a 80.</div>
+                            <div className="invalid-feedback">
+                              Digite un número que se encuentre en el rango de 1
+                              a 80.
+                            </div>
                           </div>
                         </Col>
 
                         <Col md={4}>
                           <div className="mb-3 mt-3">
-                            <label htmlFor="inputFuel"
-                              className="form-label">Gasolina</label>
-                            <select class="form-select" id="inputFuel" ref={fuel} required>
-                              <option select disable value="">Seleccione una opción</option>
+                            <label htmlFor="inputFuel" className="form-label">
+                              Gasolina
+                            </label>
+                            <select
+                              class="form-select"
+                              id="inputFuel"
+                              ref={fuel}
+                              required
+                            >
+                              <option select disable value="">
+                                Seleccione una opción
+                              </option>
                               <option value="Regular">Regular</option>
                               <option value="Super">Super</option>
                               <option value="Diesel">Diésel</option>
@@ -577,17 +497,28 @@ export const Vehicles = () => {
 
                         <Col md={4}>
                           <div className="mb-3 mt-3">
-                            <label htmlFor="inputTraction"
-                              className="form-label">Tracción</label>
-                            <select className="form-select" id="inputTraction" ref={traction} required>
-                              <option select disable value="">Seleccione una opción</option>
-                              <option value="FWD">Tracción delantera (FWD)</option>
-                              <option value="4X4">Tracción en las cuatro ruedas(4X4)</option>
-                              <option value="RWD">Tracción trasera (RWD)</option>
-                              <option value="AWD">Tracción total (AWD) </option>
-                              <option value="FR-AWD">Tracción delantera (FR-AWD)</option>
-                              <option value="part-time 4WD">Tracción integral (part-time 4WD)</option>
-                              <option value="full-time 4WD">Tracción integral (full-time 4WD)</option>
+                            <label
+                              htmlFor="inputTraction"
+                              className="form-label"
+                            >
+                              Tracción
+                            </label>
+                            <select
+                              className="form-select"
+                              id="inputTraction"
+                              ref={traction}
+                              required
+                            >
+                              <option select disable value="">
+                                Seleccione una opción
+                              </option>
+
+                              <option value="4X4">
+                                Tracción en las cuatro ruedas(4X4)
+                              </option>
+                              <option value="4X2">
+                                Tracción de dos ruedas(4X2)
+                              </option>
                             </select>
                             <div className="invalid-feedback">
                               Por favor, seleccione una opción.
@@ -599,67 +530,71 @@ export const Vehicles = () => {
                       <Row>
                         <Col md={4}>
                           <div className="mb-3 mt-3">
-                            <label htmlFor="inputEngine_Capacity"
-                              className="form-label">Cilindraje</label>
+                            <label
+                              htmlFor="inputEngine_Capacity"
+                              className="form-label"
+                            >
+                              Cilindraje
+                            </label>
                             <input
                               type="number"
                               className="form-control"
                               placeholder="Ingrese el cilindraje"
                               name="engine_capacity"
-
                               ref={engine_capacity}
                               required
                               min="0"
-
-
                             />
                             <div className="valid-feedback"></div>
-                            <div className="invalid-feedback">El campo es requerido.</div>
+                            <div className="invalid-feedback">
+                              El campo es requerido.
+                            </div>
                           </div>
                         </Col>
 
                         <Col md={4}>
                           <div className="mb-3 mt-3">
-                            <label htmlFor="inputMileage"
-                              className="form-label">Kilometraje</label>
+                            <label
+                              htmlFor="inputMileage"
+                              className="form-label"
+                            >
+                              Kilometraje
+                            </label>
                             <input
                               type="number"
                               className="form-control"
                               placeholder="Ingrese el kilometraje"
                               name="Mileage"
-
                               ref={mileage}
                               required
                               min="0"
-
                             />
                             <div className="valid-feedback"></div>
-                            <div className="invalid-feedback">El campo es requerido.</div>
+                            <div className="invalid-feedback">
+                              El campo es requerido.
+                            </div>
                           </div>
                         </Col>
 
                         <Col md={4}>
                           <div className="mb-3 mt-3">
-                            <label htmlFor="inputOil_Change"
-                              className="form-label">Cambio de aceite</label>
+                            <label
+                              htmlFor="inputOil_Change"
+                              className="form-label"
+                            >
+                              Próximo cambio de aceite
+                            </label>
                             <input
                               type="date"
                               className="form-control"
                               name="Oil_Change"
-
                               ref={oil_Change}
                               required
-
                             />
                           </div>
-
                         </Col>
                       </Row>
-                      {/*               
-                     <div className="valid-feedback"></div>
-                     <div className="invalid-feedback">El campo es requerido.</div> */}
-                      {/* </div>
-                   </div> */}
+
                       <Row>
                         <Col md={4}>
                           <Form.Group className="mb-3">
@@ -669,14 +604,24 @@ export const Vehicles = () => {
                                 type="file"
                                 className="custom-file-input"
                                 id="customFile"
-
                                 onChange={handleImageUpload}
                               />
-                              <label className="custom-file-label" htmlFor="customFile">
-                              </label>
+                              <label
+                                className="custom-file-label"
+                                htmlFor="customFile"
+                              ></label>
                             </div>
-                            {imageUrl && <img src={imageUrl} alt="Imagen subida" className="uploadedImg"
-                              style={{ maxWidth: '200px', maxHeight: '200px' }} />}
+                            {imageUrl && (
+                              <img
+                                src={imageUrl}
+                                alt="Imagen subida"
+                                className="uploadedImg"
+                                style={{
+                                  maxWidth: "200px",
+                                  maxHeight: "200px",
+                                }}
+                              />
+                            )}
                           </Form.Group>
                         </Col>
                       </Row>
@@ -684,15 +629,15 @@ export const Vehicles = () => {
                       {/* </Modal.Body>
                   
                    <ModalFooter> */}
-                      <Button variant="danger"
-                        onClick={handleCloseFormModal}>
+                      <Button variant="danger" onClick={handleCloseFormModal}>
                         Cancelar
                       </Button>
 
                       <Button
                         variant="success"
-                        className="bg-gradient-success" onClick={handleSave}>
-
+                        className="bg-gradient-success"
+                        onClick={handleSave}
+                      >
                         Guardar
                       </Button>
                     </Container>
@@ -701,9 +646,6 @@ export const Vehicles = () => {
               </Accordion.Item>
             </Accordion>
           </div>
-
-
-
 
           <div className="card-body">
             <Table
@@ -762,308 +704,19 @@ export const Vehicles = () => {
         </div>
       </Container>
 
-      <Modal show={showFormModal} onHide={handleCloseFormModal} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Crear vehiculo</Modal.Title>
-        </Modal.Header>
-
-        <Modal.Body>
-
-
-          <div className="col-md-6">
-            <Row>
-              <Col md={4}>
-                <div className="mb-3 mt-3">
-                  <label htmlFor="inputplate_Number"
-                    className="form-label">Placa</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Ingrese la placa"
-                    name="plate_Number"
-
-                    ref={plate_Number}
-                    required
-                  />
-                  <div className="valid-feedback"></div>
-                  <div className="invalid-feedback">El campo es requerido.</div>
-                </div>
-
-              </Col>
-              <Col md={4}>
-                <div className="mb-3 mt-3">
-                  <label htmlFor="inputMake"
-                    className="form-label">Marca</label>
-                  <select className="form-select" id="inputMake" data-live-search="true" ref={make} required>
-                    <option select disable value="">Seleccione una opción</option>
-                    <option value="Toyota">Toyota</option>
-                    <option value="Tucson">Tucson</option>
-                    <option value="Acent">Accent</option>
-                    <option value="Chevrolet">Chevrolet</option>
-                    <option value="Hiunday">Hiunday</option>
-                    <option value="Suzuki">Suzuki</option>
-
-                  </select>
-                  <div className="invalid-feedback">
-                    Por favor, seleccione una opción.
-                  </div>
-                </div>
-              </Col>
-
-              <Col md={4}>
-                <div className="mb-3 mt-3">
-                  <label htmlFor="inputModel"
-                    className="form-label">Modelo</label>
-                  <select className="form-select" id="inputModel" data-live-search="true" ref={model} required>
-                    <option select disable value="">Seleccione una opción</option>
-                    <option value="Hilux">Hilux</option>
-                    <option value="Yaris">Yaris</option>
-                    <option value="RAV4">RAV4</option>
-                    <option value="Corolla">Corolla</option>
-                    <option value="LandCruiser">LandCruiser</option>
-                    <option value="Suzuki">Suzuki</option>
-
-                  </select>
-                  <div className="invalid-feedback">
-                    Por favor, seleccione una opción.
-                  </div>
-                </div>
-              </Col>
-
-              <Col md={4}>
-                <div className="mb-3 mt-3">
-                  <label htmlFor="inputYear"
-                    className="form-label">Año</label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    placeholder="Ingrese el año"
-                    name="year"
-                    ref={year}
-                    required
-                    min="1980"
-                    max="2023"
-                  />
-                  <div className="valid-feedback"></div>
-                  <div className="invalid-feedback">El campo es requerido.</div>
-                </div>
-              </Col>
-
-              <Col md={4}>
-                <div className="mb-3 mt-3">
-                  <label htmlFor="inputCategory"
-                    className="form-label">Categoría</label>
-                  <select className="form-select" id="inputCategoria" ref={category} required>
-                    <option select disable value="">Seleccione una opción</option>
-                    <option value="Automovil">Automóvil</option>
-                    <option value="PickUp">Pick-Up</option>
-                    <option value="Motocicleta">Motocicleta</option>
-                    <option value="Buseta">Buseta</option>
-                    <option value="Bus">Bus</option>
-                    <option value="SUV">SUV</option>
-                    <option value="Moto Electrica">Motocicleta eléctrica</option>
-                    <option value="Auto Electrico">Automóvil eléctrico</option>
-                  </select>
-                  <div className="invalid-feedback">
-                    Por favor, seleccione una opción.
-                  </div>
-                </div>
-              </Col>
-
-              <Col md={4}>
-                <div className="mb-3 mt-3">
-                  <label htmlFor="inputColor"
-                    className="form-label">Color</label>
-                  <select className="form-select" id="inputColor" ref={color} required>
-                    <option select disable value="">Seleccione una opción</option>
-                    <option value="Blanco">Blanco</option>
-                    <option value="Negro">Negro</option>
-                    <option value="Gris">Gris</option>
-                    <option value="Rojo">Rojo</option>
-                    <option value="Azul">Azul</option>
-                    <option value="Verde">Verde</option>
-                    <option value="Plateado">Plateado</option>
-                    <option value="Dorado">Dorado</option>
-                  </select>
-                  <div className="invalid-feedback">
-                    Por favor, seleccione una opción.
-                  </div>
-                </div>
-              </Col>
-            </Row>
-
-            <Row>
-              <Col md={4}>
-                <div className="mb-3 mt-3">
-                  <label htmlFor="inputCapacity"
-                    className="form-label">Capacidad</label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    placeholder="Ingrese la capacidad"
-                    name="capacity"
-
-                    ref={capacity}
-                    required
-                    min="1"
-                    max="70"
-                    pattern="[0-9]{2}"
-                  />
-                  <div className="valid-feedback"></div>
-                  <div className="invalid-feedback">El campo es requerido.</div>
-                </div>
-              </Col>
-
-              <Col md={4}>
-                <div className="mb-3 mt-3">
-                  <label htmlFor="inputFuel"
-                    className="form-label">Gasolina</label>
-                  <select class="form-select" id="inputFuel" ref={fuel} required>
-                    <option select disable value="">Seleccione una opción</option>
-                    <option value="Regular">Regular</option>
-                    <option value="Super">Super</option>
-                    <option value="Diesel">Diésel</option>
-                    <option value="Electrico">Eléctrico</option>
-                  </select>
-                  <div className="invalid-feedback">
-                    Por favor, seleccione una opción.
-                  </div>
-                </div>
-              </Col>
-
-              <Col md={4}>
-                <div className="mb-3 mt-3">
-                  <label htmlFor="inputTraction"
-                    className="form-label">Tracción</label>
-                  <select className="form-select" id="inputTraction" ref={traction} required>
-                    <option select disable value="">Seleccione una opción</option>
-                    <option value="FWD">Tracción delantera (FWD)</option>
-                    <option value="4X4">Tracción en las cuatro ruedas(4X4)</option>
-                    <option value="RWD">Tracción trasera (RWD)</option>
-                    <option value="AWD">Tracción total (AWD) </option>
-                    <option value="FR-AWD">Tracción delantera (FR-AWD)</option>
-                    <option value="part-time 4WD">Tracción integral (part-time 4WD)</option>
-                    <option value="full-time 4WD">Tracción integral (full-time 4WD)</option>
-                  </select>
-                  <div className="invalid-feedback">
-                    Por favor, seleccione una opción.
-                  </div>
-                </div>
-              </Col>
-            </Row>
-
-            <Row>
-              <Col md={4}>
-                <div className="mb-3 mt-3">
-                  <label htmlFor="inputEngine_Capacity"
-                    className="form-label">Cilindraje</label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    placeholder="Ingrese el cilindraje"
-                    name="engine_capacity"
-
-                    ref={engine_capacity}
-                    required
-                    min="0"
-                    pattern="[0-9]"
-                  />
-                  <div className="valid-feedback"></div>
-                  <div className="invalid-feedback">El campo es requerido.</div>
-                </div>
-              </Col>
-
-              <Col md={4}>
-                <div className="mb-3 mt-3">
-                  <label htmlFor="inputMileage"
-                    className="form-label">Kilometraje</label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    placeholder="Ingrese el kilometraje"
-                    name="Mileage"
-                    ref={mileage}
-                    required
-                    min="0"
-
-                  />
-                  <div className="valid-feedback"></div>
-                  <div className="invalid-feedback">El campo es requerido.</div>
-                </div>
-              </Col>
-
-              <Col md={4}>
-                <div className="mb-3 mt-3">
-                  <label htmlFor="inputOil_Change"
-                    className="form-label">Cambio de aceite</label>
-                  <input
-                    type="date"
-                    className="form-control"
-                    name="Oil_Change"
-
-                    ref={oil_Change}
-                    required
-
-                  />
-                </div>
-
-              </Col>
-            </Row>
-            {/*               
-              <div className="valid-feedback"></div>
-              <div className="invalid-feedback">El campo es requerido.</div> */}
-            {/* </div>
-            </div> */}
-            <Row>
-              <Col md={4}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Imagen</Form.Label>
-                  <div className="custom-file">
-                    <input
-                      type="file"
-                      className="custom-file-input"
-                      id="customFile"
-
-                      onChange={handleImageUpload}
-                    />
-                    <label className="custom-file-label" htmlFor="customFile">
-                    </label>
-                  </div>
-                  {imageUrl && <img src={imageUrl} alt="Imagen subida" className="uploadedImg"
-                    style={{ maxWidth: '200px', maxHeight: '200px' }} />}
-                </Form.Group>
-              </Col>
-            </Row>
-          </div>
-
-        </Modal.Body>
-
-        <ModalFooter>
-          <Button variant="danger" onClick={handleCloseFormModal}>
-            Cancelar
-          </Button>
-          <Button
-            variant="success"
-            className="bg-gradient-success" onClick={handleSave}>
-
-
-            Guardar
-          </Button>
-        </ModalFooter>
-
-
-      </Modal>
-
-
-
-      <Modal show={showEditModal} onHide={handleCloseEditModal} centered>
+      <Modal
+        show={showEditModal}
+        onHide={handleCloseEditModal}
+        centered
+        size="lg"
+      >
         <Modal.Header closeButton>
           <Modal.Title>Editar vehículo</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
           <Form>
-            <Form validated={validated} onSubmit={handleUpdate}>
+            <Form onSubmit={handleUpdate}>
               <Row>
                 <Col>
                   <Form.Group>
@@ -1077,28 +730,17 @@ export const Vehicles = () => {
                       ref={plate_Number}
                       required
                     />
-                    <div className="valid-feedback"></div>
-                    <div className="invalid-feedback">El campo es requerido</div>
-
                   </Form.Group>
                   <Form.Group>
                     <Form.Label>Marca</Form.Label>
-                    <select 
-                    className="form-select"
-                      value={selectedMake}
-                      onChange={(e) => setSelectedMake(e.target.value)}
-                      required
+                    <Form.Control
+                      type="text"
+                      placeholder="Ingrese la marca"
+                      defaultValue={editingVehicle ? editingVehicle.make : ""}
                       ref={make}
-                      >
-                      <option value="">Seleccione una opción</option>
-                      {Object.keys(vehicleData[selectedCategory] || {}).map((make) => (
-                        <option key={make} value={make}>
-                          {make}
-                        </option>
-                      ))}
-                    </select>
+                      required
+                    />
                   </Form.Group>
-
 
                   <Form.Label>Año</Form.Label>
                   <Form.Control
@@ -1108,25 +750,26 @@ export const Vehicles = () => {
                     ref={year}
                     required
                     onChange={handleYear}
-                  >
-                  </Form.Control>
+                  ></Form.Control>
                   <div className="valid-feedback"></div>
-                  <div className="invalid-feedback">El año debe estar entre 1980 y el año actual.</div>
+                  <div className="invalid-feedback">
+                    El año debe estar entre 1980 y el año actual.
+                  </div>
 
-
-                  <Col>
-
-                  </Col>
+                  <Col></Col>
                   <Form.Group>
                     <Form.Label>Tracción</Form.Label>
-                    <Form.Control as="select" ref={traction} defaultValue={editingVehicle ? editingVehicle.traction : ""}>
-                      <option value="FWD">Tracción delantera (FWD)</option>
-                      <option value="4X4">Tracción en las cuatro ruedas (4X4)</option>
-                      <option value="RWD">Tracción trasera (RWD)</option>
-                      <option value="AWD">Tracción total (AWD) </option>
-                      <option value="FR-AWD">Tracción delantera (FR-AWD)</option>
-                      <option value="part-time 4WD">Tracción integral (part-time 4WD)</option>
-                      <option value="full-time 4WD">Tracción integral (full-time 4WD)</option>
+                    <Form.Control
+                      as="select"
+                      ref={traction}
+                      defaultValue={
+                        editingVehicle ? editingVehicle.traction : ""
+                      }
+                    >
+                      <option value="4X4">
+                        Tracción en las cuatro ruedas (4X4)
+                      </option>
+                      <option value="RX2">Tracción en dos ruedas(4X2)</option>
                     </Form.Control>
                   </Form.Group>
                   <Form.Group>
@@ -1140,16 +783,20 @@ export const Vehicles = () => {
                       ref={engine_capacity}
                       required
                       min="0"
-                    >
-
-                    </Form.Control>
+                    ></Form.Control>
                     <div className="valid-feedback"></div>
-                    <div className="invalid-feedback">El campo es requerido</div>
+                    <div className="invalid-feedback">
+                      El campo es requerido
+                    </div>
                   </Form.Group>
 
                   <Form.Group>
                     <Form.Label>Gasolina</Form.Label>
-                    <Form.Control as="select" ref={fuel} defaultValue={editingVehicle ? editingVehicle.fuel : ""}>
+                    <Form.Control
+                      as="select"
+                      ref={fuel}
+                      defaultValue={editingVehicle ? editingVehicle.fuel : ""}
+                    >
                       <option value="Regular">Regular</option>
                       <option value="Super">Super</option>
                       <option value="Diesel">Diésel</option>
@@ -1159,64 +806,63 @@ export const Vehicles = () => {
 
                   <Form.Group>
                     <Form.Label>Imagen</Form.Label>
-                    <Form.Control
-                      type="file"
-                      onChange={handleImageUpload}
-                    />
+                    <Form.Control type="file" onChange={handleImageUpload} />
                     {editingVehicle && editingVehicle.image && (
                       <img
                         src={editingVehicle.image}
                         alt="Imagen del vehículo"
                         className="uploadedImg"
-                        style={{ maxWidth: '200px', maxHeight: '200px' }}
+                        style={{ maxWidth: "200px", maxHeight: "200px" }}
                       />
                     )}
                   </Form.Group>
                 </Col>
 
-
                 <Col>
                   <Form.Group>
                     <Form.Label>Categoría</Form.Label>
-                    <Form.Control as="select"
+                    <Form.Control
+                      as="select"
                       value={selectedCategory}
-                      onChange={handleCategoryChange}
                       ref={category}
-                      defaultValue={editingVehicle ? editingVehicle.category : ""} required>
+                      defaultValue={
+                        editingVehicle ? editingVehicle.category : ""
+                      }
+                      required
+                    >
                       <option value="Automovil">Automóvil</option>
                       <option value="PickUp">Pick-Up</option>
                       <option value="Motocicleta">Motocicleta</option>
                       <option value="Buseta">Buseta</option>
                       <option value="Bus">Bus</option>
                       <option value="SUV">SUV</option>
-                      <option value="Moto Electrica">Motocicleta eléctrica</option>
-                      <option value="Auto Electrico">Automóvil eléctrico</option>
+                      <option value="Moto Electrica">
+                        Motocicleta eléctrica
+                      </option>
+                      <option value="Auto Electrico">
+                        Automóvil eléctrico
+                      </option>
                     </Form.Control>
                   </Form.Group>
 
                   <Form.Group>
                     <Form.Label>Modelo</Form.Label>
-                    <select
-                     className="form-select" id="inputModel"
-                     value={selectedModel}
-                     onChange={(e) => setSelectedModel(e.target.value)}
-                      required
+                    <Form.Control
+                      type="text"
+                      placeholder="Ingrese el modelo"
+                      defaultValue={editingVehicle ? editingVehicle.model : ""}
                       ref={model}
-                      >
-                     <option value="">Seleccione una opción</option>
-                      {vehicleData[selectedCategory] &&
-                        vehicleData[selectedCategory][selectedMake] &&
-                        vehicleData[selectedCategory][selectedMake].map((model) => (
-                          <option key={model} value={model}>
-                            {model}
-                          </option>
-                        ))}
-                    </select>
+                      required
+                    />
                   </Form.Group>
 
                   <Form.Group>
                     <Form.Label>Color</Form.Label>
-                    <Form.Control as="select" ref={color} defaultValue={editingVehicle ? editingVehicle.color : ""}>
+                    <Form.Control
+                      as="select"
+                      ref={color}
+                      defaultValue={editingVehicle ? editingVehicle.color : ""}
+                    >
                       <option value="Blanco">Blanco</option>
                       <option value="Negro">Negro</option>
                       <option value="Gris">Gris</option>
@@ -1234,14 +880,17 @@ export const Vehicles = () => {
                       type="text"
                       id="capacity"
                       placeholder="Ingrese la capacidad"
-                      defaultValue={editingVehicle ? editingVehicle.capacity : ""}
+                      defaultValue={
+                        editingVehicle ? editingVehicle.capacity : ""
+                      }
                       ref={capacity}
                       onChange={handleCapacity}
                       required
                     />
                     <div className="valid-feedback"></div>
-                    <div className="invalid-feedback">La capacidad se debe encontrar en el rango de 1 a 80.</div>
-
+                    <div className="invalid-feedback">
+                      La capacidad se debe encontrar en el rango de 1 a 80.
+                    </div>
                   </Form.Group>
 
                   <Form.Group>
@@ -1249,19 +898,24 @@ export const Vehicles = () => {
                     <Form.Control
                       type="text"
                       placeholder="Ingrese el kilometraje"
-                      defaultValue={editingVehicle ? editingVehicle.mileage : ""}
+                      defaultValue={
+                        editingVehicle ? editingVehicle.mileage : ""
+                      }
                       ref={mileage}
                       required
                       min="0"
-                      pattern="[^/*-+]+" title="valores inválidos"
+                      pattern="[^/*-+]+"
+                      title="valores inválidos"
                     />
                     <div className="valid-feedback"></div>
-                    <div className="invalid-feedback">El campo es requerido</div>
+                    <div className="invalid-feedback">
+                      El campo es requerido
+                    </div>
                   </Form.Group>
                   <Form.Group>
                     <Form.Label>Cambio de aceite</Form.Label>
                     <Form.Control
-                      type="date"
+                      type="datetime-local"
                       placeholder="Ingrese la fecha"
                       defaultValue={
                         editingVehicle ? editingVehicle.oil_Change : ""
@@ -1269,12 +923,11 @@ export const Vehicles = () => {
                       ref={oil_Change}
                     />
                   </Form.Group>
-
                 </Col>
               </Row>
             </Form>
-          </Form >
-        </Modal.Body >
+          </Form>
+        </Modal.Body>
 
         <Modal.Footer>
           <Button variant="danger" onClick={handleCloseEditModal}>
@@ -1295,16 +948,18 @@ export const Vehicles = () => {
             <span class="material-symbols-outlined">visibility</span>{" "}
           </Button> */}
         </Modal.Footer>
-      </Modal >
+      </Modal>
 
-
-      <Modal size="lg" show={showInfoModal} onHide={handleCloseInfoModal} centered>
+      <Modal
+        size="lg"
+        show={showInfoModal}
+        onHide={handleCloseInfoModal}
+        centered
+      >
         <Modal.Header closeButton>
-
           <Modal.Title>Información del Vehículo</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-
           {selectedVehicle && (
             <div>
               <Row>
@@ -1325,7 +980,8 @@ export const Vehicles = () => {
                     <strong>Tracción:</strong> {selectedVehicle.traction}
                   </div>
                   <div>
-                    <strong>Cilindraje:</strong> {selectedVehicle.engine_capacity}
+                    <strong>Cilindraje:</strong>{" "}
+                    {selectedVehicle.engine_capacity}
                   </div>
                   <div>
                     <strong>Gasolina:</strong> {selectedVehicle.fuel}
@@ -1343,27 +999,36 @@ export const Vehicles = () => {
                     <strong>Kilometraje:</strong> {selectedVehicle.mileage}
                   </div>
                   <div>
-                    <strong>Cambio de Aceite:</strong> {selectedVehicle.oil_Change}
+                    <strong>Cambio de Aceite:</strong>{" "}
+                    {selectedVehicle.oil_Change}
                   </div>
-                  <div>
+                  <div className="d-flex align-items-center">
                     <strong>Estado:</strong>{" "}
                     {selectedVehicle.status ? "Habilitado" : "Deshabilitado"}
+                    <Button
+                    variant={selectedVehicle.status ? "success" : "danger"}
+                    onClick={()=>handleStatus(selectedVehicle.id)}
+                  >
+                    {selectedVehicle.status ? (
+                      <i class="bi bi-toggle-on"></i>
+                    ) : (
+                      <i class="bi bi-toggle-off"></i>
+                    )}
+                  </Button>
                   </div>
+                  
                 </Col>
                 <Col md={3} className="text-right">
-
-                  
                   {selectedVehicle.image && (
                     <img
                       src={selectedVehicle.image}
-                      style={{ maxWidth: '400%', maxHeight: '400px' }}
+                      style={{ maxWidth: "400%", maxHeight: "400px" }}
                     />
                   )}
                 </Col>
               </Row>
             </div>
           )}
-
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseInfoModal}>
@@ -1372,9 +1037,7 @@ export const Vehicles = () => {
         </Modal.Footer>
       </Modal>
     </>
-
-  )
+  );
 };
-
 
 export default Vehicles;

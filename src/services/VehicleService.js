@@ -20,3 +20,8 @@ export const getByIdVehicle = async (vehicleId) => {
     let data = await api.get(`vehicles/${vehicleId}`).then(result => result.data);
     return data;
 }
+
+export const changeStatus = async (id) => {
+    let data = await api.patch(`vehicles/${id}/disable`).then(result);
+    return data;
+}

@@ -57,19 +57,13 @@ function ChangePassword() {
               ref={newPassword}
             />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicCheckbox">
-            <Form.Check type="checkbox" label="Cerrar Sesion" />
-          </Form.Group>
+         
 
           <Button onClick={handleSave} className="mr-1" variant="primary">
             Guardar
           </Button>
 
-          <Link to={`/users`}>
-            <Button variant="dark" className="bg-gradient-danger">
-              Regresar
-            </Button>
-          </Link>
+          
         </Form>
       </div>
     </Container>

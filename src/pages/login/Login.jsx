@@ -68,50 +68,15 @@ function Login() {
   useEffect(() => {
     if (loggedIn) {
       navigate("/");
+      window.location.reload();
     }
   });
 
   return (
-    <>
-      {/* <div className="sidenav">
-        <div className="login-main-text"></div>
-      </div>
-      <div className="main d-flex justify-content-center">
-        <div className="col-md-5 col-sm-12 d-flex border shadow login-form">
-          <div className=" p-4  ">
-            <form action="" id="login" method="post" onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label>Correo electrónico</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  placeholder="Correo Electronico"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <div className="form-group">
-                <label>Contraseña</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  placeholder="Contraseña"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <br />
-              <Button type="submit" variant="dark" className="">
-                Iniciar Sesión
-              </Button>
-            </form>
-          </div>
-        </div>
-      </div>*/}
-
+ 
       <MDBContainer className="my-5">
         <form action="" id="login" method="post" onSubmit={handleSubmit}>
-          <MDBCard>
+          <MDBCard className="d-flex">
             <MDBRow className="g-0">
               <MDBCol md="6">
                 <MDBCardImage
@@ -174,7 +139,7 @@ function Login() {
           </MDBCard>
         </form>
       </MDBContainer>
-    </>
+
   );
 }
 
