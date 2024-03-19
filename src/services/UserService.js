@@ -32,3 +32,9 @@ export const changePassword = async (user) => {
     let data = await api.patch(`users`, user).then(result =>  result.data);
     return data;
 }
+
+export const getUsersDriver = async () => {
+    let data = await api.get(`/users/usersbyrole/Chofer`).then(result => result.data);
+    return data;
+}
+

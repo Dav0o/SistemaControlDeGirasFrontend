@@ -1,5 +1,5 @@
-import React from "react";
-import { approve, cancel, getRequests } from "../../services/RequestService";
+import React, { useEffect } from "react";
+import { approve, cancel, getRequestToApprove, getRequests } from "../../services/RequestService";
 import { useMutation, useQuery } from "react-query";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -16,8 +16,9 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import SeeRequest from "../../components/SeeRequest";
 
+
 function ApproveRequest() {
-  const { data, isLoading, isError } = useQuery("requests", getRequests, {
+  const { data, isLoading, isError } = useQuery("requests", getRequestToApprove, {
     enabled: true,
   });
 
@@ -74,6 +75,18 @@ function ApproveRequest() {
     };
     mutation.mutateAsync(updateRequest);
   };
+  const [dataFilter, setDataFilter] = useState(data);
+
+  useEffect(() => {
+    setDataFilter(data)
+  }, [data])
+  
+  const numberFilter = useRef(0);
+  function handleFilter(){
+    const _data = data.filter((item) => (item.consecutiveNumber).includes(numberFilter.current.value))
+
+    setDataFilter(_data);
+  }
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -99,6 +112,26 @@ function ApproveRequest() {
         <div className="card shadow mb-4">
           <div className="card-header py-3">
             <p>Diríjase a la solicitud que desee aprobar o anular </p>
+            <br />
+            <Row className="d-flex">
+              
+              <Col >
+                <div class="input-group mb-3">
+                  <span class="input-group-text" id="basic-addon1">
+                    <i class="bi bi-search"></i>
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Buscar por número"
+                    ref={numberFilter}
+                    onChange={handleFilter}
+                    aria-label="Username"
+                    aria-describedby="basic-addon1"
+                  />
+                </div>
+              </Col>
+            </Row>
           </div>
           <div className="card-body">
             {filteredData.map((request) => (
@@ -130,10 +163,8 @@ function ApproveRequest() {
                       </Button>
                     </div>
                     <div>
-                      <Button>
-                        {" "}
-                        <SeeRequest data={request} />
-                      </Button>
+                        <SeeRequest data={request}  userId={request.processes[0].userId}/>
+                   
                     </div>
                   </div>
                 </Card.Body>

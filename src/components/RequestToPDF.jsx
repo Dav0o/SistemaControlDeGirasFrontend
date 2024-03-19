@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Page,
   Text,
@@ -8,13 +8,17 @@ import {
   StyleSheet,
 } from "@react-pdf/renderer";
 import logo from "../assets/UNA2LINErojo0.png";
+import axios from "axios";
+import { getByIdUser } from "../services/UserService";
+
+
 
 const styles = StyleSheet.create({
   page: {
     flexDirection: "column",
     backgroundColor: "#ffffff",
     padding: 20,
-    fontSize: 14
+    fontSize: 14,
   },
   logouna: {
     width: "50",
@@ -45,21 +49,49 @@ const styles = StyleSheet.create({
     padding: 6,
   },
   inputarea: {
-    width: '100%',
+    width: "100%",
     height: 60,
     borderRadius: 4,
     backgroundColor: "#e9ecef",
     padding: 5,
     marginBottom: 5,
-    
   },
-  firma:{
+  firma: {
     borderTop: 1,
-    borderColor: '#000000',
+    borderColor: "#000000",
     marginTop: 70,
-  }
+  },
+  table: {
+    display: 'table',
+    width: 'auto',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    marginBottom: 10,
+  },
+  tableRow: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+  },
+  tableCellHeader: {
+    margin: 5,
+    flex: 1,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    padding: 5, // Añadir espacio adicional
+    fontSize: 12,
+    borderRight: 1,
+  },
+  tableCell: {
+    margin: 5,
+    borderRight: 1,
+    flex: 1,
+    textAlign: 'center',
+    padding: 8, // Añadir espacio adicional
+  },
 });
-function RequestToPDF({ formData }) {
+function RequestToPDF({ formData, userData }) {
+  
+  
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -97,16 +129,29 @@ function RequestToPDF({ formData }) {
           <Text style={styles.input}>{formData.personsAmount}</Text>
         </View>
 
+        <View>
+          <Text style={styles.label}>Persona encargada:</Text>
+          <Text style={styles.input}></Text>
+        </View>
+
         <View style={styles.row}>
           <View style={styles.column}>
             <View>
               <Text style={styles.label}>Fecha y hora de salida:</Text>
-              <Text style={styles.input}>{((formData.departureDate).substring(0,10)) + ' ' + ((formData.departureDate).substring(11,16))}</Text>
+              <Text style={styles.input}>
+                {formData.departureDate.substring(0, 10) +
+                  " " +
+                  formData.departureDate.substring(11, 16)}
+              </Text>
             </View>
           </View>
           <View style={styles.column}>
             <Text style={styles.label}>Fecha y hora de regreso:</Text>
-            <Text style={styles.input}>{((formData.arriveDate).substring(0,10)) + ' ' + ((formData.arriveDate).substring(11,16))}</Text>
+            <Text style={styles.input}>
+              {formData.arriveDate.substring(0, 10) +
+                " " +
+                formData.arriveDate.substring(11, 16)}
+            </Text>
           </View>
         </View>
 
@@ -126,11 +171,15 @@ function RequestToPDF({ formData }) {
         <View style={styles.row}>
           <View style={styles.column}>
             <Text style={styles.label}>Chofer:</Text>
-            <Text style={styles.input}>{ formData.driver == null? "":formData.driver.dni}</Text>
+            <Text style={styles.input}>
+              {formData.driver == null
+                ? ""
+                : formData.driver.dni + " " + formData.driver.name}
+            </Text>
           </View>
           <View style={styles.column}>
             <Text style={styles.label}>Vehículo de la solicitud:</Text>
-            <Text style={styles.input}>{formData.plate_Number}</Text>
+            <Text style={styles.input}>{formData.vehicle.plate_Number}</Text>
           </View>
         </View>
 
@@ -140,8 +189,8 @@ function RequestToPDF({ formData }) {
             <Text style={styles.input}>{formData.condition}</Text>
           </View>
           <View style={styles.column}>
-          <Text style={styles.label}>Prioridad:</Text>
-          <Text style={styles.input}>{formData.priority}</Text>
+            <Text style={styles.label}>Prioridad:</Text>
+            <Text style={styles.input}>{formData.priority}</Text>
           </View>
         </View>
         <View>
@@ -149,24 +198,52 @@ function RequestToPDF({ formData }) {
           <Text style={styles.inputarea}>{formData.itinerary}</Text>
         </View>
 
-       
         <View>
           <Text style={styles.label}>Observaciones:</Text>
           <Text style={styles.inputarea}>{formData.observations}</Text>
         </View>
 
         <View style={styles.rowBetween}>
-            <View style={styles.firma}>
-                <Text>Firma encargado</Text>
-            </View>
-            <View style={styles.firma}>
-                <Text>Firma chofer</Text>
-            </View>
+          <View style={styles.firma}>
+            <Text>Firma encargado</Text>
+          </View>
+          <View style={styles.firma}>
+            <Text>Firma chofer</Text>
+          </View>
         </View>
       </Page>
 
       <Page size="A4" style={styles.page}>
+      <View>
+      <Text style={styles.label}>Información sobre el abasto de combustible</Text>
+      </View>
+        <View style={styles.table}>
+          {/* Cabecera de la tabla */}
+          <View style={styles.tableRow}>
+            <Text style={styles.tableCellHeader}>Ciudad</Text>
+            <Text style={styles.tableCellHeader}>Comercio</Text>
+            <Text style={styles.tableCellHeader}>Kilometraje</Text>
+            <Text style={styles.tableCellHeader}>Litros</Text>
+            <Text style={styles.tableCellHeader}>Fecha</Text>
+            <Text style={styles.tableCellHeader}>Tarjeta</Text>
+            <Text style={styles.tableCellHeader}>Factura</Text>
+            <Text style={styles.tableCellHeader}>Autorización</Text>
+          </View>
 
+          {/* Filas en blanco para escribir datos */}
+          {[...Array(3)].map((_, index) => (
+            <View key={index} style={styles.tableRow}>
+              <Text style={styles.tableCell}></Text>
+              <Text style={styles.tableCell}></Text>
+              <Text style={styles.tableCell}></Text>
+              <Text style={styles.tableCell}></Text>
+              <Text style={styles.tableCell}></Text>
+              <Text style={styles.tableCell}></Text>
+              <Text style={styles.tableCell}></Text>
+              <Text style={styles.tableCell}></Text>
+            </View>
+          ))}
+        </View>
       </Page>
     </Document>
   );

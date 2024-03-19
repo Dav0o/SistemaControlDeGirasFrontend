@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Modal, Form, Button, Table, ModalFooter } from "react-bootstrap";
+import { Modal, Form, Button, Table, ModalFooter, Spinner } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -13,6 +13,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { Accordion } from "react-bootstrap";
 import "../../stylesheets/button.css";
 import "../../stylesheets/generalDesign.css";
+
 
 
 export const Vehicles = () => {
@@ -289,7 +290,11 @@ export const Vehicles = () => {
   }
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+    );
   }
 
   if (isError) {
@@ -1017,17 +1022,16 @@ export const Vehicles = () => {
                     <strong>Estado:</strong>{" "}
                     {selectedVehicle.status ? "Habilitado" : "Deshabilitado"}
                     <Button
-                    variant={selectedVehicle.status ? "success" : "danger"}
-                    onClick={()=>handleStatus(selectedVehicle.id)}
-                  >
-                    {selectedVehicle.status ? (
-                      <i class="bi bi-toggle-on"></i>
-                    ) : (
-                      <i class="bi bi-toggle-off"></i>
-                    )}
-                  </Button>
+                      variant={selectedVehicle.status ? "success" : "danger"}
+                      onClick={() => handleStatus(selectedVehicle.id)}
+                    >
+                      {selectedVehicle.status ? (
+                        <i class="bi bi-toggle-on"></i>
+                      ) : (
+                        <i class="bi bi-toggle-off"></i>
+                      )}
+                    </Button>
                   </div>
-                  
                 </Col>
                 <Col md={3} className="text-right">
                   {selectedVehicle.image && (

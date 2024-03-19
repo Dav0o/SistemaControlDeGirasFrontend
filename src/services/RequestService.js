@@ -46,3 +46,20 @@ export const getRequestByUserId = async (userId) => {
     let data = await api.get(`requests/byuser/${userId}`).then(result => result.data);
     return data;
 }
+
+export const getRequestToEndorse = async () => {
+    let data = await api.get(`requests/toEndorse`).then(result => result.data);
+    return data;
+}
+
+export const getRequestToApprove = async () => {
+    let data = await api.get(`requests/toApprove`).then(result => result.data);
+    return data;
+}
+
+export const getRequestVerified = async () => {
+    let data = await api.get(`requests/verified`).then(result => result.data);
+    return data;
+}
+
+

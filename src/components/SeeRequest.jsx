@@ -1,10 +1,29 @@
 import React, { useState } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
+import { useQuery } from "react-query";
+import { getByIdUser } from "../services/UserService";
+import ButtonPDF from "./ButtonPDF";
 
-function SeeRequest({ data }) {
+
+
+function SeeRequest({ data, userId }) {
   const [showModal, setShowModal] = useState(false);
 
   const handleClose = () => setShowModal(false);
+
+  const {
+    isLoading: userLoading,
+    data: userData,
+    isError: userError,
+  } = useQuery(["users", userId], () => getByIdUser(userId));
+
+  
+  if (userLoading) {
+    <div>isLoading...</div>;
+  }
+  if (userError) {
+    <div>isError...</div>;
+  }
 
   const handleShowEdit = () => {
     setShowModal(true);
@@ -12,10 +31,11 @@ function SeeRequest({ data }) {
 
   return (
     <>
-      <Button onClick={handleShowEdit}
-      // variant="info"
-      //  className="bg-gradient-info text-light"
-       >
+      <Button
+        onClick={handleShowEdit}
+        // variant="info"
+        //  className="bg-gradient-info text-light"
+      >
         <i class="bi bi-info-square"> </i>
       </Button>
 
@@ -27,6 +47,20 @@ function SeeRequest({ data }) {
         <Modal.Body>
           {data && (
             <Form>
+              <Row>
+                {userData ? (
+                  <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <Form.Label>Usuario Solicitante</Form.Label>
+                    <Form.Control
+                      type="text"
+                      defaultValue={userData ? userData.dni+" | "+userData.name +" " +userData.lastName1 + ' | ' + userData.phoneNumber: ""}
+                      disabled
+                    />
+                  </Form.Group>
+                ) : (
+                  ""
+                )}
+              </Row>
               <Row>
                 <Col>
                   <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -175,8 +209,8 @@ function SeeRequest({ data }) {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button className="buttonCancel" onClick={handleClose}
-         >
+        
+          <Button className="buttonCancel" onClick={handleClose}>
             Cerrar
           </Button>
         </Modal.Footer>

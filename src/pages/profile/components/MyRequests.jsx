@@ -49,7 +49,7 @@ function MyRequests() {
           </div>
           <div className="card-body">
             {data ? data.map((request) => (
-              <Card key={request.id}>
+              <Card key={request.id} className='mb-3'>
                 <Card.Header>{request.consecutiveNumber}</Card.Header>
                 <Card.Body>
                   <Card.Title>{request.objective}</Card.Title>
@@ -58,7 +58,7 @@ function MyRequests() {
                     {request.destinyLocation}
                   </Card.Text>
 
-                  <SeeRequest data={request}/>
+                  <SeeRequest data={request} userId={request.processes[0].userId}/>
 
                   <Button
                     variant={

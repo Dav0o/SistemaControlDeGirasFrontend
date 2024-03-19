@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { useMutation, useQuery } from "react-query";
-import { endorse, getRequests, update } from "../../services/RequestService";
+import {
+  endorse,
+  getRequestToEndorse,
+  getRequests,
+  update,
+} from "../../services/RequestService";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -15,12 +20,19 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { useEffect } from "react";
 import SeeRequest from "../../components/SeeRequest";
-
+import { getUsersDriver } from "../../services/UserService";
 
 function EndorseRequest() {
-  const { data, isLoading, isError } = useQuery("requests", getRequests, {
-    enabled: true,
-  });
+  const { data, isLoading, isError } = useQuery(
+    "requests",
+    getRequestToEndorse,
+    {
+      enabled: true,
+    }
+  );
+
+  const {data:drivers, isLoading:LoadingDrivers, isError:ErrorDrivers} = useQuery('users', getUsersDriver);
+
   const executingUnit = useRef(null);
   const typeRequest = useRef(null);
   const condition = useRef(null);
@@ -35,6 +47,8 @@ function EndorseRequest() {
   const observations = useRef(null);
   const typeOfVehicle = useRef(null);
   const itsDriver = useRef(false);
+
+  const driverId = useRef(0);
 
   const {
     data: vehicles,
@@ -92,6 +106,7 @@ function EndorseRequest() {
     let updateRequest = {
       id: selectedRequest.id,
       vehicleId: parseInt(vehicleId.current.value),
+      driverId: parseInt(driverId.current.value),
       itsEndorse: true,
     };
     mutation.mutateAsync(updateRequest);
@@ -121,6 +136,27 @@ function EndorseRequest() {
     mutationUpdate.mutateAsync(updatedRequest);
   };
 
+  const [dataFilter, setDataFilter] = useState(data);
+
+  const [idUserRequest, setIdUserRequest] = useState(null);
+
+ 
+
+  useEffect(() => {
+    setDataFilter(data);
+
+    //data ? console.log(data[0].processes[0].userId) : console.log('Loading...')
+    
+    
+  }, [data])
+  
+  const numberFilter = useRef(0);
+  function handleFilter(){
+    const _data = data.filter((item) => (item.consecutiveNumber).includes(numberFilter.current.value))
+
+    setDataFilter(_data);
+  }
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -147,9 +183,29 @@ function EndorseRequest() {
         <div className="card shadow mb-4">
           <div className="card-header py-3">
             <p>Diríjase a la solicitud que desea avalar</p>
+            <br />
+            <Row className="d-flex">
+              
+              <Col >
+                <div class="input-group mb-3">
+                  <span class="input-group-text" id="basic-addon1">
+                    <i class="bi bi-search"></i>
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Buscar por número"
+                    ref={numberFilter}
+                    onChange={handleFilter}
+                    aria-describedby="basic-addon1"
+                  />
+                </div>
+              </Col>
+            </Row>
           </div>
           <div className="card-body">
-            {filteredData.map((request) => (
+            {dataFilter?
+            dataFilter.map((request) => (
               <Card key={request.id} className="mb-3">
                 <Card.Header>{request.consecutiveNumber}</Card.Header>
                 <Card.Body>
@@ -178,11 +234,12 @@ function EndorseRequest() {
                       </Button>
                       
                     </div>
-                    <SeeRequest data={request}/>
+                    <SeeRequest data={request} userId={request.processes[0].userId}/>
+                    {console.log(request)}
                   </div>
                 </Card.Body>
               </Card>
-            ))}
+            )): ''}
           </div>
         </div>
       </Container>
@@ -274,6 +331,18 @@ function EndorseRequest() {
                   })}
                 </Form.Select>
               </Form.Group>
+              {!selectedRequest.itsDriver && (
+                 <Form.Group className="mb-2" controlId="driverSelect">
+                  <Form.Label>Seleccione el chofer para la solicitud</Form.Label>
+                 <Form.Control as="select" ref={driverId}>
+                   {drivers.map((driver) => (
+                     <option key={driver.id} value={driver.id}>
+                      {driver.dni} - {driver.name} {driver.lastName1} {driver.lastName2}
+                     </option>
+                   ))}
+                 </Form.Control>
+               </Form.Group>
+              )}
             </Form>
           )}
         </Modal.Body>
