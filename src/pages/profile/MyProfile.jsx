@@ -10,6 +10,7 @@ import { Form } from "react-bootstrap";
 import { getByIdUser } from "../../services/UserService";
 import { Link } from "react-router-dom";
 import { create } from "../../services/UserService";
+import "../../stylesheets/button.css";
 
 function MyProfile() {
   const { user } = useAuth();
@@ -154,16 +155,17 @@ function MyProfile() {
                   </Col>
                 </Row>
                 <div className="d-flex justify-content-end gap-2 buttons-profile">
-                  <Button onClick={() => handleEditClick(userId)}>
+                <Button className="Profilebutton"
+                   onClick={() => handleEditClick(userId)}>
                     <i class="bi bi-pencil"></i> Editar mis datos
-                  </Button>
+                  </Button >
                   <Link to={`/profile/requests`}>
-                    <Button>
+                    <Button className="Profilebutton" >
                       <i class="bi bi-card-text"></i> Ver mis solicitudes
                     </Button>
                   </Link>
                   <Link to={`/ChangePassword`}>
-                    <Button>
+                    <Button className="Profilebutton">
                       <i class="bi bi-shield-lock"></i> Cambiar contraseña
                     </Button>
                   </Link>
@@ -241,11 +243,11 @@ function MyProfile() {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="danger" onClick={handleCloseEditModal}>
+          <Button  className="buttonCancel" onClick={handleCloseEditModal}>
             Cancelar
           </Button>
-          <Button variant="dark" onClick={handleUpdate}>
-            Actualizar
+          <Button  className= "buttonSave" variant="success" onClick={handleUpdate}>
+            Guardar
           </Button>
         </Modal.Footer>
       </Modal>

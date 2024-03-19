@@ -36,11 +36,11 @@ function CheckedRequests() {
   return (
     <>
       <Container className="mb-3">
-        <h1 className="h3 mb-2 text-gray-800">Solicitudes </h1>
+        <h2 className="h3 mb-2 text-gray-800 custom-heading">Solicitudes </h2>
         <p className="mb-4">Lista de solicitudes procesadas</p>
         <div className="card shadow mb-4">
           <div className="card-header py-3">
-            <p>Dé click en detalles para seleccionar una solicitud</p>
+            <p>Dé clic en detalles para seleccionar una solicitud</p>
           </div>
           <div className="card-body">
             {filteredData.map((request) => (
@@ -53,7 +53,7 @@ function CheckedRequests() {
                     {request.destinyLocation}
                   </Card.Text>
 
-                  <SeeRequest data={request}/>
+                  <SeeRequest data={request} />
                  <ButtonPDF formData={request}/>
 
                   <Button

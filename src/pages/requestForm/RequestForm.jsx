@@ -9,6 +9,7 @@ import { useMutation } from "react-query";
 import { create } from "../../services/RequestService";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import "../../stylesheets/button.css"
 
 function RequestForm() {
 
@@ -208,7 +209,7 @@ function RequestForm() {
                <Row>
               <Col>
                 <Form.Group className="mb-2" controlId="formBasicPassword">
-                  <Form.Label>Requiere chófer</Form.Label>
+                  <Form.Label>Requiere chofer</Form.Label>
                   <Form.Check
                     type="checkbox"
                 
@@ -245,7 +246,7 @@ function RequestForm() {
               <Form.Control as="textarea" ref={observations} />
             </Form.Group>
 
-            <Button variant="dark" className="bg-gradient-success" onClick={handleSave}>
+            <Button variant="succes" className="buttonSave" onClick={handleSave}>
               Enviar
             </Button>
           </Form>

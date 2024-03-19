@@ -12,11 +12,25 @@
     justify-content: center;
 }
 
+
+.Profilebutton {
+    background-color: #7386D5;
+    border: none; 
+    border-radius: 5px; 
+
+}
+
+.Profilebutton:hover ,
+.Profilebutton:active {
+    background-color: #5873c5; /* Cambia el color al pasar el mouse sobre el botón */
+}
+
 @media (max-width: 768px) {
     .buttons-profile{
         display: flex;
         flex-direction: column;
-        justify-content: center;
-    }
-}
+        justify-content: center; 
+    } 
+    
 
+}

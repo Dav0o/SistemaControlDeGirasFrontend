@@ -137,6 +137,19 @@ a.article:hover {
     color: #fff !important;
 }
 
+.navbar .btn-info {
+    background-color: whitesmoke;
+    border-color: whitesmoke;
+
+}
+
+
+.navbar .btn-info:hover {
+    background-color: whitesmoke; 
+    border-color: whitesmoke;
+ 
+}
+
 /* ---------------------------------------------------
     CONTENT STYLE
 ----------------------------------------------------- */

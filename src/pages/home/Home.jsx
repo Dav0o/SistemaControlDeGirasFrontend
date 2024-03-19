@@ -1,142 +1,75 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "../../stylesheets/home.css";
-import { useEffect } from "react";
-import { Row, Col, Button } from "react-bootstrap";
-import Image from 'react-bootstrap/Image';
-import { useAuth } from "../../auth/AuthProviders";
-import { useNavigate } from "react-router-dom";
-
+import { Row, Col, Card } from "react-bootstrap";
+import { useQuery } from "react-query";
+import { getNotices } from "../../services/NoticeService";
 
 function Home() {
+  const [notices, setNotices] = useState([]);
 
-  
+  const { isLoading, data, isError } = useQuery("notices", getNotices, {
+    enabled: true,
+  });
+
   useEffect(() => {
-    $(".carousel .carousel-item").each(function () {
-      var minPerSlide = 4;
-      var next = $(this).next();
-      if (!next.length) {
-        next = $(this).siblings(":first");
-      }
-      next.children(":first-child").clone().appendTo($(this));
+    if (data) {
+      const noticesActive = data.filter((notice) => notice.status === true);
+      setNotices(noticesActive);
+    }
+  }, [data]);
 
-      for (var i = 0; i < minPerSlide; i++) {
-        next = next.next();
-        if (!next.length) {
-          next = $(this).siblings(":first");
-        }
-        next.children(":first-child").clone().appendTo($(this));
-      }
-    });
-  }, []);
 
   return (
-    <>
-      <div className="container">
-        <div
-          id="myCarousel"
-          className="carousel slide container mb-5"
-          data-bs-ride="carousel"
-        >
-          <div className="carousel-inner w-100">
-            <div className="carousel-item active">
-              <div className="col-md-3">
-                <div className="card card-body">
-                  <img
-                    className="img-fluid"
-                    src="https://via.placeholder.com/640x360?text=1"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="carousel-item">
-              <div className="col-md-3">
-                <div className="card card-body">
-                  <img
-                    className="img-fluid"
-                    src="https://via.placeholder.com/640x360?text=2"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="carousel-item">
-              <div className="col-md-3">
-                <div className="card card-body">
-                  <img
-                    className="img-fluid"
-                    src="https://via.placeholder.com/640x360?text=3"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="carousel-item">
-              <div className="col-md-3">
-                <div className="card card-body">
-                  <img
-                    className="img-fluid"
-                    src="https://via.placeholder.com/640x360?text=4"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="carousel-item">
-              <div className="col-md-3">
-                <div className="card card-body">
-                  <img
-                    className="img-fluid"
-                    src="https://via.placeholder.com/640x360?text=5"
-                  />
-                </div>
-              </div>
-            </div>
+    <div className="container">
+      <div className="card-slider">
+        {notices.map((notice) => (
+          <div key={notice.id} className="card-slider-item">
+            <Card className="mb-4">
+              <Card.Body className="Body">
+                <Card.Text className="text-muted mb-2">{new Date(notice.date).toLocaleDateString()}</Card.Text>
+                <Card.Title className="mb-3">{notice.title}</Card.Title>
+                <Card.Text>{notice.body}</Card.Text>
+              </Card.Body>
+            </Card>
           </div>
-          <button
-            className="carousel-control-prev"
-            type="button"
-            data-bs-target="#myCarousel"
-            data-bs-slide="prev"
-          >
-            <span
-              className="carousel-control-prev-icon"
-              aria-hidden="true"
-            ></span>
-            <span className="visually-hidden">Previous</span>
-          </button>
-          <button
-            className="carousel-control-next"
-            type="button"
-            data-bs-target="#myCarousel"
-            data-bs-slide="next"
-          >
-            <span
-              className="carousel-control-next-icon"
-              aria-hidden="true"
-            ></span>
-            <span className="visually-hidden">Next</span>
-          </button>
-        </div>
-
-        
-        <Row>
-          <div className="shadow p-4">
-            <Row>
-              <Col>
-                <h2 className="mb-4">Información de Contacto</h2>
-                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quibusdam suscipit laudantium temporibus omnis deserunt quia reprehenderit harum maxime adipisci vitae, blanditiis nulla! Neque minus a nostrum repudiandae, praesentium officiis deserunt.</p>
-              </Col>
-
-              <Col >
-              <Image className="img-home-plate" src="https://www.unacomunica.una.ac.cr/images/Jhonny/IMG_8991.jpg#joomlaImage://local-images/Jhonny/IMG_8991.jpg?width=1920&height=1280" thumbnail  />
-                
-              
-              </Col>
-            </Row>
-          </div>
-        </Row>
-
-
+        ))}
       </div>
-    </>
+
+      <Row className="mt-5">
+        <div className="shadow p-4 w-100">
+          <Row className="align-items-center">
+           
+            <Col sm={6}>
+            <h4 className="mb-4">Información de Contacto</h4>
+              <div className="Info">
+                
+                <ul className="list-unstyled">
+                  <li><strong>UNA Campus Nicoya</strong></li>
+                  
+                  <li><strong>Encargada:</strong> Ericka Hernández Ramírez</li>
+                  <li><strong>Teléfono:</strong> 2562 6201</li>
+                  <li><strong>Correo electrónico:</strong>ericka.hernandez.ramirez@una.cr</li>
+                </ul>
+                <ul className="list-unstyled">
+                  <li><strong>UNA Campus Liberia</strong></li>
+                  <li><strong>Encargada:</strong> Kenya Campos Bogantes</li>
+                  <li><strong>Teléfono:</strong> 2562 6258</li>
+                  <li><strong>Correo electrónico:</strong>  kenya.campos.bogantes@una.cr</li>
+                </ul>
+              </div>
+            </Col>
+
+            <Col sm={6} className="text-center">
+              <img
+                className="img-thumbnail"
+                src="https://www.chorotega.una.ac.cr/images/RESIDENCIAS/Mesa1%201.jpg"
+                
+              />
+            </Col>
+          </Row>
+        </div>
+      </Row>
+    </div>
   );
 }
-
 export default Home;

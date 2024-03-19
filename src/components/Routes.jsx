@@ -30,7 +30,7 @@ import ResetPassword from "../pages/login/ResetPassword";
 
 import MyProfile from "../pages/profile/MyProfile";
 import MyRequests from "../pages/profile/components/MyRequests";
-
+import Notices from "../pages/notices/Notices";
 
 
 const Routes = () => {
@@ -211,7 +211,17 @@ const Routes = () => {
         {
           path: "/logout",
           element: <Logout />,
-        },
+        }, 
+
+        {
+          path: "/notices",
+          element: (
+            <Layout>
+              <Notices />
+            </Layout>
+          ),
+        }
+        
       ],
     },
   ];

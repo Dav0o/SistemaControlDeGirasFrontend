@@ -41,7 +41,7 @@ function ApproveRequest() {
     mutation.isError
       ? MySwal.fire({
           icon: "error",
-          text: "Algo salió mal!",
+          text: "¡Algo salió mal!",
         }).then(mutation.reset)
       : null;
   }
@@ -92,13 +92,13 @@ function ApproveRequest() {
   return (
     <>
       <Container className="container-fluid">
-        <h1 className="h3 mb-2 text-gray-800">Solicitudes pendientes</h1>
+        <h2 className="h3 mb-2 text-gray-800 custom-heading">Solicitudes pendientes</h2>
         <p className="mb-4">
-          Lista de solicitudes pendientes de aprobación o anulación.
+          Lista de solicitudes 
         </p>
         <div className="card shadow mb-4">
           <div className="card-header py-3">
-            <p>Dé click en aprobar o anular para seleccionar una solicitud.</p>
+            <p>Diríjase a la solicitud que desee aprobar o anular </p>
           </div>
           <div className="card-body">
             {filteredData.map((request) => (
@@ -114,9 +114,9 @@ function ApproveRequest() {
                     <div className="">
                       <Button
                         variant="success"
-                        className="bg-gradient-success text-light 
-                    "
+                        className="buttonSave"
                         onClick={() => handleShowApprove(request.id)}
+                        style={{marginRight: '15px'}}
                       >
                         Aprobar
                       </Button>
@@ -167,10 +167,10 @@ function ApproveRequest() {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button className="buttonCancel" onClick={handleClose}>
             Cerrar
           </Button>
-          <Button variant="primary" onClick={handleApprove}>
+          <Button variant="success" className="buttonSave" onClick={handleApprove}>
             Aprobar
           </Button>
         </Modal.Footer>

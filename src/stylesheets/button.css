@@ -1,0 +1,32 @@
+.buttonSave{
+background-color: rgb(105, 194, 105);
+color: white;
+border: greenyellow;
+}
+
+.buttonSave:hover,
+.buttonSave:active{
+    background-color: rgb(48, 122, 48);
+    border: greenyellow;
+    color: white;
+    
+    }
+
+    
+
+.buttonCancel {
+background-color: #7386D5;
+
+}
+
+.buttonCancel:hover,
+.buttonCancel:active{
+    background-color: rgb(54, 77, 204);
+    border: rgb(54, 78, 219);
+    
+    }
+
+
+.buttonNavbar{
+    background-color: #7386D5;
+}

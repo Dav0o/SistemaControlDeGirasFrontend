@@ -3,7 +3,7 @@ import "../../stylesheets/login.css";
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { useAuth } from "../../auth/AuthProviders";
@@ -20,6 +20,7 @@ import {
 } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
 
+
 function Login() {
   const { setNewUser } = useAuth();
 
@@ -27,6 +28,9 @@ function Login() {
   const [password, setPassword] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
   const MySwal = withReactContent(Swal);
+
+  const [showPassword, setShowPassword] = useState(false);
+  
 
   const navigate = useNavigate();
   const handleSubmit = (e) => {
@@ -73,8 +77,8 @@ function Login() {
   });
 
   return (
- 
-      <MDBContainer className="my-5">
+    
+      <MDBContainer className="my-5" >
         <form action="" id="login" method="post" onSubmit={handleSubmit}>
           <MDBCard className="d-flex">
             <MDBRow className="g-0">
@@ -89,11 +93,7 @@ function Login() {
               <MDBCol md="6">
                 <MDBCardBody className="d-flex flex-column">
                   <div className="d-flex flex-row mt-2">
-                    <MDBIcon
-                      fas
-                      icon="cubes fa-3x me-3"
-                      style={{ color: "#" }}
-                    />
+
                     <span className="h1 fw-bold mb-0">UNA</span>
                   </div>
 
@@ -103,27 +103,41 @@ function Login() {
                   >
                     Inicia sesión en tu cuenta
                   </h5>
-
+                    
+                
                   <MDBInput
                     wrapperClass="mb-4"
                     placeholder="Correo electrónico"
-
                     id="formControlLg"
                     type="email"
                     size="lg"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => setEmail(e.target.value)} 
                   />
+
                   <MDBInput
-                    wrapperClass="mb-4"
+                 
                     placeholder="Contraseña"
-                    id="formControlLg"
-                    type="password"
+                    id="formControl"
+                    type={showPassword ? 'text' : 'password'}
                     size="lg"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    
                   />
-                  <Button type="submit" variant="dark" className="">
+
+              <Form.Check
+              type="checkbox"
+              id="showPasswordsCheckbox"
+              label="Mostrar contraseña"
+              className="ms-2"
+              checked={showPassword}
+              style={{ marginTop: '20px' }}
+              onChange={() => setShowPassword(!showPassword)}
+              
+            />
+                       
+                  <Button type="submit" variant="dark" className="button" style={{ marginTop: '20px' }}>
                     Iniciar Sesión
                   </Button>
 
@@ -139,7 +153,7 @@ function Login() {
           </MDBCard>
         </form>
       </MDBContainer>
-
+   
   );
 }
 

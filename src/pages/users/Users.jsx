@@ -15,9 +15,10 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Accordion from "react-bootstrap/Accordion";
 import "../../stylesheets/vies.css";
+import { InputGroup } from "react-bootstrap";
 
 function Users() {
-  const userDni = useRef(0);
+  const userDni = useRef(null);
   const userName = useRef(null);
   const userLastName1 = useRef(null);
   const userLastName2 = useRef(null);
@@ -59,6 +60,29 @@ function Users() {
     // Inicializa el DataTable después de renderizar los datos
 
     const newDataTable = new DataTable("#tableUsers", {
+      language: {
+        processing: "Procesando...",
+        search: "Buscar:",
+        lengthMenu: "Mostrar _MENU_ elementos",
+        info: "Mostrando elementos _START_ al _END_ de un total de _TOTAL_ elementos",
+        infoEmpty: "Mostrando 0 elementos",
+        infoFiltered: "(filtrado de _MAX_ elementos en total)",
+        infoPostFix: "",
+        loadingRecords: "Cargando...",
+        zeroRecords: "No se encontraron elementos",
+        emptyTable: "No hay datos disponibles en la tabla",
+        paginate: {
+          first: "Primero",
+          previous: "Anterior",
+          next: "Siguiente",
+          last: "Último"
+        },
+        aria: {
+          sortAscending: ": activar para ordenar la columna de manera ascendente",
+          sortDescending: ": activar para ordenar la columna de manera descendente"
+        }
+      },
+
       retrieve: true,
       dom: "lfBrtip",
       bLengthChange: false,
@@ -70,7 +94,7 @@ function Users() {
           title: "Registro Usuarios",
           titleAttr: "Imprimir",
           text: '<i class="fa-solid fa-print" aria-hidden="true"></i>',
-          className: "btn btn-info",
+          className: "btn btn-info text-light",
           exportOptions: {
             columns: [0, 1, 2, 3, 4],
           },
@@ -109,51 +133,51 @@ function Users() {
     setDataTable(newDataTable);
   }, [data]); // Vuelve a inicializar el DataTable cuando los datos cambien
 
-//VALIDACIONES
-  const validateUserFields = (dni,licenseUNA, name, lastName1, lastName2, phoneNumber, email, password) => {
+  //VALIDACIONES
+  const validateUserFields = (dni, licenseUNA, name, lastName1, lastName2, phoneNumber, email, password) => {
     // Validación de la cédula
     if (dni.length < 9 || dni.length > 15 || !/^[0-9a-zA-Z]+$/.test(dni)) {
-      return 'La cédula debe tener una longitud entre 9 y 15 caracteres y contener solo números y letras';
+      return 'La cédula debe tener una longitud entre 9 y 15 dígitos';
     }
 
-     
+
     if (!licenseUNA.trim() || !  /^[0-9]{6}$/.test(licenseUNA)) {
       return 'La licencia debe contener 6 dígitos numerales';
     }
-  
+
     // Validación del nombre
     if (!name.trim() || !/^[a-zA-Z\s]+$/.test(name)) {
       return 'El nombre es requerido y solo puede contener letras';
     }
-  
+
     // Validación del primer apellido
     if (!lastName1.trim() || !/^[a-zA-Z\s]+$/.test(lastName1)) {
       return 'El primer apellido es requerido y solo puede contener letras';
     }
-  
+
     // Validación del segundo apellido
     if (!lastName2.trim() || !/^[a-zA-Z\s]+$/.test(lastName2)) {
       return 'El segundo apellido es requerido y solo puede contener letras';
     }
-  
+
     // Validación del número de teléfono
     const phoneNumberRegex = /^\d{8}$/;
     if (!phoneNumber.trim() || !phoneNumberRegex.test(phoneNumber)) {
       return 'El teléfono debe contener exactamente 8 dígitos';
     }
-  
+
     // Validación del correo electrónico
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     if (!email.trim() || !emailRegex.test(email)) {
       return 'El correo electrónico no es válido';
     }
-  
+
     // Validación de la contraseña
     if (!password.trim()) {
       return 'La contraseña es requerida';
     }
-  
-  
+
+
     return null;
   };
 
@@ -169,7 +193,7 @@ function Users() {
       userEmail.current.value,
       userPassword.current.value
     );
-  
+
     if (validationError) {
       Swal.fire({
         icon: 'error',
@@ -178,7 +202,7 @@ function Users() {
       });
       return;
     }
-  
+
     let newUser = {
       dni: parseInt(userDni.current.value),
       name: userName.current.value,
@@ -190,17 +214,16 @@ function Users() {
       password: userPassword.current.value,
       state: true,
     };
-    try
-    {
-       mutation.mutateAsync(newUser);
-     
-       Swal.fire({
+    try {
+      mutation.mutateAsync(newUser);
+
+      Swal.fire({
         icon: 'success',
         title: 'Usuario creado',
         text: 'El usuario se ha creado exitosamente',
       });
-  
- 
+
+
     } catch (error) {
       Swal.fire({
         icon: 'error',
@@ -227,10 +250,10 @@ function Users() {
   const [editingUser, setEditingUser] = useState(null);
 
   const handleUpdate = () => {
-    
+
     let updatedUser = {
       id: editingUser.id,
-      dni: parseInt(userDni.current.value),
+      dni: userDni.current.value,
       name: userName.current.value,
       lastName1: userLastName1.current.value,
       lastName2: userLastName2.current.value,
@@ -280,7 +303,7 @@ function Users() {
   return (
     <>
       <Container className="container-fluid">
-        <h1 className="h3 mb-2 text-gray-800">Usuarios</h1>
+        <h2 className="h3 mb-2 text-gray-800 custom-heading">Usuarios</h2>
         <p className="mb-4">Lista de usuarios</p>
 
         <div className="card shadow mb-4">
@@ -291,7 +314,7 @@ function Users() {
             <Accordion defaultActiveKey="1">
               <Accordion.Item eventKey="0">
                 <Accordion.Header>
-                  Click en el botón para crear un usuario
+                  Clic en el botón para crear un usuario
                 </Accordion.Header>
                 <Accordion.Body>
                   <Container>
@@ -299,7 +322,7 @@ function Users() {
                       <Col>
                         <Form.Label htmlFor="inputDNI">Cédula</Form.Label>
                         <Form.Control
-                          type="number"
+                          type="text"
                           placeholder=""
                           id="inputDNI"
                           ref={userDni}
@@ -365,18 +388,19 @@ function Users() {
                           ref={userEmail}
                         />
                       </Col>
-                         <Col xs={4}>
-                          <Form.Label htmlFor="inputPassword">
-                            Contraseña
-                          </Form.Label>
+
+                      <Col xs={6}>
+
+                        <Form.Label htmlFor="inputPassword">
+                          Contraseña
+                        </Form.Label>
+                        <InputGroup>
                           <Form.Control
                             type={showPassword ? "text" : "password"}
                             id="inputPassword"
                             ref={userPassword}
+                            placeholder="Contraseña"
                           />
-                        </Col>
-                         <Col xs={1}>
-                          <br></br>
                           <Button variant="ligth" onClick={togglePasswordVisibility}>
                             {showPassword ? (
                               <i className="bi bi-eye-slash"></i>
@@ -384,19 +408,20 @@ function Users() {
                               <i className="bi bi-eye"></i>
                             )}
                           </Button>
-                        </Col>
-                         <Col xs={1}>
-                         <br></br>
-                          <Button onClick={getPassword} variant="outline-primary">
-                            Generar clave
-                          </Button>
-                        </Col>
-                      </Row>
-                   
+                          
+                            <Button onClick={getPassword}  variant="light" >
+                              Generar clave
+                            </Button>
+                          
+                        </InputGroup>
+                      </Col>
+                    </Row>
+
                     <Button
-                      variant="primary"
+                      variant="success"
+                      className="mt-3 buttonSave"
                       onClick={handleSave}
-                      className="mt-3"
+
                     >
                       Guardar
                     </Button>
@@ -446,11 +471,11 @@ function Users() {
 
                       <Link
                         to={`/users/UserRole/${user.id}`}
-                        className="btn btn-secondary mr-1 text-light"
+                        className=" buttonSave btn btn-secondary mr-1 text-light"
                       >
                         <i className="bi bi-person-gear"></i>
                       </Link>
-                    
+
                     </td>
                   </tr>
                 ))}
@@ -470,7 +495,7 @@ function Users() {
               <Col>
                 <Form.Label>Cédula</Form.Label>
                 <Form.Control
-                  type="number"
+                  type="text"
                   placeholder="Ingrese la cédula"
                   defaultValue={editingUser ? editingUser.dni : ""}
                   ref={userDni}
@@ -527,10 +552,10 @@ function Users() {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="danger" onClick={handleCloseEditModal}>
+          <Button className="buttonCancel" onClick={handleCloseEditModal}>
             Cancelar
           </Button>
-          <Button variant="dark" onClick={handleUpdate}>
+          <Button className="buttonSave" onClick={handleUpdate}>
             Actualizar
           </Button>
         </Modal.Footer>
@@ -564,12 +589,12 @@ function Users() {
               <p>
                 <strong>Correo electrónico:</strong> {selectedUser.email}
               </p>
-             
+
             </div>
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseDetailModal}>
+          <Button className="buttonCancel" onClick={handleCloseDetailModal}>
             Cerrar
           </Button>
         </Modal.Footer>

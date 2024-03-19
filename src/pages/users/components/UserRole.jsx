@@ -109,7 +109,7 @@ function UserRole() {
 
           Swal.fire({
             icon: "success",
-            title: "Registrado éxitosamente",
+            title: "Registrado exitosamente",
             showConfirmButton: false,
             timer: 2500,
           }).then(() => {
@@ -129,7 +129,7 @@ function UserRole() {
 
   return (
     <Container className="container-fluid">
-      <h1 className="h3 mb-2 text-gray-800">Configuración de Roles</h1>
+      <h2 className="h3 mb-2 text-gray-800 custom-heading">Configuración de Roles</h2>
       <p className="mb-4">Lista de roles para los usuarios</p>
       <div className="p-4 card shadow mb-4">
         {console.log(selectedRoles)}
@@ -150,22 +150,25 @@ function UserRole() {
                       disabled={isSaving}
                     />
                     {role.name}
+                  
                   </label>
                 </div>
               )): ''}
+              
             </div>
             <div>
               <Button
-                variant="primary"
+                variant="success"
+                className="mr-2 buttonSave"
                 onClick={handleSave}
                 disabled={isSaving}
-                className="mr-2"
+                
               >
                 Guardar
               </Button>
 
               <Link style={LinkStyle} to={"/users"}>
-                <Button variant="dark" className="bg-gradient-danger">
+                <Button  className="buttonCancel">
                   Regresar
                 </Button>
               </Link>

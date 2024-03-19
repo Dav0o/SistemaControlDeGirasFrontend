@@ -130,7 +130,7 @@ function RequestToPDF({ formData }) {
           </View>
           <View style={styles.column}>
             <Text style={styles.label}>Vehículo de la solicitud:</Text>
-            <Text style={styles.input}>{formData.vehicle.plate_Number}</Text>
+            <Text style={styles.input}>{formData.plate_Number}</Text>
           </View>
         </View>
 

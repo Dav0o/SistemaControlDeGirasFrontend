@@ -12,8 +12,11 @@ function SeeRequest({ data }) {
 
   return (
     <>
-      <Button onClick={handleShowEdit}>
-        <i class="bi bi-info-square"></i>
+      <Button onClick={handleShowEdit}
+      // variant="info"
+      //  className="bg-gradient-info text-light"
+       >
+        <i class="bi bi-info-square"> </i>
       </Button>
 
       <Modal show={showModal} onHide={handleClose} size="lg">
@@ -140,7 +143,7 @@ function SeeRequest({ data }) {
                 </Col>
                 <Col>
                   <Form.Group className="mb-2" controlId="formBasicPassword">
-                    <Form.Label>Requiere chófer</Form.Label>
+                    <Form.Label>Requiere chofer</Form.Label>
 
                     <Form.Check
                       type="checkbox"
@@ -172,7 +175,8 @@ function SeeRequest({ data }) {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button className="buttonCancel" onClick={handleClose}
+         >
             Cerrar
           </Button>
         </Modal.Footer>
