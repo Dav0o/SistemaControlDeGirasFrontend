@@ -1,0 +1,40 @@
+/* #2898ee
+#107acc
+#0cbccc
+#15297c
+#142157 */
+
+.custom-button {
+   
+    background-color: #7386D5;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .custom-button:hover {
+    background-color: #475694;
+  }
+  
+  .custom-heading {
+    font-size: 24px;
+    color: #333;
+  }
+
+  .buttonGray {
+   
+    background-color: #8c8e92;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .buttonGray:hover {
+    background-color: #63636e;
+  }
+
+ 

@@ -10,6 +10,8 @@ import { create } from "../../services/MaintenanceService";
 import { useState, useEffect } from "react";
 import "datatables.net-buttons-dt";
 import Spinner from 'react-bootstrap/Spinner';
+import "../../stylesheets/button.css"
+import "../../stylesheets/generalDesign.css"
 
 function Vehicle() {
   const LinkStyle = {
@@ -32,6 +34,28 @@ function Vehicle() {
 
     // Inicializa el DataTable después de renderizar los datos
     const newDataTable = new DataTable("#tableMaintenance", {
+      language: {
+        processing:     "Procesando...",
+        search:         "Buscar:",
+        lengthMenu:    "Mostrar _MENU_ elementos",
+        info:           "Mostrando elementos _START_ al _END_ de un total de _TOTAL_ elementos",
+        infoEmpty:      "Mostrando 0 elementos",
+        infoFiltered:   "(filtrado de _MAX_ elementos en total)",
+        infoPostFix:    "",
+        loadingRecords: "Cargando...",
+        zeroRecords:    "No se encontraron elementos",
+        emptyTable:     "No hay datos disponibles en la tabla",
+        paginate: {
+            first:      "Primero",
+            previous:   "Anterior",
+            next:       "Siguiente",
+            last:       "Último"
+        },
+        aria: {
+            sortAscending:  ": activar para ordenar la columna de manera ascendente",
+            sortDescending: ": activar para ordenar la columna de manera descendente"
+        }
+    },
       retrieve: true,
       responsive: true,
       bLengthChange: false,
@@ -96,12 +120,12 @@ function Vehicle() {
   return (
     <>
       <Container>
-        <h1 className="h3 mb-2 text-gray-800">Mantenimiento</h1>
-        <p>Lista de vehículos con su respectiva lista de mantenimiento</p>
+        <h2 className="h3 mb-2 text-gray-800 custom-heading">Mantenimiento</h2>
+        <p> </p>
         <div className="card shadow mb-4">
           <div className="card-header py-3">
             <p>
-              Dé click en el botón "detalles" para observar el mantenimiento de
+              Dé clic en el botón "detalles" para observar el mantenimiento de
               cada vehículo
             </p>
           </div>

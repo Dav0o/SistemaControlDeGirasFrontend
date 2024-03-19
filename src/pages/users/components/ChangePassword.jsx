@@ -5,6 +5,8 @@ import Form from "react-bootstrap/Form";
 import { Link } from "react-router-dom";
 import { useMutation } from "react-query";
 import { changePassword } from "../../../services/UserService";
+import "../../../stylesheets/button.css";
+import "../../../stylesheets/generalDesign.css";
 
 function ChangePassword() {
     const email = useRef(null);
@@ -26,18 +28,17 @@ function ChangePassword() {
   }
   return (
     <Container className="container-fluid">
-      <h1 className="h3 mb-2 text-gray-800">Cambio de contraseña</h1>
+      <h2 className="h3 mb-2 text-gray-800 custom-heading">Cambio de contraseña</h2>
       <p className="mb-4">
-        Escriba los datos respectivos para realizar el cambio de contraseña del
-        usuario a especificar
+        Escriba los datos respectivos para realizar el cambio de contraseña
       </p>
       <div className="p-4 card shadow mb-4">
         <Form>
           <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Label>Correo Electronico</Form.Label>
+            <Form.Label>Correo electrónico</Form.Label>
             <Form.Control type="email" placeholder="Ingrese su correo" ref={email}/>
             <Form.Text className="text-muted">
-              No vamos a compartir la informacion privada con los demas
+              
             </Form.Text>
           </Form.Group>
 
@@ -53,16 +54,20 @@ function ChangePassword() {
             <Form.Label>Contraseña nueva</Form.Label>
             <Form.Control
               type="password"
-              placeholder="Ingrese su contraseña nueva para realizar el cambio"
+              placeholder="Ingrese su contraseña nueva "
               ref={newPassword}
             />
           </Form.Group>
          
+          <Button className="buttonCancel" style={{marginRight: '20px'}}>
+          <Link to="/profile">Regresar </Link>
+        </Button>
 
-          <Button onClick={handleSave} className="mr-1" variant="primary">
+          <Button onClick={handleSave} className="mr-1 buttonSave" variant="success">
             Guardar
           </Button>
 
+         
           
         </Form>
       </div>

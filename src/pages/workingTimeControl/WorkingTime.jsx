@@ -39,6 +39,28 @@ function WorkingTime() {
 
     // Inicializa el DataTable después de renderizar los datos
     const newDataTable = new DataTable("#tableControlJornada", {
+      language: {
+        processing:     "Procesando...",
+        search:         "Buscar:",
+        lengthMenu:    "Mostrar _MENU_ elementos",
+        info:           "Mostrando elementos _START_ al _END_ de un total de _TOTAL_ elementos",
+        infoEmpty:      "Mostrando 0 elementos",
+        infoFiltered:   "(filtrado de _MAX_ elementos en total)",
+        infoPostFix:    "",
+        loadingRecords: "Cargando...",
+        zeroRecords:    "No se encontraron elementos",
+        emptyTable:     "No hay datos disponibles en la tabla",
+        paginate: {
+            first:      "Primero",
+            previous:   "Anterior",
+            next:       "Siguiente",
+            last:       "Último"
+        },
+        aria: {
+            sortAscending:  ": activar para ordenar la columna de manera ascendente",
+            sortDescending: ": activar para ordenar la columna de manera descendente"
+        }
+    },
       dom: "lfBrtip",
       bLengthChange: false,
       responsive: true,
@@ -137,14 +159,14 @@ function WorkingTime() {
   return (
     <>
       <Container className="container-fluid">
-        <h1 className="h3 mb-2 text-gray-800">Control Jornada</h1>
+        <h2 className="h3 mb-2 text-gray-800 custom-heading">Control Jornada</h2>
         <p>Lista de los choferes con la respectiva jornada del mes</p>
         <div className="card shadow mb-4">
           <div>
             <Accordion defaultActiveKey="1">
               <Accordion.Item eventKey="0">
                 <Accordion.Header>
-                  Click en el botón para crear una jornada laboral
+                  Clic en el botón para crear una jornada laboral
                 </Accordion.Header>
                 <Accordion.Body>
                   <Container>
@@ -171,7 +193,7 @@ function WorkingTime() {
                       
                     </Row>
 
-                    <Button variant="primary" className="mt-3" onClick={handleSave}>
+                    <Button variant="success" className=" buttonSave mt-3" onClick={handleSave}>
                       Guardar
                     </Button>
                   </Container>
@@ -189,8 +211,8 @@ function WorkingTime() {
               <thead>
                 <tr>
                   <th>Fecha inicial</th>
-                  <th>Cedula chófer</th>
-                  <th>Nombre Chofer</th>
+                  <th>Cédula del chofer</th>
+                  <th>Nombre del chofer</th>
                   <th>Acciones</th>
                 </tr>
               </thead>

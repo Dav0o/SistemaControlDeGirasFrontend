@@ -140,9 +140,12 @@ function Layout({ children }) {
                     <li>
                       <a href="/checkedRequests">Ver</a>
                     </li>
-
+                      </ul>
+                    <li>
+                  <a href="/notices">Noticias</a>
+                  </li>
                     
-                  </ul>
+                 
                 </li>
               </>
             )}
@@ -163,7 +166,7 @@ function Layout({ children }) {
                 <span></span>
               </button>
               <button
-                className="btn btn-dark d-inline-block d-lg-none ml-auto"
+                className="btn  buttonNavbar d-inline-block d-lg-none ml-auto"
                 type="button"
                 data-toggle="collapse"
                 data-target="#navbarSupportedContent"

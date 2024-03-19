@@ -3,6 +3,8 @@ import axios from "axios";
 import { Button, Form } from "react-bootstrap";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import "../../stylesheets/generalDesign.css"
+import { Link } from "react-router-dom";
 
 function PasswordRecovery() {
   const [email, setEmail] = useState("");
@@ -34,24 +36,30 @@ function PasswordRecovery() {
   };
 
   return (
-    <div className="container">
-      <h2 className="my-4">Recuperación de Contraseña</h2>
+    <div className="container" >
+      <h2 className="my-4 custom-heading">Recuperación de contraseña</h2>
       <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3" controlId="Email">
-          <Form.Label>Correo Electrónico</Form.Label>
+        <Form.Group className="mb-3" controlId="Email" >
+          <Form.Label className="custom-label"  ></Form.Label>
           <Form.Control
             type="email"
-            placeholder="Ingrese su correo electrónico"
+            placeholder="Digita tu correo electrónico"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            style={{ width: '400px' }}
           />
         </Form.Group>
-        <Button variant="primary" type="submit">
+
+        <Button type="submit" className="custom-button" style={{ marginRight: '20px' }}>
           Enviar
+        </Button>
+
+        <Button  variant= 'ligth' className="buttonGray">
+          <Link to="/login">Regresar </Link>
         </Button>
       </Form>
     </div>
-  );
+  );  
 }
 
 export default PasswordRecovery;

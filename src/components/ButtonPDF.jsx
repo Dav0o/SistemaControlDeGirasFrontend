@@ -10,7 +10,11 @@ function ButtonPDF({ formData }) {
   const handleShow = () => setShow(true);
   return (
     <>
-      <Button onClick={handleShow}>PDF</Button>
+      < Button 
+      onClick={handleShow}
+
+      style={{marginLeft: '15px'}}
+      variant="danger">PDF</Button>
 
       <Modal
         size="lg"
@@ -21,7 +25,7 @@ function ButtonPDF({ formData }) {
       >
         <Modal.Header closeButton>
           <Modal.Title id="example-modal-sizes-title-lg">
-            Large Modal
+            
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>

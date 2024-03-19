@@ -4,7 +4,7 @@ import { getRequestByUserId } from '../../../services/RequestService'
 import { useAuth } from '../../../auth/AuthProviders';
 import { Button, Card, Container } from 'react-bootstrap';
 import SeeRequest from '../../../components/SeeRequest';
-
+import { Link } from 'react-router-dom';
 
 function MyRequests() {
     const {user} = useAuth();
@@ -41,11 +41,11 @@ function MyRequests() {
 
   return (
     <Container className="mb-3">
-        <h1 className="h3 mb-2 text-gray-800">Mis solicitudes </h1>
+        <h2 className="h3 mb-2 text-gray-800 custom-heading">Mis solicitudes </h2>
         <p className="mb-4">Lista de solicitudes</p>
         <div className="card shadow mb-4">
           <div className="card-header py-3">
-            <p>Dé click en ' i ' para seleccionar una solicitud</p>
+            <p>Dé clic en el icono ' i ' de detalles para obtener más información sobre sus solicitudes. </p>
           </div>
           <div className="card-body">
             {data ? data.map((request) => (
@@ -82,10 +82,15 @@ function MyRequests() {
                   </Button>
                 </Card.Body>
               </Card>
+              
             )) : ''}
           </div>
         </div>
+        <Button className="buttonCancel">
+          <Link to="/profile">Regresar </Link>
+        </Button>
       </Container>
+      
   )
 }
 

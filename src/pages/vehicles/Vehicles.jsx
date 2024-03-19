@@ -5,17 +5,15 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useMutation, useQuery } from "react-query";
-import {
-  changeStatus,
-  create,
-  getByIdVehicle,
-  getVehicles,
-} from "../../services/VehicleService";
+import {changeStatus, create, getByIdVehicle, getVehicles,} from "../../services/VehicleService";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { Accordion } from "react-bootstrap";
+import "../../stylesheets/button.css";
+import "../../stylesheets/generalDesign.css";
+
 
 export const Vehicles = () => {
   const mutation = useMutation("vehicles", create);
@@ -59,7 +57,7 @@ export const Vehicles = () => {
     mutation.isError
       ? MySwal.fire({
           icon: "error",
-          text: "Algo salió mal!",
+          text: "¡Algo salió mal!",
         }).then(mutation.reset)
       : null;
   }
@@ -212,6 +210,28 @@ export const Vehicles = () => {
 
     // Inicializa el DataTable después de renderizar los datos
     const newDataTable = new DataTable("#tableVehicles", {
+      language: {
+        processing:     "Procesando...",
+        search:         "Buscar:",
+        lengthMenu:    "Mostrar _MENU_ elementos",
+        info:           "Mostrando elementos _START_ al _END_ de un total de _TOTAL_ elementos",
+        infoEmpty:      "Mostrando 0 elementos ",
+        infoFiltered:   "(filtrado de _MAX_ elementos en total)",
+        infoPostFix:    "",
+        loadingRecords: "Cargando...",
+        zeroRecords:    "No se encontraron elementos",
+        emptyTable:     "No hay datos disponibles en la tabla",
+        paginate: {
+            first:      "Primero",
+            previous:   "Anterior",
+            next:       "Siguiente",
+            last:       "Último"
+        },
+        aria: {
+            sortAscending:  ": activar para ordenar la columna de manera ascendente",
+            sortDescending: ": activar para ordenar la columna de manera descendente"
+        }
+    },
       retrieve: true,
       responsive: true,
       bLengthChange: false,
@@ -279,7 +299,7 @@ export const Vehicles = () => {
   return (
     <>
       <Container className="container-fluid">
-        <h1 className="h3 mb-2 text-gray-800">Vehículos</h1>
+        <h2 className="h3 mb-2 text-gray-800 custom-heading">Vehículos</h2>
         <p className="mb-4">Lista de vehículos</p>
         <div className="card shadow mb-4">
           {/* <div className="d-flex justify-content-between"> */}
@@ -626,16 +646,10 @@ export const Vehicles = () => {
                         </Col>
                       </Row>
 
-                      {/* </Modal.Body>
-                  
-                   <ModalFooter> */}
-                      <Button variant="danger" onClick={handleCloseFormModal}>
-                        Cancelar
-                      </Button>
-
+         
                       <Button
                         variant="success"
-                        className="bg-gradient-success"
+                        className="buttonSave"
                         onClick={handleSave}
                       >
                         Guardar
@@ -684,6 +698,7 @@ export const Vehicles = () => {
                       <Button
                         variant="warning"
                         className="bg-gradient-warning mr-1 text-light"
+                        style={{marginRight: '20px'}}
                         onClick={() => handleEditClick(vehicle.id)}
                       >
                         <i className="bi bi-pencil-square"></i>
@@ -930,23 +945,18 @@ export const Vehicles = () => {
         </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="danger" onClick={handleCloseEditModal}>
+          <Button className="buttonCancel" onClick={handleCloseEditModal}>
             Cancelar
           </Button>
           <Button
-            variant="warning"
-            className="bg-gradient-warning text-light"
+           
+            className="buttonSave"
+            variant="success"
             onClick={handleUpdate}
           >
             Actualizar
           </Button>
-          {/* <Button
-            variant="danger"
-            onClick={() => handleDisableVehicle(editingVehicle.id)}
-          >
-            {" "}
-            <span class="material-symbols-outlined">visibility</span>{" "}
-          </Button> */}
+         
         </Modal.Footer>
       </Modal>
 
@@ -957,7 +967,7 @@ export const Vehicles = () => {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title>Información del Vehículo</Modal.Title>
+          <Modal.Title>Información del vehículo</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {selectedVehicle && (
@@ -1001,6 +1011,7 @@ export const Vehicles = () => {
                   <div>
                     <strong>Cambio de Aceite:</strong>{" "}
                     {selectedVehicle.oil_Change}
+                
                   </div>
                   <div className="d-flex align-items-center">
                     <strong>Estado:</strong>{" "}
@@ -1031,7 +1042,7 @@ export const Vehicles = () => {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseInfoModal}>
+          <Button className="buttonCancel" onClick={handleCloseInfoModal}>
             Cerrar
           </Button>
         </Modal.Footer>

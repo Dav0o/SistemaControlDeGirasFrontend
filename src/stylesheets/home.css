@@ -1,4 +1,4 @@
-.img-home-plate{
+/* .img-home-plate{
     width: 100%;
 }
 #myCarousel {
@@ -46,4 +46,47 @@
     .carousel-item-prev:not(.carousel-item-end) {
         transform: translateX(-25%) !important;
     }
-}
+} */
+
+
+.card-slider {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  
+  }
+  
+  .card-slider-item {
+    flex: 0 0 300px;
+    margin-right: 20px; 
+    scroll-snap-align: start; 
+   
+  }
+
+  .Body {
+ border: none; 
+  height: 150px;
+  padding: 20px; 
+  background-color: whitesmoke; 
+
+  }
+
+  .card-slider-item .card-body:hover {
+    box-shadow: 0 8px 16px  #5873c5; /* Cambia la sombra al pasar el mouse sobre el cuerpo de la tarjeta */
+  }
+
+  .Info
+  {
+    background-color: #5873c51f;
+    text-align: left;
+    padding: 20px; 
+    border-radius: 10px; 
+
+  }
+
+
+  
+  /* background : url (poner imagen de flecha ) no repeat;
+  float: :right;
+  margin: o -50px 0 0;
+  display: block; */

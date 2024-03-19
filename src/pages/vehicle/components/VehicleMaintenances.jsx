@@ -13,7 +13,8 @@ import withReactContent from "sweetalert2-react-content";
 import { useEffect } from "react";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { Accordion } from "react-bootstrap";
-
+import "../../../stylesheets/button.css"
+import "../../../stylesheets/generalDesign.css"
 
 function VehicleMaintenances() {
 
@@ -352,13 +353,13 @@ function VehicleMaintenances() {
   return (
     <>
       <Container className="container-fluid">
-        <h1 className="h3 mb-2 text-gray-800">Lista de Mantenimiento del Vehículo</h1>
-        <p class="mb-4">Lista de mantenimientos o incidentes</p>
+        <h2 className="h3 mb-2 text-gray-800 custom-heading">Lista de mantenimiento o incidentes del vehículo</h2>
+       
         <div className="card shadow mb-4">
 
           <Accordion defaultActiveKey="1">
             <Accordion.Item eventKey="0">
-              <Accordion.Header>Click en el botón para crear un vehículo</Accordion.Header>
+              <Accordion.Header>Clic en el botón para crear un vehículo</Accordion.Header>
               <Accordion.Body>
                 <Form validated={validated} onSubmit={handleSave}>
 
@@ -477,11 +478,8 @@ function VehicleMaintenances() {
                     </Row>
                   </Row>
                 </Form>
-                <Button variant="danger" onClick={handleCloseFormModal} style={{ marginRight: '10px' }}>
-                  Cancelar
-                </Button>
 
-                <Button variant="success" onClick={handleSave}>
+                <Button variant="success" className="buttonSave" onClick={handleSave}>
                   Guardar
                 </Button>
 
@@ -518,6 +516,7 @@ function VehicleMaintenances() {
                         variant="warning"
                         className="bg-gradient-warning mr-1 text-light"
                         onClick={() => handleEditClick(maintenance.id)}
+                        style={{marginRight:'20px'}}
                       >
                         <i class="bi bi-pencil-square"></i>
                       </Button>
@@ -540,7 +539,7 @@ function VehicleMaintenances() {
         </div>
 
         <Link style={LinkStyle} to={"/vehicle"}>
-          <Button variant="dark" className="bg-gradient-danger">
+          <Button  className="buttonCancel">
             Regresar
           </Button>
         </Link>
@@ -663,10 +662,10 @@ function VehicleMaintenances() {
 
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="danger" onClick={handleCloseEditModal}>
+          <Button className="buttonCancel" onClick={handleCloseEditModal}>
             Cancelar
           </Button>
-          <Button variant="dark" onClick={handleUpdate}>
+          <Button className="buttonSave" onClick={handleUpdate}>
             Actualizar
           </Button>
         </Modal.Footer>
@@ -681,7 +680,7 @@ function VehicleMaintenances() {
           ¿Estás seguro de que quieres eliminar este mantenimiento?
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
+          <Button className="buttonCancel" onClick={handleCloseModal}>
             Cancelar
           </Button>
           <Button variant="danger" onClick={handleDeleteMaintenance}>

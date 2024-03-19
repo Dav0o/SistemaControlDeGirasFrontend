@@ -27,9 +27,9 @@ function RequestList() {
 
   return (
     <Container className="container-fluid">
-      <h1 className="h3 mb-2 text-gray-800">Bitacora de Solicitudes</h1>
+      <h2 className="h3 mb-2 text-gray-800 custom-heading">Bitácora de solicitudes</h2>
       <p class="mb-4">
-        Lista de Solicitudes para gestionar la bitacora de las mismas
+        Gestiona la lista de solicitudes
       </p>
 
       <div className="card shadow mb-4">
@@ -48,7 +48,7 @@ function RequestList() {
                     variant="info"
                     className="bg-gradient-info text-light mr-2"
                   >
-                    Horario de Trabajo
+                    Horario de trabajo
                   </Button>
                 </Link>
                 <Link to={`/requestGasoline/${request.id}`}>
@@ -56,7 +56,7 @@ function RequestList() {
                     variant="warning"
                     className="bg-gradient-info text-light"
                   >
-                    Suministro de Combustible
+                    Suministro de combustible
                   </Button>
                 </Link>
               </Card.Body>

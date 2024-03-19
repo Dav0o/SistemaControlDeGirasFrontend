@@ -51,7 +51,7 @@ function EndorseRequest() {
     mutation.isError
       ? MySwal.fire({
           icon: "error",
-          text: "Algo salió mal!",
+          text: "¡Algo salió mal!",
         }).then(mutation.reset)
       : null;
   }
@@ -141,12 +141,12 @@ function EndorseRequest() {
 
   return (
     <>
-      <Container className="container-fluid">
-        <h1 className="h3 mb-2 text-gray-800">Solicitudes a avalar</h1>
-        <p className="mb-4">Lista de solicitudes por avalar</p>
+      <Container className="container-fluid ">
+        <h2 className="h3 mb-2 text-gray-800 custom-heading">Avalar</h2>
+        <p className="mb-4"> Lista de solicitudes</p>
         <div className="card shadow mb-4">
           <div className="card-header py-3">
-            <p>Dé click en avalar para seleccionar una solicitud</p>
+            <p>Diríjase a la solicitud que desea avalar</p>
           </div>
           <div className="card-body">
             {filteredData.map((request) => (
@@ -164,20 +164,20 @@ function EndorseRequest() {
                     <div>
                       <Button
                         variant="success"
-                        className="bg-gradient-success text-light mr-1"
+                        className="buttonSave text-light mr-1"
                         onClick={() => handleShowEndorse(request.id)}
                       >
                         Avalar
                       </Button>
                       <Button
-                        variant="dark"
-                        className="bg-gradient-secondary"
+                        
+                        className="buttonCancel"
                         onClick={() => handleShowEdit(request.id)}
                       >
                         Editar
                       </Button>
+                      
                     </div>
-
                     <SeeRequest data={request}/>
                   </div>
                 </Card.Body>
@@ -236,7 +236,7 @@ function EndorseRequest() {
                   aria-label="Default select example"
                   ref={vehicleId}
                 >
-                  <option>Lista de Vehículos</option>
+                  <option>Lista de vehículos</option>
                   {/* -------------------------------------------------------------------------------------------------- */}
                   {vehicles.map((vehicle) => {
                     // Verificar disponibilidad del vehículo
@@ -278,12 +278,12 @@ function EndorseRequest() {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button className="buttonCancel" onClick={handleCloseEdit}>
             Cerrar
           </Button>
           <Button
             variant="success"
-            className="bg-gradient-success text-light"
+            className="buttonSave"
             onClick={handleEndorse}
           >
             Avalar
@@ -437,7 +437,7 @@ function EndorseRequest() {
                 </Col>
                 <Col>
                   <Form.Group className="mb-2" controlId="formBasicPassword">
-                    <Form.Label>Requiere chófer</Form.Label>
+                    <Form.Label>Requiere chofer</Form.Label>
 
                     <Form.Check
                       type="checkbox"
@@ -479,12 +479,12 @@ function EndorseRequest() {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button className="buttonCancel" onClick={handleClose}>
             Cerrar
           </Button>
           <Button
             variant="success"
-            className="bg-gradient-success text-light"
+            className="buttonSave"
             onClick={handleUpdate}
           >
             Guardar
