@@ -190,6 +190,18 @@ function VehicleMaintenances() {
       return;
     }
 
+    const currentDate = new Date(); 
+    const selectedDate = new Date(date.current.value); 
+  
+    if (selectedDate > currentDate) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'La fecha no puede ser mayor que la fecha actual'
+      });
+      return;
+    }
+
     let updatedImageString = '';
     if (Array.isArray(imageUrl)) {
       updatedImageString = imageUrl.filter(Boolean).join(',');
@@ -209,9 +221,23 @@ function VehicleMaintenances() {
       vehicleId: vehicleId,
 
     };
-    mutation.mutateAsync(newMaintenance);
-  };
-
+    mutation.mutateAsync(newMaintenance)
+    .then(() => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Éxito',
+        text: 'El mantenimiento ha sido guardado exitosamente'
+      })
+    })
+    .catch((error) => {
+      console.error("Error al guardar el mantenimiento:", error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Hubo un problema al guardar el mantenimiento. Por favor, inténtalo de nuevo más tarde.'
+      });
+    });
+};
 
 
   const handleEditClick = (maintenanceId) => {
@@ -289,6 +315,18 @@ function VehicleMaintenances() {
       return; 
     }
 
+    const currentDate = new Date(); 
+    const selectedDate = new Date(date.current.value); 
+  
+    if (selectedDate > currentDate) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'La fecha no puede ser mayor que la fecha actual'
+      });
+      return;
+    }
+
     const updatedImages = [...editingMaintenance.image.split(','), ...newImages];
     const updatedImageString = updatedImages.filter(Boolean).join(',');
 
@@ -304,33 +342,73 @@ function VehicleMaintenances() {
       vehicleId: vehicleId,
     };
 
-    mutation.mutateAsync(updatedMaintenance).then(() => {
-      setShowEditModal(false);
+    mutation.mutateAsync(updatedMaintenance, {
+      onSuccess: () => {
+        setShowEditModal(false);
+       
+        Swal.fire({
+          icon: 'success',
+          title: 'Actualización exitosa',
+          text: 'El mantenimiento se ha actualizado correctamente.'
+        }
+        );
+        window.location.reload();
+      },
+      onError: (error) => {
+        console.error('Error al actualizar el mantenimiento:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Hubo un problema al actualizar el mantenimiento. Por favor, inténtalo de nuevo más tarde.'
+        });
+      }
     });
   };
 
-  const handleDeleteMaintenance = async () => {
+  const handleDelete = async (maintenanceId) => {
     try {
-      await deleteMaintenance(selectedMaintenance);
-      const updatedMaintenances = maintenances.filter(
-        (maintenance) => maintenance.id !== selectedMaintenance
-      );
-      setMaintenances(updatedMaintenances);
-      setShowModal(false);
+      const result = await Swal.fire({
+        title: '¿Estás seguro?',
+        text: '¡No podrás revertir esto!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminarlo!',
+        cancelButtonText: 'Cancelar',
+      });
+
+      if (result.isConfirmed) {
+        await deleteMaintenance(maintenanceId);
+        Swal.fire(
+          '¡Eliminado!',
+          'El mantenimiento ha sido eliminado.',
+          'success'
+        );
+      }
+      window.location.reload();
     } catch (error) {
-      console.error(error);
+      console.error('Error al eliminar el mantenimiento:', error);
+      Swal.fire(
+        'Error',
+        'Hubo un problema al eliminar el mantenimiento.',
+        'error'
+      );
     }
   };
 
-  const handleOpenModal = (maintenanceId) => {
-    setSelectedMaintenance(maintenanceId);
-    setShowModal(true);
-  };
 
-  const handleCloseModal = () => {
-    setSelectedMaintenance(null);
-    setShowModal(false);
-  };
+  // const handleOpenModal = (maintenanceId) => {
+  //   setSelectedMaintenance(maintenanceId);
+  //   setShowModal(true);
+  // };
+
+  // const handleCloseModal = () => {
+  //   setSelectedMaintenance(null);
+  //   setShowModal(false);
+  // };
+
+
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -523,7 +601,7 @@ function VehicleMaintenances() {
                       <Button
                         variant="danger"
                         className="bg-gradient-danger mr-1 text-light"
-                        onClick={() => handleOpenModal(maintenance.id)}
+                        onClick={() => handleDelete(maintenance.id)}
                       >
                         <i class="bi bi-trash"></i>
                       </Button>{" "}
@@ -554,7 +632,7 @@ function VehicleMaintenances() {
 
 
 
-          <form class="was-validated" >
+          <Form >
             <Row>
               <Col md={6}>
                 <Form.Group controlId="formName">
@@ -622,7 +700,6 @@ function VehicleMaintenances() {
                   />
                 </Form.Group>
               </Col>
-
               <Col md={6}>
                 <Form.Group>
                   <Form.Label>Imágenes </Form.Label>
@@ -654,40 +731,19 @@ function VehicleMaintenances() {
                   ))}
                 </Form.Group>
               </Col>
-            </Row>
-
-          </form>
-
-
-
+           </Row>
+          </Form>
         </Modal.Body>
         <Modal.Footer>
           <Button className="buttonCancel" onClick={handleCloseEditModal}>
             Cancelar
           </Button>
-          <Button className="buttonSave" onClick={handleUpdate}>
+          <Button className="buttonSave" variant="success" onClick={handleUpdate}>
             Actualizar
           </Button>
         </Modal.Footer>
       </Modal >
 
-
-      <Modal show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirmar eliminación</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          ¿Estás seguro de que quieres eliminar este mantenimiento?
-        </Modal.Body>
-        <Modal.Footer>
-          <Button className="buttonCancel" onClick={handleCloseModal}>
-            Cancelar
-          </Button>
-          <Button variant="danger" onClick={handleDeleteMaintenance}>
-            Eliminar
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </>
   );
 }

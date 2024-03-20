@@ -77,29 +77,134 @@ export const Vehicles = () => {
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [editingVehicle, setEditingVehicle] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
+
   const { isLoading, data, isError } = useQuery("vehicles", getVehicles, {
     enabled: true,
   });
 
+
+    //VALIDACIONES
+    const validateFields =  (plate_Number, category, make,model, year,color,capacity,
+                               fuel, traction, engine_capacity, mileage
+       ) => {
+     
+        const plateNumberRegex = /^[A-Za-z0-9-]{3,8}$/;
+        if (!plateNumberRegex.test(plate_Number)) {
+            return "La placa es requerida y debe tener entre 3 y 8 caracteres alfanuméricos.";
+        }
+
+      if (!category) {
+        return "La categoría requerida.";
+      }
+      
+      const makeRegex = /^[A-Za-z]{3,20}$/;
+      if (!make || !makeRegex.test(make)) {
+        return "La marca es requerida, solo permite letras.";
+      }
+
+
+    const modelRegex = /^[A-Za-z0-9]{3,30}$/;
+      if (!model || !modelRegex.test(model)) {
+        return "Digite un formato válido para el modelo, acepta números-letras.";
+      }
+      
+      if (!year || isNaN(year) || year < 1980 || year > new Date().getFullYear()) {
+        return "El año debe ser entre 1980 y el año actual.";
+      }
+    
+      if (!color) {
+        return "Color es un campo requerido.";
+      }
+    
+      if (!capacity || isNaN(capacity) || capacity < 1 || capacity > 80) {
+        return "la capacidad debe ser entre 1 y 80.";
+      }
+      if (!fuel) {
+        return "La gasolina es un campo requerido.";
+      }
+    
+      if (!traction) {
+        return "La tracción es un campo requerido.";
+      }
+    
+      const digitsOnlyRegex = /^\d+$/;
+      if (!engine_capacity || !digitsOnlyRegex.test(engine_capacity) ||  parseInt(engine_capacity) < 0) {
+        return "El cilindraje solo acepta números.";
+      }
+    
+     
+      if (!mileage || !digitsOnlyRegex.test(mileage)  || parseInt(mileage) < 0) {
+        return "El kilometraje solo acepta números.";
+      }
+    
+ 
+    
+      return null; // Retorna null si todas las validaciones pasan
+    };
   const handleSave = (event) => {
+
+  
+    const validationError = validateFields(
+    
+      plate_Number.current.value,
+      category.current.value,
+      make.current.value,
+      model.current.value,
+      year.current.value,
+      color.current.value,
+      capacity.current.value,
+      fuel.current.value,
+      traction.current.value,
+      engine_capacity.current.value,
+      mileage.current.value,
+
+    );
+
+    if (validationError) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: validationError,
+      });
+      return;
+    }
     let newVehicle = {
       plate_Number: plate_Number.current.value,
+     category: category.current.value,
       make: make.current.value,
       model: model.current.value,
-      category: category.current.value,
-      traction: traction.current.value,
       year: parseInt(year.current.value),
       color: color.current.value,
       capacity: parseInt(capacity.current.value),
-      engine_capacity: parseInt(engine_capacity.current.value),
-      mileage: parseInt(mileage.current.value),
       fuel: fuel.current.value,
+      traction: traction.current.value,
+      engine_capacity: parseInt(engine_capacity.current.value),
+      mileage: parseInt(mileage.current.value), 
       oil_Change: oil_Change.current.value,
       status: true,
       image: imageUrl,
     };
-    mutation.mutateAsync(newVehicle);
+    try {
+      mutation.mutateAsync(newVehicle).then (() => {
+        window.location.reload();
+      });
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Vehículo creado',
+        text: 'El vehículo se ha creado exitosamente',
+      });
+
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Hubo un error al crear el vehículo',
+      });
+    }
   };
+
+
 
   const plate_Number = useRef(null);
   const make = useRef(null);
@@ -182,26 +287,26 @@ export const Vehicles = () => {
   const handleCloseFormModal = () => setShowFormModal(false);
   const handleShowFormModal = () => setShowFormModal(true);
 
-  const handleCapacity = (e) => {
-    const rangeCapacity = e.target.value;
-    if (rangeCapacity > 80 || rangeCapacity < 1) {
-      capacity.current.value = "";
-    }
-  };
+  // const handleCapacity = (e) => {
+  //   const rangeCapacity = e.target.value;
+  //   if (rangeCapacity > 80 || rangeCapacity < 1) {
+  //     capacity.current.value = "";
+  //   }
+  // };
 
-  const handleYear = (e) => {
-    const inputValue = e.target.value;
+  // const handleYear = (e) => {
+  //   const inputValue = e.target.value;
 
-    const currentYear = new Date().getFullYear();
+  //   const currentYear = new Date().getFullYear();
 
-    if (inputValue < 1980 || inputValue > currentYear) {
-      e.target.setCustomValidity(
-        "El año debe estar entre 1980 y " + currentYear
-      );
-    } else {
-      e.target.setCustomValidity("");
-    }
-  };
+  //   if (inputValue < 1980 || inputValue > currentYear) {
+  //     e.target.setCustomValidity(
+  //       "El año debe estar entre 1980 y " + currentYear
+  //     );
+  //   } else {
+  //     e.target.setCustomValidity("");
+  //   }
+  // };
 
   useEffect(() => {
     if (dataTable) {
@@ -284,10 +389,24 @@ export const Vehicles = () => {
 
   const mutationStatus = useMutation("vehicles", changeStatus);
 
-  function handleStatus(id) {
-    mutationStatus.mutateAsync(id);
-    window.location.reload();
-  }
+
+  const handleStatus = (id) => {
+   
+    Swal.fire({
+      title: '¿Está seguro?',
+      text: '¿Desea cambiar el estado del vehículo?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, cambiar estado'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        mutationStatus.mutateAsync(id);
+        window.location.reload();
+      }
+    });
+  };
 
   if (isLoading) {
     return (
@@ -307,14 +426,12 @@ export const Vehicles = () => {
         <h2 className="h3 mb-2 text-gray-800 custom-heading">Vehículos</h2>
         <p className="mb-4">Lista de vehículos</p>
         <div className="card shadow mb-4">
-          {/* <div className="d-flex justify-content-between"> */}
-          {/* <div>Click en el botón para crear un vehículo</div>
-              <div> */}
+       
           <div>
             <Accordion defaultActiveKey="1">
               <Accordion.Item eventKey="0">
                 <Accordion.Header>
-                  Click en el botón para crear un vehículo
+                  Clic en el botón para crear un vehículo
                 </Accordion.Header>
                 <Accordion.Body>
                   <Form onSubmit={handleSave}>
@@ -427,7 +544,6 @@ export const Vehicles = () => {
                               placeholder="Ingrese el año"
                               name="year"
                               ref={year}
-                              onChange={handleYear}
                               required
                             />
                             <div className="valid-feedback"></div>
@@ -481,10 +597,6 @@ export const Vehicles = () => {
                               placeholder="Ingrese la capacidad"
                               name="capacity"
                               ref={capacity}
-                              minLength="1"
-                              maxLength="70"
-                              size="2"
-                              onInput={handleCapacity}
                               required
                             />
                             <div className="valid-feedback"></div>
@@ -768,8 +880,7 @@ export const Vehicles = () => {
                     placeholder="Ingrese el año"
                     defaultValue={editingVehicle ? editingVehicle.year : ""}
                     ref={year}
-                    required
-                    onChange={handleYear}
+                    required 
                   ></Form.Control>
                   <div className="valid-feedback"></div>
                   <div className="invalid-feedback">
@@ -904,7 +1015,6 @@ export const Vehicles = () => {
                         editingVehicle ? editingVehicle.capacity : ""
                       }
                       ref={capacity}
-                      onChange={handleCapacity}
                       required
                     />
                     <div className="valid-feedback"></div>

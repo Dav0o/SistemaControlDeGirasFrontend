@@ -80,6 +80,7 @@ function RequestForm() {
 
   const MySwal = withReactContent(Swal);
 
+<<<<<<< Updated upstream
  
   {
     mutation.isSuccess
@@ -91,6 +92,24 @@ function RequestForm() {
         }).then(mutation.reset)
       : null;
   }
+=======
+  {mutation.isError
+    ? 
+      MySwal.fire({
+      icon: "error",
+      text: "¡Algo salió mal!",
+    }).then(mutation.reset)
+  
+    : null}
+  {mutation.isSuccess
+    ? MySwal.fire({
+        icon: "success",
+        title: "Solicitud creada con éxito!",
+        showConfirmButton: false,
+        timer: 1500,
+      }).then(mutation.reset)
+    : null}
+>>>>>>> Stashed changes
 
   const executingUnit = useRef(null);
   const typeRequest = useRef(null);

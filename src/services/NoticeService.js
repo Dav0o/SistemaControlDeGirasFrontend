@@ -33,6 +33,6 @@ export const deleteNotice = async (noticeId) => {
   };
 
 export const changeStatus = async (id) => {
-    let data = await api.patch(`notices/${id}/disable`).then(result);
+    let data = await api.patch(`notices/${id}/disable`).then(result => result.data);
     return data;
 }
