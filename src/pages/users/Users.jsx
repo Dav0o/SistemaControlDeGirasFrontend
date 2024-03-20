@@ -205,7 +205,7 @@ function Users() {
     }
 
     let newUser = {
-      dni: parseInt(userDni.current.value),
+      dni: userDni.current.value,
       name: userName.current.value,
       lastName1: userLastName1.current.value,
       lastName2: userLastName2.current.value,
@@ -216,7 +216,9 @@ function Users() {
       state: true,
     };
     try {
-      mutation.mutateAsync(newUser);
+      mutation.mutateAsync(newUser).then (() => {
+        window.location.reload();
+      });
 
       Swal.fire({
         icon: 'success',
@@ -250,8 +252,70 @@ function Users() {
 
   const [editingUser, setEditingUser] = useState(null);
 
-  const handleUpdate = () => {
 
+    //VALIDACIONES UPDATE
+    const validateUpdateUserFields = (dni,name, lastName1, lastName2, phoneNumber, licenseUNA, email) => {
+      // Validación de la cédula
+      if (dni.length < 9 || dni.length > 15 || !/^[0-9a-zA-Z]+$/.test(dni)) {
+        return 'La cédula debe tener una longitud entre 9 y 15 dígitos';
+      }
+  
+  
+      if (!licenseUNA.trim() || !  /^[0-9]{6}$/.test(licenseUNA)) {
+        return 'La licencia debe contener 6 dígitos numerales';
+      }
+  
+      // Validación del nombre
+      if (!name.trim() || !/^[a-zA-Z\s]+$/.test(name)) {
+        return 'El nombre es requerido y solo puede contener letras';
+      }
+  
+      // Validación del primer apellido
+      if (!lastName1.trim() || !/^[a-zA-Z\s]+$/.test(lastName1)) {
+        return 'El primer apellido es requerido y solo puede contener letras';
+      }
+  
+      // Validación del segundo apellido
+      if (!lastName2.trim() || !/^[a-zA-Z\s]+$/.test(lastName2)) {
+        return 'El segundo apellido es requerido y solo puede contener letras';
+      }
+  
+      // Validación del número de teléfono
+      const phoneNumberRegex = /^\d{8}$/;
+      if (!phoneNumber.trim() || !phoneNumberRegex.test(phoneNumber)) {
+        return 'El teléfono debe contener exactamente 8 dígitos';
+      }
+  
+      // Validación del correo electrónico
+      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+      if (!email.trim() || !emailRegex.test(email)) {
+        return 'El correo electrónico no es válido';
+      }
+
+  
+      return null;
+    };
+  const handleUpdate = () => {
+    
+    const validationError = validateUpdateUserFields(
+      userDni.current.value,
+      userName.current.value,
+      userLastName1.current.value,
+      userLastName2.current.value,
+      userPhoneNumber.current.value,
+      userLicenseUNA.current.value,
+      userEmail.current.value,
+    );
+
+    if (validationError) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: validationError,
+      });
+      return;
+    }
+   
     let updatedUser = {
       id: editingUser.id,
       dni: userDni.current.value,
@@ -261,14 +325,32 @@ function Users() {
       phoneNumber: parseInt(userPhoneNumber.current.value),
       licenseUNA: parseInt(userLicenseUNA.current.value),
       email: userEmail.current.value,
-
       state: editingUser.state,
     };
 
-    mutation.mutateAsync(updatedUser);
+   try{
 
+    mutation.mutateAsync(updatedUser);
     setShowEditModal(false);
+  
+
+  Swal.fire({
+    icon: 'success',
+    title: 'Usuario creado',
+    text: 'El usuario se ha editado exitosamente',
+  });
+
+  window.location.reload();
+  
+} catch (error) {
+  Swal.fire({
+    icon: 'error',
+    title: 'Error',
+    text: 'Hubo un error al editar el usuario',
+  });
+}
   };
+
 
   const [showDetailModal, setShowDetailModal] = useState(false);
   const handleCloseDetailModal = () => setShowDetailModal(false);
@@ -517,12 +599,14 @@ function Users() {
                   defaultValue={editingUser ? editingUser.phoneNumber : ""}
                   ref={userPhoneNumber}
                 />
+                
                 <Form.Label>Correo electrónico</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Ingrese el correo"
                   defaultValue={editingUser ? editingUser.email : ""}
                   ref={userEmail}
+                  style={{width:'120%'}}
                 />
               </Col>
               <Col>
@@ -556,7 +640,7 @@ function Users() {
           <Button className="buttonCancel" onClick={handleCloseEditModal}>
             Cancelar
           </Button>
-          <Button className="buttonSave" onClick={handleUpdate}>
+          <Button className="buttonSave" variant="success" onClick={handleUpdate}>
             Actualizar
           </Button>
         </Modal.Footer>
@@ -568,26 +652,26 @@ function Users() {
         </Modal.Header>
         <Modal.Body>
           {selectedUser && (
-            <div>
-              <p>
+            <div >
+              <p style={{color: 'black'}}>
                 <strong>Cédula:</strong> {selectedUser.dni}
               </p>
-              <p>
+              <p style={{color: 'black'}}>
                 <strong>Nombre:</strong> {selectedUser.name}
               </p>
-              <p>
+              <p style={{color: 'black'}}>
                 <strong>Primer Apellido:</strong> {selectedUser.lastName1}
               </p>
-              <p>
+              <p style={{color: 'black'}}>
                 <strong>Segundo Apellido:</strong> {selectedUser.lastName2}
               </p>
-              <p>
+              <p style={{color: 'black'}}>
                 <strong>Teléfono:</strong> {selectedUser.phoneNumber}
               </p>
-              <p>
+              <p style={{color: 'black'}}>
                 <strong>Licencia UNA:</strong> {selectedUser.licenseUNA}
               </p>
-              <p>
+              <p style={{color: 'black'}}>
                 <strong>Correo electrónico:</strong> {selectedUser.email}
               </p>
 

@@ -65,34 +65,35 @@ function Notices() {
 
   const mutationStatus = useMutation("notices", changeStatus);
 
-  const handleStatusChange = async (noticeId, newStatus) => {
-    try {
-      const result = await Swal.fire({
-        title: "¿Estás seguro?",
-        text: "¿Deseas cambiar el estado?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Sí",
-        cancelButtonText: "Cancelar"
-      });
-  
+  const handleStatusChange = (noticeId, newStatus) => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "¿Deseas cambiar el estado?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí",
+      cancelButtonText: "Cancelar"
+    }).then((result) => {
       if (result.isConfirmed) {
-        await mutationStatus.mutateAsync(noticeId);
-     
-        window.location.reload();
+        mutationStatus.mutateAsync(noticeId)
+          .then(() => {
+            // Recargar la página después de realizar el cambio
+            window.location.reload();
+          })
+          .catch((error) => {
+            console.error("Error al actualizar el estado de la noticia:", error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Hubo un error al actualizar el estado de la noticia',
+            });
+          });
       }
-    } catch (error) {
-      console.error("Error al actualizar el estado de la noticia:", error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Hubo un error al actualizar el estado de la noticia',
-      });
-    }
+    });
   };
-
+  
 
 
   const formatDate = (dateString) => {

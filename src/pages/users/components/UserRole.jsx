@@ -147,7 +147,7 @@ function UserRole() {
                       type="checkbox"
                       checked={selectedRoles.includes(role.id)}
                       onChange={() => handleRoleChange(role.id)}
-                      disabled={isSaving}
+                      disabled={role.id ===  1 || isSaving}
                     />
                     {role.name}
                   
