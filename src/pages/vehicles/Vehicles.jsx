@@ -1088,52 +1088,89 @@ export const Vehicles = () => {
           {selectedVehicle && (
             <div>
               <Row>
-                <Col md={3}>
-                  <div>
+                <Col md={4}>
+                <p style={{color: 'black'}}>
                     <strong>Placa:</strong> {selectedVehicle.plate_Number}
-                  </div>
-                  <div>
+                  </p>
+                  </Col>
+
+                  <Col md={4}> 
+                  <p style={{color: 'black'}}>
+                    <strong>Categoría:</strong> {selectedVehicle.category}
+                    </p>
+                    </Col>
+
+                  <Col md={4}>
+                  <p style={{color: 'black'}}>
                     <strong>Marca:</strong> {selectedVehicle.make}
-                  </div>
-                  <div>
+                    </p>
+                    </Col>
+                    <Col md={4}>
+                  <p style={{color: 'black'}}>
                     <strong>Modelo:</strong> {selectedVehicle.model}
-                  </div>
-                  <div>
+                    </p>
+                    </Col>
+
+                    <Col md={4}> 
+                  <p style={{color: 'black'}}>
+                    <strong>Año:</strong> {selectedVehicle.year}
+                    </p>
+                    </Col>
+                    <Col md={4}> 
+                  <p style={{color: 'black'}}>
+                    <strong>Color:</strong> {selectedVehicle.color}
+                    </p>
+                    </Col>
+
+                    <Col md={4}>
+                  <p style={{color: 'black'}}>
                     <strong>Capacidad:</strong> {selectedVehicle.capacity}
-                  </div>
-                  <div>
+                    </p>
+                    </Col>
+                
+                    <Col md={4}>
+                   <p style={{color: 'black'}}>
+                    <strong>Gasolina:</strong> {selectedVehicle.fuel}
+                    </p>
+                    </Col>
+          
+                    <Col md={4}>
+                  <p style={{color: 'black'}}>
                     <strong>Tracción:</strong> {selectedVehicle.traction}
-                  </div>
-                  <div>
+                    </p>
+                    </Col>
+                    </Row>
+                    <Row>
+                    <Col md={4}>
+                  <p style={{color: 'black'}}>
                     <strong>Cilindraje:</strong>{" "}
                     {selectedVehicle.engine_capacity}
-                  </div>
-                  <div>
-                    <strong>Gasolina:</strong> {selectedVehicle.fuel}
-                  </div>
-                  <div>
-                    <strong>Año:</strong> {selectedVehicle.year}
-                  </div>
-                  <div>
-                    <strong>Color:</strong> {selectedVehicle.color}
-                  </div>
-                  <div>
-                    <strong>Categoría:</strong> {selectedVehicle.category}
-                  </div>
-                  <div>
+                    </p>
+                    </Col>
+                  
+                    <Col md={4}> 
+                  <p style={{color: 'black'}}>
                     <strong>Kilometraje:</strong> {selectedVehicle.mileage}
-                  </div>
-                  <div>
+                    </p>
+                    </Col>
+               
+                    <Col md={4}> 
+                  <p style={{color: 'black'}}>
                     <strong>Cambio de Aceite:</strong>{" "}
-                    {selectedVehicle.oil_Change}
-                
-                  </div>
-                  <div className="d-flex align-items-center">
-                    <strong>Estado:</strong>{" "}
+                    {selectedVehicle.oil_Change}          
+                    </p>
+                  </Col>
+                   </Row>
+                      <Row>
+                <Col md={4}>
+                  <p  style={{color: 'black'}} className="d-flex align-items-center">
+                    <strong>Estado:  </strong>{" "}
                     {selectedVehicle.status ? "Habilitado" : "Deshabilitado"}
+                   
                     <Button
                       variant={selectedVehicle.status ? "success" : "danger"}
                       onClick={() => handleStatus(selectedVehicle.id)}
+                      style={{marginLeft: '10px'}}
                     >
                       {selectedVehicle.status ? (
                         <i class="bi bi-toggle-on"></i>
@@ -1141,9 +1178,10 @@ export const Vehicles = () => {
                         <i class="bi bi-toggle-off"></i>
                       )}
                     </Button>
-                  </div>
-                </Col>
-                <Col md={3} className="text-right">
+                  </p>
+                </Col>          
+
+                <Col md={4} className="text-right">
                   {selectedVehicle.image && (
                     <img
                       src={selectedVehicle.image}
@@ -1151,8 +1189,9 @@ export const Vehicles = () => {
                     />
                   )}
                 </Col>
-              </Row>
+                </Row>
             </div>
+
           )}
         </Modal.Body>
         <Modal.Footer>

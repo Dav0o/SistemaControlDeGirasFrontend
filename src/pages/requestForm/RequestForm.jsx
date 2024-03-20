@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Container } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -13,103 +13,95 @@ import "../../stylesheets/button.css"
 
 function RequestForm() {
   const [showDriverOptions, setShowDriverOptions] = useState(false);
-  const [drivers, setDrivers] = useState([]); // Almacena los choferes cuando se activa el checkbox
 
   const [itsDriver, setItsDriver] = useState(true);
 
 
   //VALIDACIONES
-  const validateFormFields = (objetivo,personas, fechaSalida,fechaRegreso,lugarSalida, lugarDestino, typeOfVehicle) => {
-    // Validación de la cédula
-    if (!objetivo.trim() || !/^[a-zA-Z\s]+$/.test(objetivo)) {
-      return 'El objetivo es requerido y solo puede contener letras!';
+  const validateFormFields = (objetivo, personas, fechaSalida, fechaRegreso, lugarSalida, lugarDestino, itinerario, typeOfVehicle, observaciones) => {
+
+    if (!objetivo.trim() || !/^[a-zA-ZáéíóúÁÉÍÓÚ\s-]+$/.test(objetivo)) {
+      return 'El objetivo es requerido y solo puede contener letras';
     }
 
-     
+
     if (personas < 1) {
       return 'La cantidad de personas tiene que ser mayor o igual a 1';
     }
 
-    if(!fechaSalida.trim()){
+    if (!fechaSalida.trim()) {
       return 'La fecha de salida es requerida';
     }
 
-    if(!fechaRegreso.trim()){
-      return 'La fecha de regreso es requerida';  
+    if (!fechaRegreso.trim()) {
+      return 'La fecha de regreso es requerida';
     }
+
+    const salidaDate = new Date(fechaSalida);
+    const regresoDate = new Date(fechaRegreso);
   
-    // Validación del nombre
-    if (!lugarSalida.trim() || !/^[a-zA-Z\s]+$/.test(lugarSalida)) {
-      return 'El lugar de salida es requerido y solo puede contener letras';
+    if (salidaDate.getTime() === regresoDate.getTime()) {
+      return 'La fecha de salida de puede ser igual a la fecha de regreso';
     }
-  
-    // Validación del primer apellido
-    if (!lugarDestino.trim() || !/^[a-zA-Z\s]+$/.test(lugarDestino)) {
-      return 'El lugar de destino es requerido y solo puede contener letras';
+
+    if (new Date(fechaSalida) < new Date()) {
+       return 'La fecha de salida debe ser igual o mayor a la fecha actual';
+   
     }
-  
-    // Validación del segundo apellido
-    // if (!itinerario.trim()) {
-    //   return 'El itinerario es requerido';
-    // }
+
+    if (new Date(fechaRegreso) < new Date(fechaSalida)) {
+      return 'La fecha de regreso debe ser posterior o igual a la fecha de salida';
+    }
+
+    if (!lugarSalida.trim() || !/^[a-zA-ZáéíóúÁÉÍÓÚ\s-]+$/.test(lugarSalida)) {
+      return 'El lugar de salida es requerido';
+    }
+
+
+    if (!lugarDestino.trim() || !/^[a-zA-ZáéíóúÁÉÍÓÚ\s-]+$/.test(lugarDestino)) {
+      return 'El lugar de destino es requerido';
+    }
+
+    if (!itinerario.trim() || !/^[a-zA-ZáéíóúÁÉÍÓÚ\s-]+$/.test(itinerario)) {
+      return 'El itinerario es requerido';
+    }
 
     if (!typeOfVehicle.trim() || !/^[a-zA-Z\s]+$/.test(typeOfVehicle)) {
-      return 'El tipo de vehiculo es requerido y solo puede contener letras';
+      return 'El tipo de vehiculo es requerido';
     }
-  
+
+
+    if (observaciones && !/^[a-zA-Z0-9\s]*$/.test(observaciones)) {
+      return 'Las observaciones solo pueden contener letras y números';
+    }
+
+
     return null;
   };
 
-  const handleDriverCheckboxChange = () => {
-    // setShowDriverOptions(!showDriverOptions);
-    // if (!showDriverOptions) {
-    //   // Realiza una solicitud HTTP GET para obtener los choferes
-    //   fetch("https://localhost:7023/api/Users/usersbyrole/Chofer")
-    //     .then((response) => response.json())
-    //     .then((data) => {
-    //       setDrivers(data); // Almacena los choferes en el estado
-    //     })
-    //     .catch((error) => {
-    //       console.error("Error al obtener la lista de choferes:", error);
-    //     });
-    // }
-    setItsDriver(!itsDriver);
+  const handleSelectChange = (event) => {
+    const value = event.target.value === "0";
+    setItsDriver(value);
   };
 
+
+  
   const mutation = useMutation("requests", create);
 
   const MySwal = withReactContent(Swal);
 
-<<<<<<< Updated upstream
- 
-  {
-    mutation.isSuccess
-      ? MySwal.fire({
-          icon: "success",
-          title: "Solicitud creada con éxito!",
-          showConfirmButton: false,
-          timer: 1500,
-        }).then(mutation.reset)
-      : null;
-  }
-=======
-  {mutation.isError
-    ? 
+
+  useEffect(() => {
+    if (mutation.isSuccess) {
       MySwal.fire({
-      icon: "error",
-      text: "¡Algo salió mal!",
-    }).then(mutation.reset)
-  
-    : null}
-  {mutation.isSuccess
-    ? MySwal.fire({
         icon: "success",
         title: "Solicitud creada con éxito!",
         showConfirmButton: false,
-        timer: 1500,
-      }).then(mutation.reset)
-    : null}
->>>>>>> Stashed changes
+        timer: 2000,
+      }).then(mutation.reset);
+      window.location.reload();
+    }
+  }, [mutation.isSuccess, MySwal, mutation.reset]);
 
   const executingUnit = useRef(null);
   const typeRequest = useRef(null);
@@ -161,19 +153,21 @@ function RequestForm() {
       arriveDate.current.value,
       departureLocation.current.value,
       destinyLocation.current.value,
-      // itinerary.current.value,
-      typeOfVehicle.current.value
-      
+      itinerary.current.value,
+      typeOfVehicle.current.value,
+      observations.current.value,
+
     );
 
-    if(validationError){
+    if (validationError) {
       MySwal.fire({
         icon: "error",
         title: "Error",
         text: validationError,
       });
+      return;
     }
-    
+
     let newRequest = {
       consecutiveNumber: obtenerFechaYHora(),
       executingUnit: executingUnit.current.value,
@@ -192,16 +186,18 @@ function RequestForm() {
       itsDriver: itsDriver,
       driverId: driverId.current.value,
     };
-    try{
+    try {
       mutation.mutate(newRequest);
-    }catch(error){
+
+    } catch (error) {
+
       MySwal.fire({
         icon: 'error',
         title: 'Error',
         text: 'Hubo un error al crear la solicitud',
       });
     }
-    
+
   };
 
   return (
@@ -240,25 +236,25 @@ function RequestForm() {
 
             <Form.Group className="mb-2" controlId="formBasicPassword">
               <Form.Label>Objetivo</Form.Label>
-              <Form.Control as="textarea" ref={objective} required/>
+              <Form.Control as="textarea" ref={objective} required />
             </Form.Group>
 
             <Form.Group className="mb-2" controlId="formBasicPassword">
               <Form.Label>Número de personas</Form.Label>
-              <Form.Control type="number" ref={personsAmount} required/>
+              <Form.Control type="number" ref={personsAmount} required />
             </Form.Group>
 
             <Row>
               <Col>
                 <Form.Group className="mb-2" controlId="formBasicPassword">
                   <Form.Label>Fecha y hora de salida</Form.Label>
-                  <Form.Control type="datetime-local" ref={departureDate} required/>
+                  <Form.Control type="datetime-local" ref={departureDate} required />
                 </Form.Group>
               </Col>
               <Col>
                 <Form.Group className="mb-2" controlId="formBasicPassword">
                   <Form.Label>Fecha y hora de regreso</Form.Label>
-                  <Form.Control type="datetime-local" ref={arriveDate} required/>
+                  <Form.Control type="datetime-local" ref={arriveDate} required />
                 </Form.Group>
               </Col>
             </Row>
@@ -266,13 +262,13 @@ function RequestForm() {
               <Col>
                 <Form.Group className="mb-2" controlId="formBasicPassword">
                   <Form.Label>Lugar de salida</Form.Label>
-                  <Form.Control type="text" ref={departureLocation} required/>
+                  <Form.Control type="text" ref={departureLocation} required />
                 </Form.Group>
               </Col>
               <Col>
                 <Form.Group className="mb-2" controlId="formBasicPassword">
                   <Form.Label>Lugar de destino</Form.Label>
-                  <Form.Control type="text" ref={destinyLocation} required/>
+                  <Form.Control type="text" ref={destinyLocation} required />
                 </Form.Group>
               </Col>
             </Row>
@@ -290,13 +286,13 @@ function RequestForm() {
 
             <Form.Group className="mb-2" controlId="formBasicPassword">
               <Form.Label>Itinerario</Form.Label>
-              <Form.Control as="textarea" ref={itinerary} required/>
+              <Form.Control as="textarea" ref={itinerary} required />
             </Form.Group>
             <Row>
               <Col>
                 <Form.Group className="mb-2" controlId="formBasicPassword">
                   <Form.Label>Tipo de vehículo</Form.Label>
-                  <Form.Select  ref={typeOfVehicle} required>
+                  <Form.Select ref={typeOfVehicle} required>
                     <option select disable value="No especificado">
                       Seleccione una opción de lo contrario será generico
                     </option>
@@ -313,33 +309,17 @@ function RequestForm() {
                   </Form.Select>
                 </Form.Group>
               </Col>
-              <Col>
-                <Row>
-                  <Col className="d-flex align-items-center mt-2">
-                    <Form.Group className="mb-2 d-flex gap-5 " controlId="formBasicPassword" >
-                      <Form.Label>Requiere chofer</Form.Label>
-                      <Form.Check
-                        type="switch"
-                        className=""
-                        onChange={handleDriverCheckboxChange} // Maneja el cambio de checkbox
-                      />
-                    </Form.Group>
-                    {/* {showDriverOptions && (
-                  <Form.Group className="mb-2" controlId="driverSelect">
-                    <Form.Control as="select" ref={driverId}>
-                      {drivers.map((driver) => (
-                        <option key={driver.id} value={driver.id}>
-                         {driver.dni} - {driver.name} {driver.lastName1} {driver.lastName2}
-                        </option>
-                      ))}
-                    </Form.Control>
-                  </Form.Group>
-                )} */}
-                  </Col>
-                </Row>
-              </Col>
+                  <Col>
+           <Form.Group className="m" controlId="formBasicSelect">
+          <Form.Label>Requiere chofer</Form.Label>
+          <Form.Control as="select" onChange={handleSelectChange} value={itsDriver ? "0" : "1"}>
+          <option value="1">Sí</option>
+          <option value="0">No</option>
+         
+        </Form.Control>
+        </Form.Group>
+       </Col>
             </Row>
-
             <Form.Group className="mb-2" controlId="formBasicPassword">
               <Form.Label>Prioridad</Form.Label>
               <Form.Control as="select" ref={priority}>
