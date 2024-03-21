@@ -48,7 +48,7 @@ function UserRole() {
         showLoaderOnConfirm: true,
         preConfirm: async () => {
           await axios.delete(
-            `https://localhost:7023/api/User_Roles/${userId}/${roleId}`
+            `https://controldegirasapi20240320221516.azurewebsites.net/api/User_Roles/${userId}/${roleId}`
           ); // Esto de aqui elimina el rol antes de haber confirmado
           Swal.fire({
             icon: "success",
@@ -103,7 +103,7 @@ function UserRole() {
       console.log("Data a enviar al servidor:", data);
 
       axios
-        .post("https://localhost:7023/api/user_Roles", data)
+        .post("https://controldegirasapi20240320221516.azurewebsites.net/api/user_Roles", data)
         .then((response) => {
           console.log("Respuesta del servidor:", response.data);
 

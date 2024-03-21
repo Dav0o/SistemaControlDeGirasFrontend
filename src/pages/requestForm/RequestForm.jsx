@@ -41,7 +41,7 @@ function RequestForm() {
     const regresoDate = new Date(fechaRegreso);
   
     if (salidaDate.getTime() === regresoDate.getTime()) {
-      return 'La fecha de salida de puede ser igual a la fecha de regreso';
+      return 'La fecha de salida no puede ser igual a la fecha de regreso';
     }
 
     if (new Date(fechaSalida) < new Date()) {
