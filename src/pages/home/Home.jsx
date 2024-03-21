@@ -31,7 +31,7 @@ function Home() {
         <div className="lc-block col-lg-6 mx-auto mb-4">
           <div editable="rich">
             <p className="lead ">
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sed, dolorem. 
+              Para realizar una solicitud de clic en el botón
             </p>
           </div>
         </div>
@@ -43,7 +43,7 @@ function Home() {
             href="/requestForm"
             role="button"
           >
-            Realizar una solicitud
+            Ir al formulario
           </a>
           
         </div>

@@ -15,6 +15,7 @@ function RequestForm() {
   const [showDriverOptions, setShowDriverOptions] = useState(false);
 
   const [itsDriver, setItsDriver] = useState(true);
+  const [isClicked, setIsClicked] = useState(false);
 
 
   //VALIDACIONES
@@ -145,9 +146,14 @@ function RequestForm() {
 
   const handleSave = () => {
 
-    const validationError = validateFormFields(
 
-      objective.current.value,
+    if (!isClicked) {
+
+      
+
+      const validationError = validateFormFields(
+        
+        objective.current.value,
       personsAmount.current.value,
       departureDate.current.value,
       arriveDate.current.value,
@@ -187,19 +193,21 @@ function RequestForm() {
       driverId: driverId.current.value,
     };
     try {
+      setIsClicked(true);
       mutation.mutate(newRequest);
 
     } catch (error) {
-
+      
       MySwal.fire({
         icon: 'error',
         title: 'Error',
         text: 'Hubo un error al crear la solicitud',
       });
     }
-
+  }
+    
   };
-
+  
   return (
     <Container>
       <Card>
@@ -343,6 +351,7 @@ function RequestForm() {
               variant="succes"
               className="buttonSave"
               onClick={handleSave}
+              disabled={isClicked}
             >
               Enviar
             </Button>
