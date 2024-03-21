@@ -19,6 +19,11 @@ const AuthProviders = ({ children }) => {
     setUser(newUser);
   }
 
+  const logOut = () => {
+    setToken_("");
+    localStorage.setItem("token", "")
+  }
+
   useEffect(() => {
     if (token) {
       axios.defaults.headers.common["Authorization"] = "Bearer " + token;
@@ -38,7 +43,8 @@ const AuthProviders = ({ children }) => {
       token,
       user,
       setToken,
-      setNewUser
+      setNewUser,
+      logOut
     }),
     [token, user]
   );

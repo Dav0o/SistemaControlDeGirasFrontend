@@ -3,11 +3,11 @@ import { useAuth } from "../../auth/AuthProviders";
 import '../../stylesheets/logout.css'
 
 const Logout = () => {
-  const { setToken } = useAuth();
+  const { logOut } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    setToken();
+    logOut();
     navigate("/login", { replace: true });
   };
 
