@@ -159,7 +159,7 @@ function Layout({ children }) {
               <button
                 type="button"
                 id="sidebarCollapse"
-                className="btn buttonLigth"
+                className="btn buttonLight"
                 onClick={toggleSidebar}
               >
                 <i className="fas fa-align-left"></i>
