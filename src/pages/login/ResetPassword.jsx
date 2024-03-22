@@ -45,7 +45,7 @@ function ResetPassword() {
       return;
     }
     try {
-      const response = await axios.post("https://localhost:7023/api/Users/resetPassword", {
+      const response = await axios.post("https://controldegirasapi20240320221516.azurewebsites.net/api/Users/resetPassword", {
         resetToken, 
         newPass,
         confirmPassword,
