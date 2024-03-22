@@ -21,13 +21,20 @@ function RequestForm() {
   //VALIDACIONES
   const validateFormFields = (objetivo, personas, fechaSalida, fechaRegreso, lugarSalida, lugarDestino, itinerario, typeOfVehicle, observaciones) => {
 
-    if (!objetivo.trim() || !/^[a-zA-ZáéíóúÁÉÍÓÚ\s-]+$/.test(objetivo)) {
-      return 'El objetivo es requerido y solo puede contener letras';
+
+    if (!objetivo.trim()) {
+      return 'El objetivo es requerido';
+    }
+    if (!objetivo.trim() || !/^[a-zA-ZáéíóúüÜÁÉÍÓÚ\s-.,;/:()"'=#1234567890]+$/.test(objetivo)) {
+      return 'El objetivo no acepta @ !¡ ¿? $ & % * + [] {} <> ';
     }
 
-
-    if (personas < 1) {
+    if (personas < 1 ) {
       return 'La cantidad de personas tiene que ser mayor o igual a 1';
+    }
+
+    if (personas >= 150) {
+      return 'La cantidad de personas debe ser menor que 150';
     }
 
     if (!fechaSalida.trim()) {
@@ -54,26 +61,37 @@ function RequestForm() {
       return 'La fecha de regreso debe ser posterior o igual a la fecha de salida';
     }
 
-    if (!lugarSalida.trim() || !/^[a-zA-ZáéíóúÁÉÍÓÚ\s-]+$/.test(lugarSalida)) {
+    if (!lugarSalida.trim()) {
       return 'El lugar de salida es requerido';
     }
 
-
-    if (!lugarDestino.trim() || !/^[a-zA-ZáéíóúÁÉÍÓÚ\s-]+$/.test(lugarDestino)) {
+    if (!lugarDestino.trim()) {
       return 'El lugar de destino es requerido';
     }
 
-    if (!itinerario.trim() || !/^[a-zA-ZáéíóúÁÉÍÓÚ\s-]+$/.test(itinerario)) {
+    if (!/^[a-zA-ZáéíóúÁÉÍÓÚ, -]+$/.test(lugarSalida.trim())) {
+      return 'El lugar de salida solo puede contener letras';
+    }
+    
+    if (!/^[a-zA-ZáéíóúÁÉÍÓÚ, -]+$/.test(lugarDestino.trim())) {
+      return 'El lugar de destino solo puede contener letras';
+    }
+    
+
+    if (!itinerario.trim()) {
       return 'El itinerario es requerido';
+    }
+    if (!itinerario.trim() || !/^[a-zA-ZáéíóúüÜÁÉÍÓÚ\s-.,;/:()"'=#1234567890]+$/.test(itinerario)) {
+      return 'El itinerario no acepta @ !¡ ¿? $ & % * + [] {} <> ';
     }
 
     if (!typeOfVehicle.trim() || !/^[a-zA-Z\s]+$/.test(typeOfVehicle)) {
       return 'El tipo de vehiculo es requerido';
     }
 
-
-    if (observaciones && !/^[a-zA-Z0-9\s]*$/.test(observaciones)) {
-      return 'Las observaciones solo pueden contener letras y números';
+   
+    if (!observaciones.trim() || !/^[a-zA-ZáéíóúüÜÁÉÍÓÚ\s-.,;/:()"'=#1234567890]+$/.test(observaciones)) {
+      return 'Las observaciones no aceptan @ !¡ ¿? $ & % * + [] {} <> ';
     }
 
 
