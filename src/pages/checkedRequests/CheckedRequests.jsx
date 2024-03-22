@@ -64,7 +64,7 @@ function CheckedRequests() {
         <p className="mb-4">Lista de solicitudes procesadas</p>
         <div className="card shadow mb-4">
           <div className="card-header py-3">
-            <p>Dé click en detalles para seleccionar una solicitud</p>
+            <p>Dé clic en detalles para seleccionar una solicitud</p>
             <br />
             <Row className="d-flex">
               
