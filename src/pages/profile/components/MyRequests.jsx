@@ -48,7 +48,8 @@ function MyRequests() {
             <p>Dé clic en el icono ' i ' de detalles para obtener más información sobre sus solicitudes. </p>
           </div>
           <div className="card-body">
-            {data ? data.map((request) => (
+          {data && Array.isArray(data) && data.length > 0 ? (
+          data.map((request) => (
               <Card key={request.id} className='mb-3'>
                 <Card.Header>{request.consecutiveNumber}</Card.Header>
                 <Card.Body>
@@ -82,15 +83,17 @@ function MyRequests() {
                   </Button>
                 </Card.Body>
               </Card>
-              
-            )) : ''}
+                 ))
+                 ) : (
+                   <p>No hay solicitudes disponibles.</p>
+                 )}
           </div>
         </div>
         <Button className="buttonCancel">
           <Link to="/profile">Regresar </Link>
         </Button>
       </Container>
-      
+  
   )
 }
 
