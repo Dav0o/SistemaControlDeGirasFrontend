@@ -155,17 +155,20 @@ function VehicleMaintenances() {
 
 
     if (!name.current.value.trim()) {
-      
       Swal.fire({
-        icon: 'error', title: 'Error', text: 'El nombre es requerido'
+          icon: 'error',
+          title: 'Error',
+          text: 'El nombre es requerido'
       });
       return;
-    }
-    else if (!/^[a-zA-Z\s]*$/.test(name.current.value.trim())) {
-
-      Swal.fire({ icon: 'error', title: 'Error', text: 'El nombre solo puede contener letras' });
-      return; 
-    }
+  } else if (!/^[a-zA-Z\u00C0-\u024F\u1E00-\u1EFF\u0300-\u036F\s]*$/.test(name.current.value.trim())) {
+      Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'El nombre solo puede contener letras'
+      });
+      return;
+  }
 
     if (!severity.current.value.trim()) {
 
@@ -202,6 +205,17 @@ function VehicleMaintenances() {
       return;
     }
 
+    if (description.current.value.trim()) {
+      if (!/^[a-zA-Z0-9\u00C0-\u024F\u1E00-\u1EFF\u0300-\u036F\/,\s-]*$/.test(description.current.value.trim())) {
+          Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'La descripción solo puede contener letras y números'
+          });
+          return;
+      }
+  }
+
     let updatedImageString = '';
     if (Array.isArray(imageUrl)) {
       updatedImageString = imageUrl.filter(Boolean).join(',');
@@ -228,6 +242,10 @@ function VehicleMaintenances() {
         title: 'Éxito',
         text: 'El mantenimiento ha sido guardado exitosamente'
       })
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000); 
     })
     .catch((error) => {
       console.error("Error al guardar el mantenimiento:", error);
@@ -309,11 +327,14 @@ function VehicleMaintenances() {
       });
       return;
     }
-    else if (!/^[a-zA-Z\s]*$/.test(name.current.value.trim())) {
-
-      Swal.fire({ icon: 'error', title: 'Error', text: 'El nombre solo puede contener letras' });
-      return; 
-    }
+    else if (!/^[a-zA-Z\u00C0-\u024F\u1E00-\u1EFF\u0300-\u036F\s]*$/.test(name.current.value.trim())) {
+      Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'El nombre solo puede contener letras'
+      });
+      return;
+  }
 
     const currentDate = new Date(); 
     const selectedDate = new Date(date.current.value); 
@@ -326,6 +347,17 @@ function VehicleMaintenances() {
       });
       return;
     }
+
+    if (description.current.value.trim()) {
+      if (!/^[a-zA-Z0-9\u00C0-\u024F\u1E00-\u1EFF\u0300-\u036F\/,\s-]*$/.test(description.current.value.trim())) {
+          Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'La descripción solo puede contener letras y números'
+          });
+          return;
+      }
+  }
 
     const updatedImages = [...editingMaintenance.image.split(','), ...newImages];
     const updatedImageString = updatedImages.filter(Boolean).join(',');
@@ -350,9 +382,11 @@ function VehicleMaintenances() {
           icon: 'success',
           title: 'Actualización exitosa',
           text: 'El mantenimiento se ha actualizado correctamente.'
-        }
+        }    
         );
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000); 
       },
       onError: (error) => {
         console.error('Error al actualizar el mantenimiento:', error);
@@ -386,7 +420,10 @@ function VehicleMaintenances() {
           'success'
         );
       }
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000); 
+
     } catch (error) {
       console.error('Error al eliminar el mantenimiento:', error);
       Swal.fire(
@@ -397,16 +434,6 @@ function VehicleMaintenances() {
     }
   };
 
-
-  // const handleOpenModal = (maintenanceId) => {
-  //   setSelectedMaintenance(maintenanceId);
-  //   setShowModal(true);
-  // };
-
-  // const handleCloseModal = () => {
-  //   setSelectedMaintenance(null);
-  //   setShowModal(false);
-  // };
 
 
 

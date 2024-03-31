@@ -146,17 +146,17 @@ function Users() {
     }
 
     // Validación del nombre
-    if (!name.trim() || !/^[a-zA-Z\s]+$/.test(name)) {
+    if (!name.trim() || !/^[a-zA-Z\u00C0-\u024F\u1E00-\u1EFF\u0300-\u036F\s]+$/.test(name)) {
       return 'El nombre es requerido y solo puede contener letras';
     }
 
     // Validación del primer apellido
-    if (!lastName1.trim() || !/^[a-zA-Z\s]+$/.test(lastName1)) {
+    if (!lastName1.trim() || !/^[a-zA-Z\u00C0-\u024F\u1E00-\u1EFF\u0300-\u036F\s]+$/.test(lastName1)) {
       return 'El primer apellido es requerido y solo puede contener letras';
     }
 
     // Validación del segundo apellido
-    if (!lastName2.trim() || !/^[a-zA-Z\s]+$/.test(lastName2)) {
+    if (!lastName2.trim() || !/^[a-zA-Z\u00C0-\u024F\u1E00-\u1EFF\u0300-\u036F\s]+$/.test(lastName2)) {
       return 'El segundo apellido es requerido y solo puede contener letras';
     }
 
@@ -176,6 +176,9 @@ function Users() {
     if (!password.trim()) {
       return 'La contraseña es requerida';
     }
+      else if (password.trim().length < 8) {
+        return 'La contraseña debe tener al menos 8 caracteres';
+      }
 
 
     return null;
@@ -217,7 +220,9 @@ function Users() {
     };
     try {
       mutation.mutateAsync(newUser).then (() => {
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000); 
       });
 
       Swal.fire({
@@ -266,17 +271,17 @@ function Users() {
       }
   
       // Validación del nombre
-      if (!name.trim() || !/^[a-zA-Z\s]+$/.test(name)) {
+      if (!name.trim() || !/^[a-zA-Z\u00C0-\u024F\u1E00-\u1EFF\u0300-\u036F\s]+$/.test(name)) {
         return 'El nombre es requerido y solo puede contener letras';
       }
   
       // Validación del primer apellido
-      if (!lastName1.trim() || !/^[a-zA-Z\s]+$/.test(lastName1)) {
+      if (!lastName1.trim() || !/^[a-zA-Z\u00C0-\u024F\u1E00-\u1EFF\u0300-\u036F\s]+$/.test(lastName1)) {
         return 'El primer apellido es requerido y solo puede contener letras';
       }
   
       // Validación del segundo apellido
-      if (!lastName2.trim() || !/^[a-zA-Z\s]+$/.test(lastName2)) {
+      if (!lastName2.trim() || !/^[a-zA-Z\u00C0-\u024F\u1E00-\u1EFF\u0300-\u036F\s]+$/.test(lastName2)) {
         return 'El segundo apellido es requerido y solo puede contener letras';
       }
   
@@ -340,7 +345,9 @@ function Users() {
     text: 'El usuario se ha editado exitosamente',
   });
 
-  window.location.reload();
+  setTimeout(() => {
+    window.location.reload();
+  }, 1500); 
   
 } catch (error) {
   Swal.fire({

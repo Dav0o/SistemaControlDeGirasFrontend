@@ -20,18 +20,17 @@ function Home() {
 
   return (
     <div className="container">
+      <h2 className="display-5 fw-bold text-muted text-center" style={{ fontFamily: 'Roboto, sans-serif' }}>
+        Sistema de Control de Giras UNA
+      </h2>
+      <h2 className="display-5 fw-bold text-muted text-center" style={{ fontFamily: 'Roboto, sans-serif' }}>
+        Sede Regional Chorotega
+      </h2>
       <div className="container-fluid px-4 py-5 my-5 text-center">
-        <div className="lc-block">
-          <div editable="rich">
-            <h2 className="display-5 fw-bold text-muted">
-              Sistema de Control de Giras UNA Sede Chorotega
-            </h2>
-          </div>
-        </div>
         <div className="lc-block col-lg-6 mx-auto mb-4">
           <div editable="rich">
             <p className="lead ">
-              Para realizar una solicitud de clic en el botón
+              Para realizar una solicitud dé clic en el botón
             </p>
           </div>
         </div>
@@ -45,7 +44,7 @@ function Home() {
           >
             Ir al formulario
           </a>
-          
+
         </div>
       </div>
 

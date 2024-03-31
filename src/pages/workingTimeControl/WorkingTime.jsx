@@ -15,20 +15,22 @@ import "../../stylesheets/vies.css";
 import Modal from "react-bootstrap/Modal";
 import { getUserByRole } from "../../services/UserService";
 import { useMutation } from "react-query";
+import Swal from "sweetalert2";
+import { deleteWorkingTime } from "../../services/WorkingTimeService";
 
 function WorkingTime() {
-  const { isLoading, data, isError } = useQuery("driverLogs", getDriverLog, {
+
+  const [selectedUserId, setSelectedUserId] = useState('');
+
+  const { isLoading, data} = useQuery("driverLogs", getDriverLog, {
     enabled: true,
   });
 
-  const {
-    isLoading: isLoadingUsers,
-    data: users,
-    isError: isErrorUsers,
-  } = useQuery("users/usersbyrole", () => getUserByRole('Chofer'), {
+  const { isLoading: isLoadingUsers, data: users, } = useQuery("users/usersbyrole", () => getUserByRole('Chofer'), {
     enabled: true,
   });
 
+  
   const [dataTable, setDataTable] = useState(null);
 
   useEffect(() => {
@@ -123,38 +125,111 @@ function WorkingTime() {
   const ordinaryHours = useRef(null);
   const userId = useRef(0);
 
-  const mutation = useMutation("driverLog", create, {
-    onSettled: () => queryClient.invalidateQueries("driverLogs"),
-    mutationKey: "driverLog",
-  });
+  const mutation = useMutation(
+    "driverLog",
+    create,
+    {
+        onSuccess: () => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: 'El registro ha sido guardado exitosamente'
+            }).then(() => {
+                setTimeout(() => {
+                    window.location.reload(); 
+                }, 2000);
+            });
+        },
+        onError: (error) => {
+            console.error("Error al guardar el registro:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Hubo un problema al guardar el registro'
+            });
+        }
+    }
+);
+
+  const handleSelectChange = (e) => {
+    setSelectedUserId(e.target.value);
+  };
+
+  
   const handleSave = () =>{
+    
+    if (!selectedUserId) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Por favor, seleccione un chofer'
+      });
+      return;
+    }
+
+    if (!initialLogDate.current.value.trim()) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Por favor, ingrese la fecha inicial'
+      });
+      return;
+    }
+  
     let newLog = {
+        userId: parseInt(selectedUserId),
         initialLogDate: initialLogDate.current.value,
         ordinaryHours: 0,
         bonusHours: 0,
         extraHours: 0,
-        salary: 0,
-        userId: parseInt(userId.current.value)
+        salary: 0
     };
-    mutation.mutateAsync(newLog);
-  }
+    mutation.mutateAsync(newLog)};
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+if (isLoading) {
+  return <div>Cargando...</div>;
+}
 
-  if (isError) {
-    return <div>Error</div>;
-  }
-  if (isLoadingUsers) {
-    return <div>Loading...</div>;
-  }
+if (isLoadingUsers) {
+  return <div>Cargando...</div>;
+}
 
-  if (isErrorUsers) {
-    return <div>Error</div>;
-  }
 
- 
+/////////////////////////////////
+
+ /////////////////////////////////////////
+
+ const handleDelete = async (WorkingTimeId) => {
+  try {
+    const result = await Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¡No podrás revertir esto!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminarlo!',
+      cancelButtonText: 'Cancelar',
+    });
+
+    if (result.isConfirmed) {
+      await deleteWorkingTime(WorkingTimeId);
+      Swal.fire(
+        'Eliminado!',
+        'El registro ha sido eliminada.',
+        'success'
+      );
+    }
+  } catch (error) {
+    console.error('Error al eliminar el control de horas:', error);
+    Swal.fire(
+      'Error',
+      'Hubo un problema al eliminar el registro.',
+      'error'
+    );
+  }
+};
+
 
   return (
     <>
@@ -175,8 +250,8 @@ function WorkingTime() {
                         <Form.Label htmlFor="inputDNI">
                           Cédula del chofer
                         </Form.Label>
-                        <Form.Select aria-label="Default select example">
-                          <option>Choferes a seleccionar</option>
+                        <Form.Select aria-label="Default select example" value={selectedUserId} onChange={handleSelectChange}>
+                          <option value="" >Choferes a seleccionar</option>
                           {users.map((user) => (
                             <option value={user.id} ref={userId}>{user.dni}-{user.name} {user.lastName1}</option>
                           ))}
@@ -184,13 +259,11 @@ function WorkingTime() {
                       </Col>
                     </Row>
                     <Row className="mb-2">
-                    
+
                         <Form.Label >
                           Fecha de inicio
                         </Form.Label>
                         <Form.Control type="date"  ref={initialLogDate}/>
-                      
-                      
                     </Row>
 
                     <Button variant="success" className=" buttonSave mt-3" onClick={handleSave}>
@@ -243,6 +316,15 @@ function WorkingTime() {
                         <i class="bi bi-clock"></i>
                       </Button>
                       </Link>
+
+                      <Button
+                        variant="danger"
+                        className="bg-gradient-danger mr-1 text-light"
+                        onClick={() => handleDelete(request.id)}
+                        style={{marginLeft:'10px'}}
+                      >
+                        <i className="bi bi-trash"></i>
+                      </Button>
                       
                      
                     </td>
@@ -293,7 +375,8 @@ function WorkingTime() {
               />
             </Modal.Body>
             <Modal.Footer>
-              <Button onClick={handleClose}>Close</Button>
+              <Button 
+              className= "buttonCancel" onClick={handleClose}>Cerrar</Button>
             </Modal.Footer>
           </>
         )}
