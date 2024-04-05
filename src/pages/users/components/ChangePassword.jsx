@@ -7,9 +7,11 @@ import { useMutation } from "react-query";
 import { changePassword } from "../../../services/UserService";
 import "../../../stylesheets/button.css";
 import "../../../stylesheets/generalDesign.css";
+import Swal from "sweetalert2";
 
 function ChangePassword() {
-    const email = useRef(null);
+    
+  const email = useRef(null);
     const oldPassword = useRef(null);
     const newPassword = useRef(null);
 
@@ -19,6 +21,35 @@ function ChangePassword() {
   });
 
   const handleSave = () => {
+
+    if (!email.current.value.trim()) {
+      Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'El correo electrónico es requerido'
+      });
+      return;
+    }
+
+    if (!oldPassword.current.value.trim()) {
+      Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'La contraseña anterior es requerida'
+      });
+      return;
+    }
+
+    if (!newPassword.current.value.trim()) {
+      Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Debe digitar una contraseña nueva'
+      });
+      return;
+    }
+
+
     let newPasswordDto = {
         email:email.current.value,
         oldPassword:oldPassword.current.value,
@@ -36,7 +67,7 @@ function ChangePassword() {
         <Form>
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Label>Correo electrónico</Form.Label>
-            <Form.Control type="email" placeholder="Ingrese su correo" ref={email}/>
+            <Form.Control type="email" placeholder="Ingrese su correo" value={user.email}/>
             <Form.Text className="text-muted">
               
             </Form.Text>

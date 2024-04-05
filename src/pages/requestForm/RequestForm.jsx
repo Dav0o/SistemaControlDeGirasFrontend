@@ -90,10 +90,11 @@ function RequestForm() {
     }
 
    
-    if (!observaciones.trim() || !/^[a-zA-ZáéíóúüÜÁÉÍÓÚ\s-.,;/:()"'=#1234567890]+$/.test(observaciones)) {
+    if (!observaciones.trim()) {
+    } else { (!/^[a-zA-ZáéíóúüÜÁÉÍÓÚ\s-.,;/:()"'=#1234567890]+$/.test(observaciones)) 
       return 'Las observaciones no aceptan @ !¡ ¿? $ & % * + [] {} <> ';
-    }
-
+    } 
+    
 
     return null;
   };
@@ -360,9 +361,12 @@ function RequestForm() {
               </Form.Control>
             </Form.Group>
 
-            <Form.Group className="mb-2" controlId="formBasicPassword">
-              <Form.Label>Observaciones</Form.Label>
+            <Form.Group className="mb-2" controlId="Observations">
+              <Form.Label>Observaciones </Form.Label>
               <Form.Control as="textarea" ref={observations} />
+              <Form.Text className="text-muted">
+              *No es obligatoria*
+              </Form.Text>
             </Form.Group>
 
             <Button

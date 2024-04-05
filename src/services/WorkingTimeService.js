@@ -19,3 +19,13 @@ export const getByIdWorkingTime = async (workingTimeId) => {
     let data = await api.get(`workingTimes/${workingTimeId}`).then(result => result.data);
     return data;
 }
+
+
+export const deleteWorkingTime = async (workingTimeId) => {
+    try {
+      const response = await api.delete(`workingTimes/${workingTimeId}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };

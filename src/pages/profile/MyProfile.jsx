@@ -11,6 +11,7 @@ import { getByIdUser } from "../../services/UserService";
 import { Link } from "react-router-dom";
 import { create } from "../../services/UserService";
 import "../../stylesheets/button.css";
+import Swal from "sweetalert2";
 
 function MyProfile() {
   const { user } = useAuth();
@@ -21,8 +22,9 @@ function MyProfile() {
     isLoading: userLoading,
     data: userData,
     isError: userError,
-  } = useQuery(["users", userId], () => getByIdUser(userId));
-
+  } = useQuery(["users", userId], () => getByIdUser(userId), {
+    enabled: !!userId, 
+  });
   useEffect(() => {
     if (user) {
       for (const claim in user) {
@@ -63,7 +65,70 @@ function MyProfile() {
     mutationKey: "user",
   });
 
+  const validateUpdateUserFields = (dni,name, lastName1, lastName2, licenseUNA, phoneNumber, email) => {
+    // Validación de la cédula
+    if (dni.length < 9 || dni.length > 15 || !/^[0-9a-zA-Z]+$/.test(dni)) {
+      return 'La cédula debe tener una longitud entre 9 y 15 dígitos';
+    }
+
+    // Validación del nombre
+    if (!name.trim() || !/^[a-zA-Z\u00C0-\u024F\u1E00-\u1EFF\u0300-\u036F\s]+$/.test(name)) {
+      return 'El nombre es requerido y solo puede contener letras';
+    }
+
+    // Validación del primer apellido
+    if (!lastName1.trim() || !/^[a-zA-Z\u00C0-\u024F\u1E00-\u1EFF\u0300-\u036F\s]+$/.test(lastName1)) {
+      return 'El primer apellido es requerido y solo puede contener letras';
+    }
+
+    // Validación del segundo apellido
+    if (!lastName2.trim() || !/^[a-zA-Z\u00C0-\u024F\u1E00-\u1EFF\u0300-\u036F\s]+$/.test(lastName2)) {
+      return 'El segundo apellido es requerido y solo puede contener letras';
+    }
+
+    if (!licenseUNA.trim() || !  /^[0-9]{6}$/.test(licenseUNA)) {
+      return 'La licencia debe contener 6 dígitos numerales';
+    }
+
+    // Validación del número de teléfono
+    const phoneNumberRegex = /^\d{8}$/;
+    if (!phoneNumber.trim() || !phoneNumberRegex.test(phoneNumber)) {
+      return 'El teléfono debe contener exactamente 8 dígitos';
+    }
+
+    // Validación del correo electrónico
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    if (!email.trim() || !emailRegex.test(email)) {
+      return 'El correo electrónico no es válido';
+    }
+
+
+    return null;
+  };
+
+
   const handleUpdate = () => {
+
+    const validationError = validateUpdateUserFields(
+      userDni.current.value,
+      userName.current.value,
+      userLastName1.current.value,
+      userLastName2.current.value,
+      userLicenseUNA.current.value,
+      userPhoneNumber.current.value,
+      userEmail.current.value,
+    );
+
+    if (validationError) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: validationError,
+      });
+      return;
+    }
+   
+
     let updatedUser = {
       id: editingUser.id,
       dni: parseInt(userDni.current.value),
@@ -77,14 +142,37 @@ function MyProfile() {
       state: editingUser.state,
     };
 
-    mutation.mutateAsync(updatedUser);
-  };
+    try{
+
+      mutation.mutateAsync(updatedUser);
+      setShowEditModal(false);
+    
+  
+    Swal.fire({
+      icon: 'success',
+      title: 'Usuario creado',
+      text: 'El usuario se ha editado exitosamente',
+    });
+  
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000); 
+    
+  } catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Hubo un error al editar el usuario',
+    });
+  }
+    };
+  
 
   if (userLoading) {
-    <div>isLoading...</div>;
+    <div>Cargando...</div>;
   }
   if (userError) {
-    <div>isError...</div>;
+    <div>Error...</div>;
   }
 
   return (

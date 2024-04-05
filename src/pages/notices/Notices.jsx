@@ -1,22 +1,43 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useMutation, useQuery } from "react-query";
 import { Row, Col, Accordion, Form, Button, Container, Table, Modal, FormLabel } from "react-bootstrap";
-import { create, getNotices, deleteNotice, changeStatus } from "../../services/NoticeService.js";
+import {  create, getNotices, deleteNotice, changeStatus } from "../../services/NoticeService.js";
 import Swal from "sweetalert2";
 import DataTable from 'datatables.net';
 import "../../stylesheets/vies.css"
 import "../../stylesheets/button.css"
 import "../../stylesheets/generalDesign.css"
+import CreateNotice from "./components/CreateNotice.jsx";
 
 function Notices() {
   const mutation = useMutation("notices", create);
-
   const { isLoading, data, isError } = useQuery("notices", getNotices, {
     enabled: true,
   });
 
+  
   const [notices, setNotices] = useState([]);
   const [dataTable, setDataTable] = useState(null);
+
+  const [accordionKey, setAccordionKey] = useState(null);
+  const [validationErrorT, setValidationErrorT] = useState(false);
+  const [validationErrorB, setValidationErrorB] = useState(false);
+
+
+  const handleCreateSuccess = () => {
+   
+    setAccordionKey(null); 
+  };
+
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.getMonth() + 1; 
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
 
 
 
@@ -96,43 +117,7 @@ function Notices() {
   
 
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const formattedDate = date.toISOString().split('T')[0];
-    return formattedDate;
-  };
-
-  const handleSave = () => {
-   
-
-    const dateValue = date.current.value;
-
-    const newNotice = {
-      title: noticeTitle.current.value,
-      body: noticeBody.current.value,
-      status: true,
-      date: dateValue,
-    };
-    try {
-      mutation.mutateAsync(newNotice);
-      Swal.fire({
-        icon: 'success',
-        title: 'Noticia creada',
-        text: 'La noticia se ha creado exitosamente',
-      }).then(() => {
-     
-        window.location.reload();
-      });
   
-    } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Hubo un error al crear la noticia',
-      });
-    }
-  };
-
   //////////edit/////////////////////////////
   const [showEditModal, setShowEditModal] = useState(false);
 
@@ -151,11 +136,45 @@ function Notices() {
 
   const handleUpdate = () => {
 
+  if (noticeTitle.current.value.trim()) {
+      if (!/^[A-Za-záéíóúÁÉÍÓÚñÑ\s\-\/,._:&"]+$/.test(noticeTitle.current.value.trim())) {
+        setValidationErrorT(true);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'El título presenta algún caracter inválido'
+        });
+        return;
+      } else {
+        setValidationErrorT(false);
+      }
+    }
+
+    if (!noticeBody.current.value.trim()) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'El contenido es requerido'
+      });
+      return;
+
+    } else if (!/^[A-Za-záéíóúÁÉÍÓÚñÑ\s\d\-\/.,_:&()"']+$/.test(noticeBody.current.value.trim())) {
+      setValidationErrorB(true);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'El contenido presenta algún caracter inválido'
+      });
+      return;
+    } else {
+      setValidationErrorB(false);
+    }
+
     let updatedNotice = {
       id: editingNotice.id,
       title: noticeTitle.current.value,
       body: noticeBody.current.value,
-      date: date.current.value,
+       date: editingNotice.date,
       status: editingNotice.status,
     };
 
@@ -203,6 +222,10 @@ function Notices() {
           'success'
         );
       }
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+
     } catch (error) {
       console.error('Error al eliminar la noticia:', error);
       Swal.fire(
@@ -226,61 +249,7 @@ function Notices() {
               <Accordion.Item eventKey="0">
                 <Accordion.Header>Clic en el botón para crear una noticia</Accordion.Header>
                 <Accordion.Body>
-                  <Form onSubmit={handleSave}>
-                    <Container>
-                      <Row>
-                        <Col md={6}>
-                          <div className="mb-3 mt-3">
-                            <Form.Label htmlFor="inputtitle">
-                              Título
-                            </Form.Label>
-                            <Form.Control
-                              type="text"
-                              className="form-control"
-                              placeholder="Ingrese el título"
-                              name="title"
-                              ref={noticeTitle}
-                              required
-                            />
-                          </div>
-                        </Col>
-
-                        <Col md={6}>
-                          <div className="mb-3 mt-3">
-                            <Form.Label htmlFor="inputbody">
-                              Contenido
-                            </Form.Label>
-                            <Form.Control
-                              type="area"
-                              className="form-control"
-                              placeholder="Ingrese la noticia"
-                              name="body"
-                              ref={noticeBody}
-                              required
-                            />
-                          </div>
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col md={6}>
-                          <div className="mb-3 mt-3">
-                            <Form.Label htmlFor="inputimage">
-                              Fecha creación
-                            </Form.Label>
-                            <Form.Control
-                              type="date"
-                              className="form-control"
-                              name="date"
-                              ref={date}
-                            />
-                          </div>
-                        </Col>
-                      </Row>
-                      <Button variant="success" className="buttonSave" type="submit">
-                        Guardar
-                      </Button>
-                    </Container>
-                  </Form>
+                <CreateNotice onSuccess={handleCreateSuccess} />
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>
@@ -290,6 +259,7 @@ function Notices() {
             <Table responsive className="display nowrap" id="tableNotices">
               <thead >
                 <tr>
+                <th className="text-center">Fecha</th>
                   <th className="text-center">Título</th>
                   <th className="text-center">Contenido</th>
                   <th className="text-center">Acciones </th>
@@ -298,6 +268,7 @@ function Notices() {
               <tbody>
                 {data && data.map((notice) => (
                   <tr key={notice.id}>
+                    <td>{formatDate(notice.date)}</td>
                     <td>{notice.title} </td>
                     <td>{notice.body}</td>
 
@@ -350,6 +321,11 @@ function Notices() {
                   defaultValue={editingNotice ? editingNotice.title : ""}
                   ref={noticeTitle}
                 />
+                   {validationErrorT && (
+              <Form.Text className="text-muted">
+                solo acepta letras y , . - _ : / & "
+              </Form.Text>
+               )}
               </Col>
             </Row>
             <Row>
@@ -360,20 +336,14 @@ function Notices() {
                   defaultValue={editingNotice ? editingNotice.body : ""}
                   ref={noticeBody}
                 />
+                  {validationErrorB && (
+              <Form.Text className="text-muted">
+              Solo se permiten letras, números y  - . , _ : \ / & ()"
+              </Form.Text>
+               )}
               </Col>
             </Row>
-            <Row>
-              <Col >
-                <Form.Label>Fecha de creación</Form.Label>
-                <Form.Control
-                  type="date"
-                  defaultValue={editingNotice ? formatDate(editingNotice.date) : ""}
-                  ref={date}
-                  style={{ marginBottom: '10px' }}
-                />
-              </Col>
               <Row>
-
                 <Col>
                   <Form.Label>Estado</Form.Label>
                   <Form.Select
@@ -385,10 +355,8 @@ function Notices() {
                     <option value="false">Inactivo</option>
                   </Form.Select>
                 </Col>
-
-
               </Row>
-            </Row>
+         
           </Form>
         </Modal.Body>
         <Modal.Footer>
