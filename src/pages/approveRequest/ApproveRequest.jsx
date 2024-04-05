@@ -31,6 +31,7 @@ function ApproveRequest() {
     try {
       await cancelMutation.mutateAsync({ id: requestToCancel.id });
       MySwal.fire("Solicitud Cancelada", "", "success");
+      window.location.reload();
     } catch (error) {
       console.error("Error al cancelar la solicitud", error);
       MySwal.fire("Error al cancelar la solicitud", error.message, "error");
@@ -53,7 +54,7 @@ function ApproveRequest() {
           title: "¡Tu trabajo ha sido guardado!",
           showConfirmButton: false,
           timer: 1500,
-        }).then(mutation.reset)
+        }).then(mutation.reset).then(window.location.reload())
       : null;
   }
 

@@ -91,6 +91,9 @@ function Layout({ children }) {
             <li>
               <a href="/requestForm">Formulario Solicitud</a>
             </li>
+            <li>
+              <a href="/profile/requests">Mis solicitudes</a>
+            </li>
             {isAdmin && (
               <>
                 <li>

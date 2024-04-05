@@ -31,7 +31,11 @@ function EndorseRequest() {
     }
   );
 
-  const {data:drivers, isLoading:LoadingDrivers, isError:ErrorDrivers} = useQuery('users', getUsersDriver);
+  const {
+    data: drivers,
+    isLoading: LoadingDrivers,
+    isError: ErrorDrivers,
+  } = useQuery("users", getUsersDriver);
 
   const executingUnit = useRef(null);
   const typeRequest = useRef(null);
@@ -76,7 +80,29 @@ function EndorseRequest() {
           title: "Tu trabajo ha sido guardado!",
           showConfirmButton: false,
           timer: 1500,
+        })
+          .then(mutation.reset)
+          .then(window.location.reload())
+      : null;
+  }
+  {
+    mutationUpdate.isError
+      ? MySwal.fire({
+          icon: "error",
+          text: "¡Algo salió mal!",
         }).then(mutation.reset)
+      : null;
+  }
+  {
+    mutationUpdate.isSuccess
+      ? MySwal.fire({
+          icon: "success",
+          title: "Tu trabajo ha sido guardado!",
+          showConfirmButton: false,
+          timer: 1500,
+        })
+          .then(mutation.reset)
+          .then(window.location.reload())
       : null;
   }
 
@@ -115,7 +141,7 @@ function EndorseRequest() {
   const handleUpdate = () => {
     let updatedRequest = {
       id: selectedRequest.id,
-      consecutiveNumber: 20230000,
+      consecutiveNumber: selectedRequest.consecutiveNumber,
       executingUnit: executingUnit.current.value,
       typeRequest: typeRequest.current.value,
       condition: condition.current.value,
@@ -140,22 +166,24 @@ function EndorseRequest() {
 
   const [idUserRequest, setIdUserRequest] = useState(null);
 
- 
-
   useEffect(() => {
     setDataFilter(data);
 
     //data ? console.log(data[0].processes[0].userId) : console.log('Loading...')
-    
-    
-  }, [data])
-  
+  }, [data]);
+
   const numberFilter = useRef(0);
-  function handleFilter(){
-    const _data = data.filter((item) => (item.consecutiveNumber).includes(numberFilter.current.value))
+  function handleFilter() {
+    const _data = data.filter((item) =>
+      item.consecutiveNumber.includes(numberFilter.current.value)
+    );
 
     setDataFilter(_data);
   }
+
+  let vehiclesFilter = vehicles
+    ? vehicles.filter((item) => item.status == true)
+    : "";
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -185,8 +213,7 @@ function EndorseRequest() {
             <p>Diríjase a la solicitud que desea avalar</p>
             <br />
             <Row className="d-flex">
-              
-              <Col >
+              <Col>
                 <div class="input-group mb-3">
                   <span class="input-group-text" id="basic-addon1">
                     <i class="bi bi-search"></i>
@@ -204,42 +231,44 @@ function EndorseRequest() {
             </Row>
           </div>
           <div className="card-body">
-            {dataFilter?
-            dataFilter.map((request) => (
-              <Card key={request.id} className="mb-3">
-                <Card.Header>{request.consecutiveNumber}</Card.Header>
-                <Card.Body>
-                  <Card.Title>{request.objective}</Card.Title>
-                  <Card.Text>
-                    La gira tiene destino a{" "}
-                    <strong>{request.destinyLocation}</strong> y sale desde{" "}
-                    <strong>{request.departureLocation}</strong>
-                  </Card.Text>
+            {dataFilter
+              ? dataFilter.map((request) => (
+                  <Card key={request.id} className="mb-3">
+                    <Card.Header>{request.consecutiveNumber}</Card.Header>
+                    <Card.Body>
+                      <Card.Title>{request.objective}</Card.Title>
+                      <Card.Text>
+                        La gira tiene destino a{" "}
+                        <strong>{request.destinyLocation}</strong> y sale desde{" "}
+                        <strong>{request.departureLocation}</strong>
+                      </Card.Text>
 
-                  <div className="d-flex justify-content-between">
-                    <div>
-                      <Button
-                        variant="success"
-                        className="buttonSave text-light mr-1"
-                        onClick={() => handleShowEndorse(request.id)}
-                      >
-                        Avalar
-                      </Button>
-                      <Button
-                        
-                        className="buttonCancel"
-                        onClick={() => handleShowEdit(request.id)}
-                      >
-                        Editar
-                      </Button>
-                      
-                    </div>
-                    <SeeRequest data={request} userId={request.processes[0].userId}/>
-                    {console.log(request)}
-                  </div>
-                </Card.Body>
-              </Card>
-            )): ''}
+                      <div className="d-flex justify-content-between">
+                        <div>
+                          <Button
+                            variant="success"
+                            className="buttonSave text-light mr-1"
+                            onClick={() => handleShowEndorse(request.id)}
+                          >
+                            Avalar
+                          </Button>
+                          <Button
+                            className="buttonCancel"
+                            onClick={() => handleShowEdit(request.id)}
+                          >
+                            Editar
+                          </Button>
+                        </div>
+                        <SeeRequest
+                          data={request}
+                          userId={request.processes[0].userId}
+                        />
+                        {console.log(request)}
+                      </div>
+                    </Card.Body>
+                  </Card>
+                ))
+              : ""}
           </div>
         </div>
       </Container>
@@ -295,7 +324,7 @@ function EndorseRequest() {
                 >
                   <option>Lista de vehículos</option>
                   {/* -------------------------------------------------------------------------------------------------- */}
-                  {vehicles.map((vehicle) => {
+                  {vehiclesFilter.map((vehicle) => {
                     // Verificar disponibilidad del vehículo
                     const isAvailable = data.every((request) => {
                       // Convertir las fechas a objetos Date
@@ -332,16 +361,19 @@ function EndorseRequest() {
                 </Form.Select>
               </Form.Group>
               {!selectedRequest.itsDriver && (
-                 <Form.Group className="mb-2" controlId="driverSelect">
-                  <Form.Label>Seleccione el chofer para la solicitud</Form.Label>
-                 <Form.Control as="select" ref={driverId}>
-                   {drivers.map((driver) => (
-                     <option key={driver.id} value={driver.id}>
-                      {driver.dni} - {driver.name} {driver.lastName1} {driver.lastName2}
-                     </option>
-                   ))}
-                 </Form.Control>
-               </Form.Group>
+                <Form.Group className="mb-2" controlId="driverSelect">
+                  <Form.Label>
+                    Seleccione el chofer para la solicitud
+                  </Form.Label>
+                  <Form.Control as="select" ref={driverId}>
+                    {drivers.map((driver) => (
+                      <option key={driver.id} value={driver.id}>
+                        {driver.dni} - {driver.name} {driver.lastName1}{" "}
+                        {driver.lastName2}
+                      </option>
+                    ))}
+                  </Form.Control>
+                </Form.Group>
               )}
             </Form>
           )}

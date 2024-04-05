@@ -179,9 +179,9 @@ function SeeRequest({ data, userId }) {
                   <Form.Group className="mb-2" controlId="formBasicPassword">
                     <Form.Label>Requiere chofer</Form.Label>
 
-                    <Form.Check
-                      type="checkbox"
-                      defaultValue={data ? data.itsDriver : ""}
+                    <Form.Control
+                      type="text"
+                      defaultValue={data ? (data.itsDriver ? "Si" : 'No') : ""}
                       disabled
                     />
                   </Form.Group>
