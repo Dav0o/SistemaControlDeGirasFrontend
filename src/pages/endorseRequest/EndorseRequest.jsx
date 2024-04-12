@@ -25,7 +25,7 @@ import { getUsersDriver } from "../../services/UserService";
 function EndorseRequest() {
   const { data, isLoading, isError } = useQuery(
     "requests",
-    getRequestToEndorse,
+    getRequests,
     {
       enabled: true,
     }
@@ -231,8 +231,7 @@ function EndorseRequest() {
             </Row>
           </div>
           <div className="card-body">
-            {dataFilter
-              ? dataFilter.map((request) => (
+            {filteredData.map((request) => (
                   <Card key={request.id} className="mb-3">
                     <Card.Header>{request.consecutiveNumber}</Card.Header>
                     <Card.Body>
@@ -261,14 +260,14 @@ function EndorseRequest() {
                         </div>
                         <SeeRequest
                           data={request}
-                          userId={request.processes[0].userId}
+                          userId={1}
                         />
                         {console.log(request)}
                       </div>
                     </Card.Body>
                   </Card>
                 ))
-              : ""}
+              }
           </div>
         </div>
       </Container>
@@ -343,12 +342,14 @@ function EndorseRequest() {
                         request.vehicleId !== vehicle.id ||
                         request.id === selectedRequest.id || // Ignorar la solicitud actual si se está editando
                         selectedStartDate >= requestEndDate ||
-                        selectedEndDate <= requestStartDate
+                        selectedEndDate <= requestStartDate 
+                       
                       );
                     });
+                    const isCanceled = data.filter(item => item.ItsCanceled == true);
 
                     // Si el vehículo está disponible, mostrarlo en la lista
-                    if (isAvailable) {
+                    if (isAvailable || isCanceled) {
                       return (
                         <option key={vehicle.id} value={vehicle.id}>
                           {vehicle.plate_Number} - {vehicle.category}
