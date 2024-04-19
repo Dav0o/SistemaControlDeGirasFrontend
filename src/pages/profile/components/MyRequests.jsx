@@ -79,7 +79,7 @@ function MyRequests() {
                           : "rgba(0, 0, 255, 0.5)" 
                     }}
                   >
-                    {request.itsApprove ? "Aprobada" : "Anulada"}
+                    {request.itsApprove ? "Aprobada" : request.itsCanceled ? "Anulada": "Pendiente"}
                   </Button>
                 </Card.Body>
               </Card>
