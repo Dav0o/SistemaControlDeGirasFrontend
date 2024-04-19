@@ -39,7 +39,7 @@ function Login() {
 
     // Handle validations
     axios
-      .post("https://controldegirasapi20240320221516.azurewebsites.net//api/Users/login", { email, password })
+      .post("https://controldegirasapi20240418212308.azurewebsites.net/api/Users/login", { email, password })
       .then((response) => {
         localStorage.setItem("token", response.data);
         setNewUser(response.data);
