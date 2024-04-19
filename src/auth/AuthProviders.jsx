@@ -21,7 +21,7 @@ const AuthProviders = ({ children }) => {
 
   const logOut = () => {
     setToken_("");
-    localStorage.setItem("token", "")
+    localStorage.removeItem("token")
   }
 
   useEffect(() => {
