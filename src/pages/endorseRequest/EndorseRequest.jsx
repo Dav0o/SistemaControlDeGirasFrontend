@@ -346,10 +346,10 @@ function EndorseRequest() {
                        
                       );
                     });
-                    const isCanceled = data.filter(item => item.ItsCanceled == true);
+                  //  const isCanceled = data.filter(item => item.ItsCanceled == true);
 
                     // Si el vehículo está disponible, mostrarlo en la lista
-                    if (isAvailable || isCanceled) {
+                    if (isAvailable) {
                       return (
                         <option key={vehicle.id} value={vehicle.id}>
                           {vehicle.plate_Number} - {vehicle.category}
