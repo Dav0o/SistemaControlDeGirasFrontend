@@ -181,7 +181,7 @@ function SeeRequest({ data, userId }) {
 
                     <Form.Control
                       type="text"
-                      defaultValue={data ? (data.itsDriver ? "Si" : 'No') : ""}
+                      defaultValue={data ? (data.itsDriver ? "No" : 'Si') : ""}
                       disabled
                     />
                   </Form.Group>

@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   rowBetween: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 20,
+    marginBottom: 15,
   },
   label: {
     fontWeight: "bold",
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: "#e9ecef",
     padding: 5,
-    marginBottom: 5,
+    marginBottom: 2,
   },
   firma: {
     borderTop: 1,
@@ -89,9 +89,9 @@ const styles = StyleSheet.create({
     padding: 8, // Añadir espacio adicional
   },
 });
-function RequestToPDF({ formData, userData }) {
+function RequestToPDF({ formData }) {
   
-  
+  console.log(formData.processes[0].user.name)
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -131,7 +131,7 @@ function RequestToPDF({ formData, userData }) {
 
         <View>
           <Text style={styles.label}>Persona encargada:</Text>
-          <Text style={styles.input}></Text>
+          <Text style={styles.input}>{formData.processes[0].user.name} {formData.processes[0].user.lastName1}</Text>
         </View>
 
         <View style={styles.row}>
