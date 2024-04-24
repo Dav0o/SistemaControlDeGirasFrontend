@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 import { useMutation, useQuery } from "react-query";
-import {
-  endorse,
-  getRequestToEndorse,
-  getRequests,
-  update,
-} from "../../services/RequestService";
+import { endorse, getRequestToEndorse, getRequests, update, } from "../../services/RequestService";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -20,9 +15,10 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { useEffect } from "react";
 import SeeRequest from "../../components/SeeRequest";
-import { getUsersDriver } from "../../services/UserService";
+import { getUsersDriver, getByIdUser} from "../../services/UserService";
 
-function EndorseRequest() {
+
+function EndorseRequest({}) {
   const { data, isLoading, isError } = useQuery(
     "requests",
     getRequests,
@@ -36,6 +32,8 @@ function EndorseRequest() {
     isLoading: LoadingDrivers,
     isError: ErrorDrivers,
   } = useQuery("users", getUsersDriver);
+
+
 
   const executingUnit = useRef(null);
   const typeRequest = useRef(null);
@@ -63,48 +61,50 @@ function EndorseRequest() {
   });
 
   const mutation = useMutation(`requests/endorse`, endorse);
+
   const mutationUpdate = useMutation(`requests`, update);
-  const MySwal = withReactContent(Swal);
-  {
-    mutation.isError
-      ? MySwal.fire({
-          icon: "error",
-          text: "¡Algo salió mal!",
-        }).then(mutation.reset)
-      : null;
-  }
-  {
-    mutation.isSuccess
-      ? MySwal.fire({
-          icon: "success",
-          title: "Tu trabajo ha sido guardado!",
-          showConfirmButton: false,
-          timer: 1500,
-        })
-          .then(mutation.reset)
-          .then(window.location.reload())
-      : null;
-  }
-  {
-    mutationUpdate.isError
-      ? MySwal.fire({
-          icon: "error",
-          text: "¡Algo salió mal!",
-        }).then(mutation.reset)
-      : null;
-  }
-  {
-    mutationUpdate.isSuccess
-      ? MySwal.fire({
-          icon: "success",
-          title: "Tu trabajo ha sido guardado!",
-          showConfirmButton: false,
-          timer: 1500,
-        })
-          .then(mutation.reset)
-          .then(window.location.reload())
-      : null;
-  }
+
+   const MySwal = withReactContent(Swal);
+  // {
+  //   mutation.isError
+  //     ? MySwal.fire({
+  //       icon: "error",
+  //       text: "¡Algo salió mal!",
+  //     }).then(mutation.reset)
+  //     : null;
+  // }
+  // {
+  //   mutation.isSuccess
+  //     ? MySwal.fire({
+  //       icon: "success",
+  //       title: "Tu trabajo ha sido guardado!",
+  //       showConfirmButton: false,
+  //       timer: 1500,
+  //     })
+  //       .then(mutation.reset)
+  //       .then(window.location.reload())
+  //     : null;
+  // }
+  // {
+  //   mutationUpdate.isError
+  //     ? MySwal.fire({
+  //       icon: "error",
+  //       text: "¡Algo salió mal!",
+  //     }).then(mutation.reset)
+  //     : null;
+  // }
+  // {
+  //   mutationUpdate.isSuccess
+  //     ? MySwal.fire({
+  //       icon: "success",
+  //       title: "Tu trabajo ha sido guardado!",
+  //       showConfirmButton: false,
+  //       timer: 1500,
+  //     })
+  //       .then(mutation.reset)
+  //       .then(window.location.reload())
+  //     : null;
+  // }
 
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [showEndorseModal, setShowEndorseModal] = useState(false);
@@ -128,15 +128,51 @@ function EndorseRequest() {
     setShowEditModal(true);
   };
 
+
+  
   const handleEndorse = () => {
+
+    const selectedVehicleId = parseInt(vehicleId.current.value);
+
+    if (!selectedVehicleId) {
+        MySwal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Por favor, seleccione un vehículo",
+        });
+        return;
+    }
+
+
     let updateRequest = {
       id: selectedRequest.id,
       vehicleId: parseInt(vehicleId.current.value),
       driverId: parseInt(driverId.current.value),
       itsEndorse: true,
     };
-    mutation.mutateAsync(updateRequest);
-  };
+    mutation.mutateAsync(updateRequest)
+    .then(() => {
+
+        MySwal.fire({
+            icon: "success",
+            title: "Éxito",
+            text: "La solicitud ha sido avalada correctamente",
+        });
+
+        setTimeout(() => {
+            window.location.reload();
+        }, 1500);
+    })
+    .catch((error) => {
+        MySwal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Hubo un error al avalar la solicitud",
+        });
+    });
+};
+
+
 
   const handleUpdate = () => {
     let updatedRequest = {
@@ -232,42 +268,42 @@ function EndorseRequest() {
           </div>
           <div className="card-body">
             {filteredData.map((request) => (
-                  <Card key={request.id} className="mb-3">
-                    <Card.Header>{request.consecutiveNumber}</Card.Header>
-                    <Card.Body>
-                      <Card.Title>{request.objective}</Card.Title>
-                      <Card.Text>
-                        La gira tiene destino a{" "}
-                        <strong>{request.destinyLocation}</strong> y sale desde{" "}
-                        <strong>{request.departureLocation}</strong>
-                      </Card.Text>
+              <Card key={request.id} className="mb-3">
+                <Card.Header>{request.consecutiveNumber}</Card.Header>
+                <Card.Body>
+                  <Card.Title>{request.objective}</Card.Title>
+                  <Card.Text>
+                    La gira tiene destino a{" "}
+                    <strong>{request.destinyLocation}</strong> y sale desde{" "}
+                    <strong>{request.departureLocation}</strong>
+                  </Card.Text>
 
-                      <div className="d-flex justify-content-between">
-                        <div>
-                          <Button
-                            variant="success"
-                            className="buttonSave text-light mr-1"
-                            onClick={() => handleShowEndorse(request.id)}
-                          >
-                            Avalar
-                          </Button>
-                          <Button
-                            className="buttonCancel"
-                            onClick={() => handleShowEdit(request.id)}
-                          >
-                            Editar
-                          </Button>
-                        </div>
-                        <SeeRequest
-                          data={request}
-                          userId={1}
-                        />
-                        {console.log(request)}
-                      </div>
-                    </Card.Body>
-                  </Card>
-                ))
-              }
+                  <div className="d-flex justify-content-between">
+                    <div>
+                      <Button
+                        variant="success"
+                        className="buttonSave text-light mr-1"
+                        onClick={() => handleShowEndorse(request.id)}
+                      >
+                        Avalar
+                      </Button>
+                      <Button
+                        className="buttonCancel"
+                        onClick={() => handleShowEdit(request.id)}
+                      >
+                        Editar
+                      </Button>
+                    </div>
+                    <SeeRequest
+                      data={request}
+                      userId={1}
+                    />
+                    {console.log(request)}
+                  </div>
+                </Card.Body>
+              </Card>
+            ))
+            }
           </div>
         </div>
       </Container>
@@ -280,7 +316,9 @@ function EndorseRequest() {
         <Modal.Body>
           {selectedRequest && (
             <Form>
+            
               <Form.Group>
+             
                 <Form.Label>
                   Número de consecutivo de la solicitud a avalar
                 </Form.Label>
@@ -342,14 +380,14 @@ function EndorseRequest() {
                         request.vehicleId !== vehicle.id ||
                         request.id === selectedRequest.id || // Ignorar la solicitud actual si se está editando
                         selectedStartDate >= requestEndDate ||
-                        selectedEndDate <= requestStartDate 
-                       
+                        selectedEndDate <= requestStartDate
+
                       );
                     });
-                  //  const isCanceled = data.filter(item => item.ItsCanceled == true);
+                    const isCanceled = data.filter(item => item.ItsCanceled == true);
 
                     // Si el vehículo está disponible, mostrarlo en la lista
-                    if (isAvailable) {
+                    if (isAvailable || isCanceled) {
                       return (
                         <option key={vehicle.id} value={vehicle.id}>
                           {vehicle.plate_Number} - {vehicle.category}
@@ -380,7 +418,7 @@ function EndorseRequest() {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button className="buttonCancel" onClick={handleCloseEdit}>
+          <Button className="buttonCancel" onClick={handleClose}>
             Cerrar
           </Button>
           <Button
@@ -552,17 +590,15 @@ function EndorseRequest() {
                 </Col>
               </Row>
 
-              <Form.Group className="mb-2" controlId="formBasicPassword">
+              <Form.Group className="mb-2" controlId="formPrioridad">
                 <Form.Label>Prioridad</Form.Label>
-                <Form.Control as="select" ref={priority}>
-                  <option value="">Seleccione una opción</option>
+                <Form.Control as="select" ref={priority} 
+                defaultValue={selectedRequest ? selectedRequest.priority : ""}>
                   <option value="Objetivos administrativos, académicos-administrativos y paraacadémicos">
-                    Objetivos administrativos, académicos-administrativos y
-                    paraacadémicos
+                    Objetivos administrativos, académicos-administrativos y paraacadémicos
                   </option>
                   <option value="Cumplen con objetivos de cursos de docencia, según plan de estudios y programa del curso">
-                    Cumplen con objetivos de cursos de docencia, según plan de
-                    estudios y programa del curso
+                    Cumplen con objetivos de cursos de docencia, según plan de estudios y programa del curso
                   </option>
                 </Form.Control>
               </Form.Group>
@@ -581,7 +617,7 @@ function EndorseRequest() {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button className="buttonCancel" onClick={handleClose}>
+          <Button className="buttonCancel" onClick={handleCloseEdit}>
             Cerrar
           </Button>
           <Button

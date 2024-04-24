@@ -15,19 +15,12 @@ function MyRequests() {
     isLoading,
     data,
     isError,
-  } = useQuery(["users", userId], () => getRequestByUserId(userId));
+  } = useQuery(["users", userId], () => getRequestByUserId(userId),
+  {
+    enabled: !!userId,
+  });
 
-  useEffect(() => {
-    if (user) {
-      for (const claim in user) {
-        if (claim.endsWith("/nameidentifier")) {
-         
-          setUserId(user[claim]);
-          
-        }
-      }
-    }
-  }, [user]);
+
 
    console.log(data);
 

@@ -249,11 +249,32 @@ export const Vehicles = () => {
       image: imageUrl,
     };
 
-    mutation.mutateAsync(updatedVehicle).then(() => {
-      setShowEditModal(false);
-    });
-  };
+  try{
 
+    mutation.mutateAsync(updatedVehicle).then(() => {
+
+      setShowEditModal(false);
+      
+    });
+  
+  Swal.fire({
+    icon: 'success',
+    title: 'Vehículo editado',
+    text: 'El vehículo se ha editado exitosamente',
+  });
+
+  setTimeout(() => {
+    window.location.reload();
+  }, 2000); 
+  
+} catch (error) {
+  Swal.fire({
+    icon: 'error',
+    title: 'Error',
+    text: 'Hubo un error al editar el vehículo',
+  });
+}
+  };
   //////////////editar imagen
   useEffect(() => {
     getByIdVehicle(Vehicles, (vehicleData) => {
