@@ -15,10 +15,10 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { useEffect } from "react";
 import SeeRequest from "../../components/SeeRequest";
-import { getUsersDriver, getByIdUser} from "../../services/UserService";
+import { getUsersDriver, getByIdUser } from "../../services/UserService";
 
 
-function EndorseRequest({}) {
+function EndorseRequest({ }) {
   const { data, isLoading, isError } = useQuery(
     "requests",
     getRequests,
@@ -64,7 +64,7 @@ function EndorseRequest({}) {
 
   const mutationUpdate = useMutation(`requests`, update);
 
-   const MySwal = withReactContent(Swal);
+  const MySwal = withReactContent(Swal);
   // {
   //   mutation.isError
   //     ? MySwal.fire({
@@ -129,18 +129,18 @@ function EndorseRequest({}) {
   };
 
 
-  
+
   const handleEndorse = () => {
 
     const selectedVehicleId = parseInt(vehicleId.current.value);
 
     if (!selectedVehicleId) {
-        MySwal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Por favor, seleccione un vehículo",
-        });
-        return;
+      MySwal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Por favor, seleccione un vehículo",
+      });
+      return;
     }
 
 
@@ -151,30 +151,151 @@ function EndorseRequest({}) {
       itsEndorse: true,
     };
     mutation.mutateAsync(updateRequest)
-    .then(() => {
+      .then(() => {
 
         MySwal.fire({
-            icon: "success",
-            title: "Éxito",
-            text: "La solicitud ha sido avalada correctamente",
+          icon: "success",
+          title: "Éxito",
+          text: "La solicitud ha sido avalada correctamente",
         });
 
         setTimeout(() => {
-            window.location.reload();
+          window.location.reload();
         }, 1500);
-    })
-    .catch((error) => {
+      })
+      .catch((error) => {
         MySwal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Hubo un error al avalar la solicitud",
+          icon: "error",
+          title: "Error",
+          text: "Hubo un error al avalar la solicitud",
         });
-    });
-};
+      });
+  };
+
+
+  const validateFormFields = (unidadEjecutora, objetivo, personas, fechaSalida, fechaRegreso, lugarSalida, lugarDestino,condicion, itinerario, typeOfVehicle, observaciones) => {
+
+    if (!unidadEjecutora.trim()) {
+      return 'La unidad ejecutora requerida';
+    }
+
+    if (!/^[a-zA-ZáéíóúÁÉÍÓÚ, -]+$/.test(unidadEjecutora.trim())) {
+      return 'La unidad ejecutora solo puede contener letras';
+    }
+
+    if (!objetivo.trim()) {
+      return 'El objetivo es requerido';
+    }
+    if (!/^[a-zA-ZáéíóúüÜÁÉÍÓÚ\s-.,;/:()"'=#0-9]+$/.test(objetivo)) {
+      return 'El objetivo no acepta @ !¡ ¿? $ & % * + [] {} <> ';
+    }
+
+    if (personas < 1) {
+      return 'La cantidad de personas tiene que ser mayor o igual a 1';
+    }
+
+    if (personas >= 150) {
+      return 'La cantidad de personas debe ser menor que 150';
+    }
+
+    if (!fechaSalida.trim()) {
+      return 'La fecha de salida es requerida';
+    }
+
+    if (!fechaRegreso.trim()) {
+      return 'La fecha de regreso es requerida';
+    }
+
+    const salidaDate = new Date(fechaSalida);
+    const regresoDate = new Date(fechaRegreso);
+
+    if (salidaDate.getTime() === regresoDate.getTime()) {
+      return 'La fecha de salida no puede ser igual a la fecha de regreso';
+    }
+
+    if (salidaDate < new Date()) {
+      return 'La fecha de salida debe ser igual o mayor a la fecha actual';
+    }
+
+    if (regresoDate < salidaDate) {
+      return 'La fecha de regreso debe ser posterior o igual a la fecha de salida';
+    }
+
+    if (!lugarSalida.trim()) {
+      return 'El lugar de salida es requerido';
+    }
+
+    if (!lugarDestino.trim()) {
+      return 'El lugar de destino es requerido';
+    }
+
+    if (!/^[a-zA-ZáéíóúÁÉÍÓÚ, -]+$/.test(lugarSalida.trim())) {
+      return 'El lugar de salida solo puede contener letras';
+    }
+
+    if (!/^[a-zA-ZáéíóúÁÉÍÓÚ, -]+$/.test(lugarDestino.trim())) {
+      return 'El lugar de destino solo puede contener letras';
+    }
+
+    if (!condicion.trim()) {
+      return 'La condición es requerida';
+    }
+
+    if (!/^[a-zA-ZáéíóúÁÉÍÓÚ, -]+$/.test(condicion.trim())) {
+      return 'La condición solo puede contener letras';
+    }
+
+    if (!itinerario.trim()) {
+      return 'El itinerario es requerido';
+    }
+    if (!/^[a-zA-ZáéíóúüÜÁÉÍÓÚ\s-.,;/:()"'=#0-9]+$/.test(itinerario)) {
+      return 'El itinerario no acepta @ !¡ ¿? $ & % * + [] {} <> ';
+    }
+
+    if (!typeOfVehicle.trim()) {
+      return 'El tipo de vehiculo es requerido';
+    }
+
+    if (!/^[a-zA-Z\s]+$/.test(typeOfVehicle)) {
+      return 'El tipo de vehículo solo puede contener letras';
+    }
+
+    if (observaciones.trim() && !/^[a-zA-ZáéíóúüÜÁÉÍÓÚ\s\-.,;/:()"'=#0-9]+$/.test(observaciones)) {
+      return 'Las observaciones no aceptan @ !¡ ¿? $ & % * + [] {} <> ';
+    }
+
+    return null;
+  };
 
 
 
   const handleUpdate = () => {
+
+    const validationError = validateFormFields(
+
+      executingUnit.current.value,
+      objective.current.value,
+      parseInt(personsAmount.current.value),
+      departureDate.current.value,
+      arriveDate.current.value,
+      departureLocation.current.value,
+      destinyLocation.current.value,
+      condition.current.value,
+      itinerary.current.value,
+      typeOfVehicle.current.value,
+      observations.current.value
+    );
+
+    if (validationError) {
+      MySwal.fire({
+        icon: "error",
+        title: "Error",
+        text: validationError,
+      });
+      return;
+    }
+
+
     let updatedRequest = {
       id: selectedRequest.id,
       consecutiveNumber: selectedRequest.consecutiveNumber,
@@ -195,7 +316,26 @@ function EndorseRequest({}) {
 
       itsDriver: itsDriver.current.valueOf,
     };
-    mutationUpdate.mutateAsync(updatedRequest);
+    try {
+      mutationUpdate.mutateAsync(updatedRequest);
+      MySwal.fire({
+        icon: 'success',
+        title: 'Éxito',
+        text: 'La solicitud ha sido editada correctamente',
+      });
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+
+    } catch (error) {
+
+      MySwal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Hubo un error al editar la solicitud',
+      });
+    }
   };
 
   const [dataFilter, setDataFilter] = useState(data);
@@ -316,9 +456,9 @@ function EndorseRequest({}) {
         <Modal.Body>
           {selectedRequest && (
             <Form>
-            
+
               <Form.Group>
-             
+
                 <Form.Label>
                   Número de consecutivo de la solicitud a avalar
                 </Form.Label>
@@ -444,12 +584,13 @@ function EndorseRequest({}) {
                   <Form.Group className="mb-3" controlId="formBasicEmail">
                     <Form.Label>Tipo de gira</Form.Label>
                     <Form.Control
-                      type="text"
+                      as="select"
                       ref={typeRequest}
                       defaultValue={
-                        selectedRequest ? selectedRequest.typeRequest : ""
-                      }
-                    />
+                        selectedRequest ? selectedRequest.typeRequest : ""}>
+                      <option value="Centralizada">Centralizada</option>
+                      <option value="Descentralizada">Descentralizada</option>
+                    </Form.Control>
                   </Form.Group>
                 </Col>
                 <Col>
@@ -461,6 +602,7 @@ function EndorseRequest({}) {
                       defaultValue={
                         selectedRequest ? selectedRequest.executingUnit : ""
                       }
+
                     />
                   </Form.Group>
                 </Col>
@@ -567,14 +709,26 @@ function EndorseRequest({}) {
                   <Form.Group className="mb-2" controlId="formBasicPassword">
                     <Form.Label>Tipo de vehículo</Form.Label>
                     <Form.Control
-                      type="text"
+                      as="select"
                       ref={typeOfVehicle}
                       defaultValue={
-                        selectedRequest ? selectedRequest.typeOfVehicle : ""
-                      }
-                    />
+                        selectedRequest ? selectedRequest.typeOfVehicle : ""} >
+                      <option select disable value="No especificado">
+                         No especificado
+                      </option>
+                      <option value="Automovil">Automóvil</option>
+                      <option value="PickUp">Pick-Up</option>
+                      <option value="Motocicleta">Motocicleta</option>
+                      <option value="Buseta">Buseta</option>
+                      <option value="Bus">Bus</option>
+                      <option value="SUV">SUV</option>
+                      <option value="Moto Electrica"> Motocicleta eléctrica </option>
+                      <option value="Auto Electrico">Automóvil eléctrico</option>
+                    </Form.Control>
+
                   </Form.Group>
                 </Col>
+
                 <Col>
                   <Form.Group className="mb-2" controlId="formBasicPassword">
                     <Form.Label>Requiere chofer</Form.Label>
@@ -592,8 +746,8 @@ function EndorseRequest({}) {
 
               <Form.Group className="mb-2" controlId="formPrioridad">
                 <Form.Label>Prioridad</Form.Label>
-                <Form.Control as="select" ref={priority} 
-                defaultValue={selectedRequest ? selectedRequest.priority : ""}>
+                <Form.Control as="select" ref={priority}
+                  defaultValue={selectedRequest ? selectedRequest.priority : ""}>
                   <option value="Objetivos administrativos, académicos-administrativos y paraacadémicos">
                     Objetivos administrativos, académicos-administrativos y paraacadémicos
                   </option>
