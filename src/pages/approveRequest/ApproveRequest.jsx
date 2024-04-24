@@ -135,7 +135,7 @@ function ApproveRequest() {
             </Row>
           </div>
           <div className="card-body">
-            {filteredData.map((request) => (
+            {dataFilter?.map((request) => (
               <Card key={request.id} className="mb-3">
                 <Card.Header>{request.consecutiveNumber}</Card.Header>
                 <Card.Body>

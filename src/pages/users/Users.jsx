@@ -139,7 +139,12 @@ function Users() {
     if (dni.length < 9 || dni.length > 15 || !/^[0-9a-zA-Z]+$/.test(dni)) {
       return 'La cédula debe tener una longitud entre 9 y 15 dígitos';
     }
-  
+
+
+    if (!licenseUNA.trim() || !  /^[0-9]/.test(licenseUNA)) {
+      return 'La licencia es requerida';
+    }
+
     // Validación del nombre
     if (!name.trim() || !/^[a-zA-Z\u00C0-\u024F\u1E00-\u1EFF\u0300-\u036F\s]+$/.test(name)) {
       return 'El nombre es requerido y solo puede contener letras';

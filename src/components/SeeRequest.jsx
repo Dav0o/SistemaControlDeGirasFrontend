@@ -4,8 +4,6 @@ import { useQuery } from "react-query";
 import { getByIdUser } from "../services/UserService";
 import ButtonPDF from "./ButtonPDF";
 
-
-
 function SeeRequest({ data, userId }) {
   const [showModal, setShowModal] = useState(false);
 
@@ -17,7 +15,6 @@ function SeeRequest({ data, userId }) {
     isError: userError,
   } = useQuery(["users", userId], () => getByIdUser(userId));
 
-  
   if (userLoading) {
     <div>isLoading...</div>;
   }
@@ -53,7 +50,17 @@ function SeeRequest({ data, userId }) {
                     <Form.Label>Usuario Solicitante</Form.Label>
                     <Form.Control
                       type="text"
-                      defaultValue={userData ? userData.dni+" | "+userData.name +" " +userData.lastName1 + ' | ' + userData.phoneNumber: ""}
+                      defaultValue={
+                        userData
+                          ? userData.dni +
+                            " | " +
+                            userData.name +
+                            " " +
+                            userData.lastName1 +
+                            " | " +
+                            userData.phoneNumber
+                          : ""
+                      }
                       disabled
                     />
                   </Form.Group>
@@ -181,7 +188,7 @@ function SeeRequest({ data, userId }) {
 
                     <Form.Control
                       type="text"
-                      defaultValue={data ? (data.itsDriver ? "No" : 'Si') : ""}
+                      defaultValue={data ? (data.itsDriver ? "No" : "Si") : ""}
                       disabled
                     />
                   </Form.Group>
@@ -209,7 +216,6 @@ function SeeRequest({ data, userId }) {
           )}
         </Modal.Body>
         <Modal.Footer>
-        
           <Button className="buttonCancel" onClick={handleClose}>
             Cerrar
           </Button>

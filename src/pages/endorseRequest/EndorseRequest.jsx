@@ -18,14 +18,10 @@ import SeeRequest from "../../components/SeeRequest";
 import { getUsersDriver, getByIdUser } from "../../services/UserService";
 
 
-function EndorseRequest({ }) {
-  const { data, isLoading, isError } = useQuery(
-    "requests",
-    getRequests,
-    {
-      enabled: true,
-    }
-  );
+function EndorseRequest() {
+  const { data, isLoading, isError } = useQuery("requests", getRequests, {
+    enabled: true,
+  });
 
   const {
     data: drivers,
@@ -48,7 +44,7 @@ function EndorseRequest({ }) {
   const itinerary = useRef(null);
   const observations = useRef(null);
   const typeOfVehicle = useRef(null);
-  const itsDriver = useRef(false);
+  const itsDriver = useRef(null);
 
   const driverId = useRef(0);
 
@@ -314,7 +310,7 @@ function EndorseRequest({ }) {
 
       typeOfVehicle: typeOfVehicle.current.value,
 
-      itsDriver: itsDriver.current.valueOf,
+      itsDriver: itsDriver.current.value === "true"? false : true,
     };
     try {
       mutationUpdate.mutateAsync(updatedRequest);
@@ -338,23 +334,31 @@ function EndorseRequest({ }) {
     }
   };
 
-  const [dataFilter, setDataFilter] = useState(data);
+  const [dataFilter, setDataFilter] = useState([]);
 
   const [idUserRequest, setIdUserRequest] = useState(null);
 
   useEffect(() => {
-    setDataFilter(data);
+    const filteredData = data?.filter((item) => item.itsEndorse === false);
+    setDataFilter(filteredData);
 
     //data ? console.log(data[0].processes[0].userId) : console.log('Loading...')
   }, [data]);
 
   const numberFilter = useRef(0);
   function handleFilter() {
-    const _data = data.filter((item) =>
-      item.consecutiveNumber.includes(numberFilter.current.value)
+    const _data = data.filter(
+      (item) =>
+        item.consecutiveNumber.includes(numberFilter.current.value) &&
+        item.itsEndorse === false
     );
 
     setDataFilter(_data);
+  }
+
+  function handleChangeChofer(){
+      
+      console.log(itsDriver.current.value)
   }
 
   let vehiclesFilter = vehicles
@@ -376,8 +380,6 @@ function EndorseRequest({ }) {
   if (errorVehicles) {
     return <div>Error</div>;
   }
-
-  const filteredData = data.filter((item) => item.itsEndorse === false);
 
   return (
     <>
@@ -407,7 +409,7 @@ function EndorseRequest({ }) {
             </Row>
           </div>
           <div className="card-body">
-            {filteredData.map((request) => (
+            {dataFilter?.map((request) => (
               <Card key={request.id} className="mb-3">
                 <Card.Header>{request.consecutiveNumber}</Card.Header>
                 <Card.Body>
@@ -434,16 +436,12 @@ function EndorseRequest({ }) {
                         Editar
                       </Button>
                     </div>
-                    <SeeRequest
-                      data={request}
-                      userId={1}
-                    />
-                    {console.log(request)}
+                    <SeeRequest data={request} userId={1} />
+                   
                   </div>
                 </Card.Body>
               </Card>
-            ))
-            }
+            ))}
           </div>
         </div>
       </Container>
@@ -521,10 +519,9 @@ function EndorseRequest({ }) {
                         request.id === selectedRequest.id || // Ignorar la solicitud actual si se está editando
                         selectedStartDate >= requestEndDate ||
                         selectedEndDate <= requestStartDate
-
                       );
                     });
-                    const isCanceled = data.filter(item => item.ItsCanceled == true);
+                    //  const isCanceled = data.filter(item => item.ItsCanceled == true);
 
                     // Si el vehículo está disponible, mostrarlo en la lista
                     if (isAvailable || isCanceled) {
@@ -733,13 +730,16 @@ function EndorseRequest({ }) {
                   <Form.Group className="mb-2" controlId="formBasicPassword">
                     <Form.Label>Requiere chofer</Form.Label>
 
-                    <Form.Check
-                      type="checkbox"
+                    <Form.Control
+                      as="select"
                       ref={itsDriver}
-                      defaultValue={
-                        selectedRequest ? selectedRequest.itsDriver : ""
-                      }
-                    />
+                      onChange={handleChangeChofer}
+                      defaultValue={selectedRequest ? (selectedRequest.itsDriver ? "No" : "Si") : "Cargando"}
+                    
+                    >
+                      <option value={true}>Sí</option>
+                      <option value={false}>No</option>
+                    </Form.Control>
                   </Form.Group>
                 </Col>
               </Row>
