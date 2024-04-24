@@ -90,11 +90,9 @@ function RequestForm() {
     }
 
    
-    if (!observaciones.trim()) {
-    } else { (!/^[a-zA-ZáéíóúüÜÁÉÍÓÚ\s-.,;/:()"'=#1234567890]+$/.test(observaciones)) 
+    if (observaciones.trim() && !/^[a-zA-ZáéíóúüÜÁÉÍÓÚ\s\-.,;/:()"'=#1234567890]+$/.test(observaciones)) {
       return 'Las observaciones no aceptan @ !¡ ¿? $ & % * + [] {} <> ';
-    } 
-    
+  }
 
     return null;
   };
