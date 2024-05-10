@@ -7,18 +7,25 @@ import SeeRequest from '../../../components/SeeRequest';
 import { Link } from 'react-router-dom';
 
 function MyRequests() {
-    const {user} = useAuth();
+  const {user} = useAuth();
+  const [userId, setUserId] = useState(0);
+const {
+  isLoading,
+  data,
+  isError,
+} = useQuery(["requests", userId], () => getRequestByUserId(userId));
 
-    const [userId, setUserId] = useState(0);
-
-  const {
-    isLoading,
-    data,
-    isError,
-  } = useQuery(["users", userId], () => getRequestByUserId(userId),
-  {
-    enabled: !!userId,
-  });
+useEffect(() => {
+  if (user) {
+    for (const claim in user) {
+      if (claim.endsWith("/nameidentifier")) {
+       
+        setUserId(user[claim]);
+        
+      }
+    }
+  }
+}, [user]);
 
 
 
