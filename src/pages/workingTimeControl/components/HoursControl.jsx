@@ -144,7 +144,7 @@ function HoursControl() {
 
   const dataLogFiltered = dataLogs.filter((item) => item.driverLogId == driverLogId.logId);
 
-
+//
   const handleDelete = async (HourDriverId) => {
     try {
       const result = await Swal.fire({
@@ -162,10 +162,14 @@ function HoursControl() {
         await deleteHour(HourDriverId);
         Swal.fire(
           'Eliminado!',
-          'El registro ha sido eliminada.',
+          'El registro ha sido eliminado.',
           'success'
         );
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000); 
       }
+
     } catch (error) {
       console.error('Error al eliminar el control de horas:', error);
       Swal.fire(

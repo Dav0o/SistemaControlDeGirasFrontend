@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "react-query";
-import { create, getDriverLog } from "../../services/DriverLogService";
+import { create, getDriverLog, deleteDriverLog } from "../../services/DriverLogService";
 import Container from "react-bootstrap/Container";
 import { Button, Table } from "react-bootstrap";
 import "datatables.net-buttons-dt";
@@ -16,7 +16,7 @@ import Modal from "react-bootstrap/Modal";
 import { getUserByRole } from "../../services/UserService";
 import { useMutation } from "react-query";
 import Swal from "sweetalert2";
-import { deleteWorkingTime } from "../../services/WorkingTimeService";
+
 
 function WorkingTime() {
 
@@ -195,11 +195,10 @@ if (isLoadingUsers) {
 }
 
 
-/////////////////////////////////
 
  /////////////////////////////////////////
 
- const handleDelete = async (WorkingTimeId) => {
+ const handleDelete = async (driverLogId) => {
   try {
     const result = await Swal.fire({
       title: '¿Estás seguro?',
@@ -213,12 +212,15 @@ if (isLoadingUsers) {
     });
 
     if (result.isConfirmed) {
-      await deleteWorkingTime(WorkingTimeId);
+      await deleteDriverLog(driverLogId);
       Swal.fire(
         'Eliminado!',
-        'El registro ha sido eliminada.',
+        'El registro ha sido eliminado.',
         'success'
       );
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000); 
     }
   } catch (error) {
     console.error('Error al eliminar el control de horas:', error);

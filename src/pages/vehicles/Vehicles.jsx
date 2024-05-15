@@ -19,9 +19,13 @@ import "../../stylesheets/generalDesign.css";
 export const Vehicles = () => {
   const mutation = useMutation("vehicles", create);
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [plateNumberError, setPlateNumberError] = useState("");
+
+  const [newImages, setNewImages] = useState([]);
+  const [imageUrl, setImageUrl] = useState('');
   const apiKey = "6c4a708d4bdee0384fae9c67a8558f9e";
 
+  
   const handleImageUpload = async (e) => {
     const imageInput = e.target.files[0];
 
@@ -51,6 +55,42 @@ export const Vehicles = () => {
       }
     }
   };
+
+/////////////////////editar imagen//////////////////
+const handleEditImageUpload = async (e) => {
+  const imageInput = e.target.files[0];
+
+  if (imageInput) {
+    try {
+      const formData = new FormData();
+      formData.append('image', imageInput);
+
+      const response = await fetch(
+        `https://api.imgbb.com/1/upload?key=${apiKey}`,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        const uploadedImageUrl = data.data.url;
+
+        setNewImages((prevImages) => [...prevImages, uploadedImageUrl]);
+
+        console.log('Url = ', uploadedImageUrl);
+      } else {
+        console.error('error al subir la imagen');
+      }
+    } catch (error) {
+      console.error('error de solicitud', error);
+    }
+  }
+};
+///////////////////////////////////////////////////
+
+
 
   const MySwal = withReactContent(Swal);
 
@@ -83,8 +123,24 @@ export const Vehicles = () => {
   });
 
 
+  const plate_Number = useRef(null);
+  const make = useRef(null);
+  const model = useRef(null);
+  const category = useRef(null);
+  const traction = useRef(null);
+  const year = useRef(0);
+  const color = useRef(null);
+  const capacity = useRef(0);
+  const engine_capacity = useRef(0);
+  const mileage = useRef(0);
+  const fuel = useRef(null);
+  const oil_Change = useRef(null);
+  const status = useRef(true);
+
+
+
     //VALIDACIONES
-    const validateFields =  (plate_Number, category, make,model, year,color,capacity,
+    const validateFields = (plate_Number, category, make,model, year,color,capacity,
                                fuel, traction, engine_capacity, mileage
        ) => {
      
@@ -93,6 +149,7 @@ export const Vehicles = () => {
             return "La placa es requerida y debe tener entre 3 y 8 caracteres alfanuméricos.";
         }
 
+        
       if (!category) {
         return "La categoría requerida.";
       }
@@ -136,12 +193,13 @@ export const Vehicles = () => {
       if (!mileage || !digitsOnlyRegex.test(mileage)  || parseInt(mileage) < 0) {
         return "El kilometraje solo acepta números.";
       }
-    
- 
-    
-      return null; // Retorna null si todas las validaciones pasan
+
+      return null; 
     };
-  const handleSave = (event) => {
+    
+    
+  const handleSave = async (event) => {
+      event.preventDefault();
 
   
     const validationError = validateFields(
@@ -168,6 +226,14 @@ export const Vehicles = () => {
       });
       return;
     }
+
+    let updatedImageString = '';
+    if (Array.isArray(imageUrl)) {
+      updatedImageString = imageUrl.filter(Boolean).join(',');
+    } else {
+      updatedImageString = imageUrl || '';
+    }
+
     let newVehicle = {
       plate_Number: plate_Number.current.value,
      category: category.current.value,
@@ -182,43 +248,34 @@ export const Vehicles = () => {
       mileage: parseInt(mileage.current.value), 
       oil_Change: oil_Change.current.value,
       status: true,
-      image: imageUrl,
+      image: updatedImageString,
     };
-    try {
-      mutation.mutateAsync(newVehicle).then (() => {
+    const result = await create(newVehicle);
+  if (result.error) {
+  
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: result.error,
+    });
+  } else {
+    
+    Swal.fire({
+      icon: 'success',
+      title: 'Vehículo creado',
+      text: 'El vehículo se ha creado exitosamente',
+    }).then(() => {
+      setTimeout(() => {
         window.location.reload();
-      });
+      }, 2000);
 
-      Swal.fire({
-        icon: 'success',
-        title: 'Vehículo creado',
-        text: 'El vehículo se ha creado exitosamente',
-      });
-
-    } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Hubo un error al crear el vehículo',
-      });
-    }
-  };
+    });
+  }
+};
 
 
 
-  const plate_Number = useRef(null);
-  const make = useRef(null);
-  const model = useRef(null);
-  const category = useRef(null);
-  const traction = useRef(null);
-  const year = useRef(0);
-  const color = useRef(null);
-  const capacity = useRef(0);
-  const engine_capacity = useRef(0);
-  const mileage = useRef(0);
-  const fuel = useRef(null);
-  const oil_Change = useRef(null);
-  const status = useRef(true);
+
 
   const handleEditClick = (vehicleId) => {
     const vehicleToEdit = data.find((vehicle) => vehicle.id === vehicleId);
@@ -231,6 +288,11 @@ export const Vehicles = () => {
   };
 
   const handleUpdate = (event) => {
+
+    const updatedImages = [...editingVehicle.image.split(','), ...newImages];
+    const updatedImageString = updatedImages.filter(Boolean).join(',');
+
+
     let updatedVehicle = {
       id: editingVehicle.id,
       plate_Number: plate_Number.current.value,
@@ -246,7 +308,7 @@ export const Vehicles = () => {
       fuel: fuel.current.value,
       oil_Change: oil_Change.current.value,
       status: editingVehicle.status,
-      image: imageUrl,
+      image: updatedImageString,
     };
 
   try{
@@ -275,15 +337,27 @@ export const Vehicles = () => {
   });
 }
   };
-  //////////////editar imagen
-  useEffect(() => {
-    getByIdVehicle(Vehicles, (vehicleData) => {
-      const imagesArray = vehicleDataData.image.split(",");
-      vehicleDataData.image = imagesArray;
-      setVehicleData(vehicleDataData);
+
+
+   const removeImage = (indexToRemove) => {
+
+    setEditingVehicle((prevVehicle) => {
+      const updatedImages = prevVehicle.image.split(',');
+      updatedImages.splice(indexToRemove, 1);
+      const serializedImages = updatedImages.join(',');
+
+      return {
+        ...prevVehicle,
+        image: serializedImages,
+      };
     });
-  }, [Vehicles]);
-  ////////////////////
+
+
+    Swal.fire('Imagen removida', 'Para confirmar su eliminación presione el botón "Actualizar"', 'success');
+
+  };
+
+  ////////////////////////////////////////////////
 
   useEffect(() => {
     if (editingVehicle) {
@@ -308,26 +382,7 @@ export const Vehicles = () => {
   const handleCloseFormModal = () => setShowFormModal(false);
   const handleShowFormModal = () => setShowFormModal(true);
 
-  // const handleCapacity = (e) => {
-  //   const rangeCapacity = e.target.value;
-  //   if (rangeCapacity > 80 || rangeCapacity < 1) {
-  //     capacity.current.value = "";
-  //   }
-  // };
 
-  // const handleYear = (e) => {
-  //   const inputValue = e.target.value;
-
-  //   const currentYear = new Date().getFullYear();
-
-  //   if (inputValue < 1980 || inputValue > currentYear) {
-  //     e.target.setCustomValidity(
-  //       "El año debe estar entre 1980 y " + currentYear
-  //     );
-  //   } else {
-  //     e.target.setCustomValidity("");
-  //   }
-  // };
 
   useEffect(() => {
     if (dataTable) {
@@ -390,7 +445,7 @@ export const Vehicles = () => {
           className: "btn btn-danger",
           exportOptions: { columns: [0, 1, 2, 3, 4, 5, 6] },
           customize: function (doc) {
-            doc.content[1].margin = [100, 0, 100, 0]; //left, top, right, bottom
+            doc.content[1].margin = [100, 0, 100, 0]; 
           },
         },
         {
@@ -420,7 +475,8 @@ export const Vehicles = () => {
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí, cambiar estado'
+      confirmButtonText: 'Sí, cambiar estado',
+      cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
         mutationStatus.mutateAsync(id);
@@ -957,17 +1013,34 @@ export const Vehicles = () => {
                   </Form.Group>
 
                   <Form.Group>
-                    <Form.Label>Imagen</Form.Label>
-                    <Form.Control type="file" onChange={handleImageUpload} />
-                    {editingVehicle && editingVehicle.image && (
-                      <img
-                        src={editingVehicle.image}
-                        alt="Imagen del vehículo"
-                        className="uploadedImg"
-                        style={{ maxWidth: "200px", maxHeight: "200px" }}
-                      />
-                    )}
-                  </Form.Group>
+                  <Form.Label>Imágenes </Form.Label>
+                  <div className='styled-table'>
+                    <div style={{ display: 'flex', overflowX: 'auto', gap: '10px' }}>
+                      {editingVehicle && editingVehicle.image && editingVehicle.image.split(',').map((imageUrl, index) => (
+                        <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                          <td>
+                            <img
+                              src={imageUrl}
+                              alt={`Imagen ${index}`}
+                              style={{ maxWidth: '200px', maxHeight: '200px' }}
+                            />
+                          </td>
+                          <td>
+                            <Button variant='danger' onClick={() => removeImage(index)}>
+                              Eliminar
+                            </Button>
+                          </td>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <br>
+                  </br>
+                  <input type='file' accept='image/*' className='form-control-file' onChange={handleEditImageUpload} multiple />
+                  {newImages.map((imageUrl, index) => (
+                    <div key={index}>Nueva imagen {index + 1}</div>
+                  ))}
+                </Form.Group>
                 </Col>
 
                 <Col>
@@ -975,7 +1048,6 @@ export const Vehicles = () => {
                     <Form.Label>Categoría</Form.Label>
                     <Form.Control
                       as="select"
-                      value={selectedCategory}
                       ref={category}
                       defaultValue={
                         editingVehicle ? editingVehicle.category : ""
