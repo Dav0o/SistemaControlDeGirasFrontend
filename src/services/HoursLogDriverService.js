@@ -11,9 +11,10 @@ export const getHoursLogDriver = async () => {
 }
 
 
+
 export const deleteHour = async (HourDriverId) => {
   try {
-    const response = await api.delete(`hoursLogDriver/${HourDriverId}`);
+    const response = await api.delete(`hoursLogDriver?id=${HourDriverId}`);
     return response.data;
   } catch (error) {
     throw error;

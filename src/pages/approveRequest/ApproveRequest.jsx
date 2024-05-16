@@ -28,13 +28,28 @@ function ApproveRequest() {
 
   const handleCancel = async (requestId) => {
     const requestToCancel = data.find((request) => request.id === requestId);
-    try {
-      await cancelMutation.mutateAsync({ id: requestToCancel.id });
-      MySwal.fire("Solicitud Cancelada", "", "success");
-      window.location.reload();
-    } catch (error) {
-      console.error("Error al cancelar la solicitud", error);
-      MySwal.fire("Error al cancelar la solicitud", error.message, "error");
+    const result = await Swal.fire({
+      title: "¿Estás seguro?",
+      text: "¿Quieres Anular esta solicitud?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, Anular",
+      cancelButtonText: "Cancelar",
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        await cancelMutation.mutateAsync({ id: requestToCancel.id });
+        Swal.fire("Solicitud Cancelada", "", "success");
+        window.location.reload();
+      } catch (error) {
+        console.error("Error al cancelar la solicitud", error);
+        Swal.fire("Error al cancelar la solicitud", error.message, "error");
+      }
+    } else {
+         Swal.fire("Cancelado", "La solicitud no ha sido cancelada", "info");
     }
   };
 
@@ -75,7 +90,10 @@ function ApproveRequest() {
       itsApprove: true,
     };
     mutation.mutateAsync(updateRequest);
+    
   };
+
+  
   const [dataFilter, setDataFilter] = useState(data);
 
   useEffect(() => {
