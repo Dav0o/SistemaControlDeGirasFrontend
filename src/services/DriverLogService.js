@@ -14,3 +14,13 @@ export const getByIdDriverLog = async (driverLogId) => {
     let data = await api.get(`driverLogs/${driverLogId}`).then(result => result.data);
     return data;
 }
+
+export const deleteDriverLog = async (driverLogId) => {
+    try {
+        const response = await api.delete(`DriverLogs/${driverLogId}`);
+        return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+

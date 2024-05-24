@@ -21,11 +21,3 @@ export const getByIdWorkingTime = async (workingTimeId) => {
 }
 
 
-export const deleteWorkingTime = async (workingTimeId) => {
-    try {
-      const response = await api.delete(`workingTimes/${workingTimeId}`);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  };

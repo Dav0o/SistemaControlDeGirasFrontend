@@ -161,7 +161,8 @@ function VehicleMaintenances() {
           text: 'El nombre es requerido'
       });
       return;
-  } else if (!/^[a-zA-Z\u00C0-\u024F\u1E00-\u1EFF\u0300-\u036F\s]*$/.test(name.current.value.trim())) {
+    
+  } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚ, -]+$/.test(name.current.value.trim())) {
       Swal.fire({
           icon: 'error',
           title: 'Error',
@@ -206,7 +207,7 @@ function VehicleMaintenances() {
     }
 
     if (description.current.value.trim()) {
-      if (!/^[a-zA-Z0-9\u00C0-\u024F\u1E00-\u1EFF\u0300-\u036F\/,\s-]*$/.test(description.current.value.trim())) {
+      if (!/^[a-zA-ZáéíóúÁÉÍÓÚ, - #1234567890]+$/.test(description.current.value.trim())) {
           Swal.fire({
               icon: 'error',
               title: 'Error',
@@ -215,6 +216,8 @@ function VehicleMaintenances() {
           return;
       }
   }
+
+
 
     let updatedImageString = '';
     if (Array.isArray(imageUrl)) {
@@ -327,7 +330,8 @@ function VehicleMaintenances() {
       });
       return;
     }
-    else if (!/^[a-zA-Z\u00C0-\u024F\u1E00-\u1EFF\u0300-\u036F\s]*$/.test(name.current.value.trim())) {
+    
+    else if  (!/^[a-zA-ZáéíóúÁÉÍÓÚ, -]+$/.test(name.current.value.trim())){
       Swal.fire({
           icon: 'error',
           title: 'Error',
@@ -349,7 +353,7 @@ function VehicleMaintenances() {
     }
 
     if (description.current.value.trim()) {
-      if (!/^[a-zA-Z0-9\u00C0-\u024F\u1E00-\u1EFF\u0300-\u036F\/,\s-]*$/.test(description.current.value.trim())) {
+      if (!/^[a-zA-ZáéíóúÁÉÍÓÚ, - #1234567890]+$/.test(description.current.value.trim())) {
           Swal.fire({
               icon: 'error',
               title: 'Error',
