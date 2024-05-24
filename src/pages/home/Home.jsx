@@ -83,7 +83,7 @@ function Home() {
                     <strong>Teléfono:</strong> 2562 6201
                   </li>
                   <li>
-                    <strong>Correo electrónico:</strong>
+                    <strong>Correo electrónico:</strong>{" "}
                     ericka.hernandez.ramirez@una.cr
                   </li>
                 </ul>

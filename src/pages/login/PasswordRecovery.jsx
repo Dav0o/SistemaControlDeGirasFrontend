@@ -14,7 +14,7 @@ function PasswordRecovery() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("https://controldegirasapi20240320221516.azurewebsites.net/api/Users/forgot", { email });
+      const response = await axios.post("https://controldegirasapi20240523202403.azurewebsites.net/api/Users/forgot", { email });
       if (response.data !== "Usuario no encontrado.") {
         MySwal.fire({
           icon: "success",
