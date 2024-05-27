@@ -86,8 +86,8 @@ function MyProfile() {
       return 'El segundo apellido es requerido y solo puede contener letras';
     }
 
-    if (!licenseUNA.trim() || !  /^[0-9]{6}$/.test(licenseUNA)) {
-      return 'La licencia debe contener 6 dígitos numerales';
+    if (!licenseUNA.trim() || !  /^[0-9]/.test(licenseUNA)) {
+      return 'La licencia debe contener solo dígitos numerales';
     }
 
     // Validación del número de teléfono

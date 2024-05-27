@@ -9,6 +9,7 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
+import  Spinner  from "react-bootstrap/Spinner";
 import { getVehicles } from "../../services/VehicleService";
 import { useRef } from "react";
 import Swal from "sweetalert2";
@@ -366,7 +367,9 @@ function EndorseRequest() {
     : "";
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Spinner animation="border" role="status">
+    <span className="visually-hidden">Loading...</span>
+  </Spinner>;
   }
 
   if (isError) {
@@ -374,7 +377,9 @@ function EndorseRequest() {
   }
 
   if (loadingVehicles) {
-    return <div>Loading...</div>;
+    return <Spinner animation="border" role="status">
+    <span className="visually-hidden">Loading...</span>
+  </Spinner>;
   }
 
   if (errorVehicles) {

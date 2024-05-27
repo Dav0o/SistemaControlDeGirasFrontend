@@ -4,6 +4,7 @@ import { useQuery } from "react-query";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Spinner from 'react-bootstrap/Spinner'
 import "bootstrap/dist/css/bootstrap.min.css";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
@@ -49,7 +50,9 @@ function CheckedRequests() {
   
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Spinner animation="border" role="status">
+    <span className="visually-hidden">Loading...</span>
+  </Spinner>;
   }
 
   if (isError) {
@@ -105,7 +108,7 @@ function CheckedRequests() {
           <div className="card-body">
             {dataFilter ?
             dataFilter.map((request) => (
-              <Card key={request.id}>
+              <Card key={request.id} className="mb-3">
                 <Card.Header>{request.consecutiveNumber}</Card.Header>
                 <Card.Body>
                   <Card.Title>{request.objective}</Card.Title>

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import { Outlet, NavLink } from "react-router-dom";
-import { NavDropdown, Navbar } from "react-bootstrap";
+import { NavDropdown, Navbar, Spinner } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import { Dropdown, Nav } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
@@ -51,7 +51,6 @@ function Layout({ children }) {
       }
       for (const claim in user) {
         if (claim.endsWith("/nameidentifier")) {
-         
           setUserId(user[claim]);
         }
       }
@@ -64,7 +63,6 @@ function Layout({ children }) {
       setIsAdmin(userRoles[0].includes("Admin"));
     }
   }, [userRoles]);
-
 
   if (userLoading) {
     <div>isLoading...</div>;
@@ -143,12 +141,10 @@ function Layout({ children }) {
                     <li>
                       <a href="/checkedRequests">Ver</a>
                     </li>
-                      </ul>
-                    <li>
-                  <a href="/notices">Noticias</a>
+                  </ul>
+                  <li>
+                    <a href="/notices">Noticias</a>
                   </li>
-                    
-                 
                 </li>
               </>
             )}
@@ -187,13 +183,17 @@ function Layout({ children }) {
                 <ul className="nav navbar-nav ml-auto">
                   <NavDropdown
                     title={
-                      userData
-                        ? `${userData.name} ${userData.lastName1}`
-                        : "..."
+                      userData ? (
+                        `${userData.name} ${userData.lastName1}`
+                      ) : (
+                        <Spinner animation="border" role="status">
+                          <span className="visually-hidden">Loading...</span>
+                        </Spinner>
+                      )
                     }
                     id="basic-nav-dropdown"
                   >
-                    {userData ? (
+                    {localStorage.getItem("token") ? (
                       <>
                         <NavDropdown.Item href="/profile">
                           Mi perfil

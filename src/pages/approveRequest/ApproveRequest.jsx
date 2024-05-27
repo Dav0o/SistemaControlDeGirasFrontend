@@ -1,5 +1,10 @@
 import React, { useEffect } from "react";
-import { approve, cancel, getRequestToApprove, getRequests } from "../../services/RequestService";
+import {
+  approve,
+  cancel,
+  getRequestToApprove,
+  getRequests,
+} from "../../services/RequestService";
 import { useMutation, useQuery } from "react-query";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -9,6 +14,7 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
+import  Spinner  from "react-bootstrap/Spinner";
 import { getVehicles } from "../../services/VehicleService";
 import { useRef } from "react";
 import { useState } from "react";
@@ -16,11 +22,14 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import SeeRequest from "../../components/SeeRequest";
 
-
 function ApproveRequest() {
-  const { data, isLoading, isError } = useQuery("requests", getRequestToApprove, {
-    enabled: true,
-  });
+  const { data, isLoading, isError } = useQuery(
+    "requests",
+    getRequestToApprove,
+    {
+      enabled: true,
+    }
+  );
 
   const mutation = useMutation("requests/approve", approve);
 
@@ -38,7 +47,7 @@ function ApproveRequest() {
       confirmButtonText: "Sí, Anular",
       cancelButtonText: "Cancelar",
     });
-  
+
     if (result.isConfirmed) {
       try {
         await cancelMutation.mutateAsync({ id: requestToCancel.id });
@@ -49,7 +58,7 @@ function ApproveRequest() {
         Swal.fire("Error al cancelar la solicitud", error.message, "error");
       }
     } else {
-         Swal.fire("Cancelado", "La solicitud no ha sido cancelada", "info");
+      Swal.fire("Cancelado", "La solicitud no ha sido cancelada", "info");
     }
   };
 
@@ -69,7 +78,9 @@ function ApproveRequest() {
           title: "¡Tu trabajo ha sido guardado!",
           showConfirmButton: false,
           timer: 1500,
-        }).then(mutation.reset).then(window.location.reload())
+        })
+          .then(mutation.reset)
+          .then(window.location.reload())
       : null;
   }
 
@@ -90,25 +101,29 @@ function ApproveRequest() {
       itsApprove: true,
     };
     mutation.mutateAsync(updateRequest);
-    
   };
 
-  
   const [dataFilter, setDataFilter] = useState(data);
 
   useEffect(() => {
-    setDataFilter(data)
-  }, [data])
-  
+    setDataFilter(data);
+  }, [data]);
+
   const numberFilter = useRef(0);
-  function handleFilter(){
-    const _data = data.filter((item) => (item.consecutiveNumber).includes(numberFilter.current.value))
+  function handleFilter() {
+    const _data = data.filter((item) =>
+      item.consecutiveNumber.includes(numberFilter.current.value)
+    );
 
     setDataFilter(_data);
   }
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+    );
   }
 
   if (isError) {
@@ -124,17 +139,16 @@ function ApproveRequest() {
   return (
     <>
       <Container className="container-fluid">
-        <h2 className="h3 mb-2 text-gray-800 custom-heading">Solicitudes pendientes</h2>
-        <p className="mb-4">
-          Lista de solicitudes 
-        </p>
+        <h2 className="h3 mb-2 text-gray-800 custom-heading">
+          Solicitudes pendientes
+        </h2>
+        <p className="mb-4">Lista de solicitudes</p>
         <div className="card shadow mb-4">
           <div className="card-header py-3">
             <p>Diríjase a la solicitud que desee aprobar o anular </p>
             <br />
             <Row className="d-flex">
-              
-              <Col >
+              <Col>
                 <div class="input-group mb-3">
                   <span class="input-group-text" id="basic-addon1">
                     <i class="bi bi-search"></i>
@@ -168,7 +182,7 @@ function ApproveRequest() {
                         variant="success"
                         className="buttonSave"
                         onClick={() => handleShowApprove(request.id)}
-                        style={{marginRight: '15px'}}
+                        style={{ marginRight: "15px" }}
                       >
                         Aprobar
                       </Button>
@@ -182,8 +196,10 @@ function ApproveRequest() {
                       </Button>
                     </div>
                     <div>
-                        <SeeRequest data={request}  userId={request.processes[0].userId}/>
-                   
+                      <SeeRequest
+                        data={request}
+                        userId={request.processes[0].userId}
+                      />
                     </div>
                   </div>
                 </Card.Body>
@@ -220,7 +236,11 @@ function ApproveRequest() {
           <Button className="buttonCancel" onClick={handleClose}>
             Cerrar
           </Button>
-          <Button variant="success" className="buttonSave" onClick={handleApprove}>
+          <Button
+            variant="success"
+            className="buttonSave"
+            onClick={handleApprove}
+          >
             Aprobar
           </Button>
         </Modal.Footer>

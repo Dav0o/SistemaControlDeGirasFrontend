@@ -5,6 +5,7 @@ import Accordion from "react-bootstrap/Accordion";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
+import Spinner from "react-bootstrap/Spinner"
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { getRequests } from "../../../services/RequestService";
@@ -127,7 +128,9 @@ function HoursControl() {
   const { isLoading: loadingLogs, data: dataLogs, errorLogs } = useQuery("hoursLogDriver", getHoursLogDriver);
 
   if (isLoading) {
-    return <div>Cargando...</div>;
+    return <Spinner animation="border" role="status">
+    <span className="visually-hidden">Loading...</span>
+  </Spinner>;
   }
 
   if (isError) {
@@ -135,7 +138,9 @@ function HoursControl() {
   }
 
   if (loadingLogs) {
-    return <div>Cargando...</div>;
+    return <Spinner animation="border" role="status">
+    <span className="visually-hidden">Loading...</span>
+  </Spinner>;
   }
 
   if (errorLogs) {

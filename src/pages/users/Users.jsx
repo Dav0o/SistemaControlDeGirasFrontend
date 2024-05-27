@@ -5,6 +5,7 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Modal from "react-bootstrap/Modal";
+import Spinner from "react-bootstrap/Spinner";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { create, getUsers } from "../../services/UserService";
@@ -364,7 +365,9 @@ function Users() {
 
 
   if (loadingUsers) {
-    return <div>Loading...</div>;
+    return <Spinner animation="border" role="status">
+    <span className="visually-hidden">Loading...</span>
+  </Spinner>;
   }
 
   if (errorUsers) {

@@ -463,10 +463,16 @@ const handleEditImageUpload = async (e) => {
     setDataTable(newDataTable);
   }, [data]); // Vuelve a inicializar el DataTable cuando los datos cambien
 
-  const mutationStatus = useMutation("vehicles", changeStatus);
+  const mutationStatus = useMutation("vehicles", changeStatus,{
+    onSuccess:() => {
+      // Invalidar y refetch los datos de vehículos después de una mutación exitosa
+      queryClient.invalidateQueries('vehicles');
+      window.location.reload()
+    },
+  });
 
 
-  const handleStatus = (id) => {
+  const handleStatus = async (id) => {
    
     Swal.fire({
       title: '¿Está seguro?',
@@ -479,8 +485,11 @@ const handleEditImageUpload = async (e) => {
       cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
-        mutationStatus.mutateAsync(id);
+      mutationStatus.mutateAsync(id);
+      
+      setTimeout(() => {
         window.location.reload();
+      }, 2000); // 2000 milisegundos = 2 segundos
       }
     });
   };

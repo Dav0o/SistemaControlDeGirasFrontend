@@ -11,8 +11,6 @@ import logo from "../assets/UNA2LINErojo0.png";
 import axios from "axios";
 import { getByIdUser } from "../services/UserService";
 
-
-
 const styles = StyleSheet.create({
   page: {
     flexDirection: "column",
@@ -36,14 +34,14 @@ const styles = StyleSheet.create({
   rowBetween: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 15,
+    marginBottom: 10,
   },
   label: {
     fontWeight: "bold",
     marginBottom: 5,
   },
   input: {
-    marginBottom: 10,
+    marginBottom: 5,
     borderRadius: 4,
     backgroundColor: "#e9ecef",
     padding: 6,
@@ -59,39 +57,60 @@ const styles = StyleSheet.create({
   firma: {
     borderTop: 1,
     borderColor: "#000000",
+    width: "110px",
     marginTop: 70,
+    marginHorizontal: 15,
   },
   table: {
-    display: 'table',
-    width: 'auto',
-    borderStyle: 'solid',
-    borderWidth: 1,
-    marginBottom: 10,
+    width: "100%",
   },
-  tableRow: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
+  rowTable: {
+    display: "flex",
+    flexDirection: "row",
+    borderTop: "1px solid #000",
+    paddingTop: 12,
+    paddingBottom: 12,
   },
-  tableCellHeader: {
-    margin: 5,
-    flex: 1,
-    textAlign: 'center',
-    fontWeight: 'bold',
-    padding: 5, // Añadir espacio adicional
-    fontSize: 12,
-    borderRight: 1,
+  header: {
+    borderTop: "none",
+    backgroundColor: '#C0392B',
+    paddingHorizontal: 20,
+    color: "#FFF"
   },
-  tableCell: {
-    margin: 5,
-    borderRight: 1,
-    flex: 1,
-    textAlign: 'center',
-    padding: 8, // Añadir espacio adicional
+  bold: {
+    fontWeight: "bold",
+  },
+  col1: {
+    width: "10%",
+  },
+  col2: {
+    width: "15%",
+  },
+  col3: {
+    width: "15%",
+  },
+  col4: {
+    width: "10%",
+  },
+  col5: {
+    width: "10%",
+  },
+  col6: {
+    width: "15%",
+  },
+  col7: {
+    width: "10%",
+  },
+  col8: {
+    width: "15%",
+  },
+  emptyRow: {
+    borderBottom: "1px solid #EEE",
+    
   },
 });
 function RequestToPDF({ formData }) {
-  
-  console.log(formData.processes[0].user.name)
+  console.log(formData.processes[0].user.name);
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -131,7 +150,10 @@ function RequestToPDF({ formData }) {
 
         <View>
           <Text style={styles.label}>Persona encargada:</Text>
-          <Text style={styles.input}>{formData.processes[0].user.name} {formData.processes[0].user.lastName1}</Text>
+          <Text style={styles.input}>
+            {formData.processes[0].user.name}{" "}
+            {formData.processes[0].user.lastName1}
+          </Text>
         </View>
 
         <View style={styles.row}>
@@ -208,39 +230,47 @@ function RequestToPDF({ formData }) {
             <Text>Firma encargado</Text>
           </View>
           <View style={styles.firma}>
-            <Text>Firma chofer</Text>
+            <Text>‎ ‎‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ Sello</Text>
           </View>
         </View>
       </Page>
 
       <Page size="A4" style={styles.page}>
-      <View>
-      <Text style={styles.label}>Información sobre el abasto de combustible</Text>
-      </View>
+        <View>
+          <Text style={styles.label}>
+            Información sobre el abasto de combustible
+          </Text>
+        </View>
         <View style={styles.table}>
-          {/* Cabecera de la tabla */}
-          <View style={styles.tableRow}>
-            <Text style={styles.tableCellHeader}>Ciudad</Text>
-            <Text style={styles.tableCellHeader}>Comercio</Text>
-            <Text style={styles.tableCellHeader}>Kilometraje</Text>
-            <Text style={styles.tableCellHeader}>Litros</Text>
-            <Text style={styles.tableCellHeader}>Fecha</Text>
-            <Text style={styles.tableCellHeader}>Tarjeta</Text>
-            <Text style={styles.tableCellHeader}>Factura</Text>
-            <Text style={styles.tableCellHeader}>Autorización</Text>
+          <View style={[styles.rowTable, styles.bold, styles.header]}>
+            <Text style={styles.col1}>Ciudad</Text>
+            <Text style={styles.col2}>Comercio</Text>
+            <Text style={styles.col3}>Kilometraje</Text>
+            <Text style={styles.col4}>Litros</Text>
+            <Text style={styles.col5}>Fecha</Text>
+            <Text style={styles.col6}>Tarjeta</Text>
+            <Text style={styles.col7}>Factura</Text>
+            <Text style={styles.col8}>Autorización</Text>
           </View>
 
-          {/* Filas en blanco para escribir datos */}
-          {[...Array(3)].map((_, index) => (
-            <View key={index} style={styles.tableRow}>
-              <Text style={styles.tableCell}></Text>
-              <Text style={styles.tableCell}></Text>
-              <Text style={styles.tableCell}></Text>
-              <Text style={styles.tableCell}></Text>
-              <Text style={styles.tableCell}></Text>
-              <Text style={styles.tableCell}></Text>
-              <Text style={styles.tableCell}></Text>
-              <Text style={styles.tableCell}></Text>
+          {[...Array(4)].map((_, index) => (
+            <View
+              key={index}
+              style={[styles.rowTable, styles.emptyRow]}
+              wrap={false}
+            >
+              <Text style={styles.col1}>
+                <Text style={styles.bold}></Text>
+              </Text>
+              <Text style={styles.col2}></Text>
+              <Text style={styles.col3}></Text>
+              <Text style={styles.col4}>
+                <Text style={styles.bold}></Text>
+              </Text>
+              <Text style={styles.col5}></Text>
+              <Text style={styles.col6}></Text>
+              <Text style={styles.col7}></Text>
+              <Text style={styles.col8}></Text>
             </View>
           ))}
         </View>

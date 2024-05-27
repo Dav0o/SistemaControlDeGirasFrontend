@@ -1,23 +1,25 @@
 import React, { useRef, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Button, Table, Modal, Form } from "react-bootstrap";
+import { Button, Table, Modal, Form, Spinner } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { useQuery, useMutation } from "react-query";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { getByIdVehicle } from "../../../services/VehicleService";
-import { create, deleteMaintenance } from "../../../services/MaintenanceService";
+import {
+  create,
+  deleteMaintenance,
+} from "../../../services/MaintenanceService";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { useEffect } from "react";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { Accordion } from "react-bootstrap";
-import "../../../stylesheets/button.css"
-import "../../../stylesheets/generalDesign.css"
+import "../../../stylesheets/button.css";
+import "../../../stylesheets/generalDesign.css";
 
 function VehicleMaintenances() {
-
   const { vehicleId } = useParams();
   const { isLoading, data, isError } = useQuery(["vehicles", vehicleId], () =>
     getByIdVehicle(vehicleId)
@@ -27,24 +29,21 @@ function VehicleMaintenances() {
   const [validated, setValidated] = useState(false);
 
   const [newImages, setNewImages] = useState([]);
-  const [imageUrl, setImageUrl] = useState('');
-  const apiKey = '6c4a708d4bdee0384fae9c67a8558f9e';
-
-
-
+  const [imageUrl, setImageUrl] = useState("");
+  const apiKey = "6c4a708d4bdee0384fae9c67a8558f9e";
 
   const handleImageUpload = async (e) => {
     const imageInput = e.target.files[0];
 
     if (imageInput) {
       const formData = new FormData();
-      formData.append('image', imageInput);
+      formData.append("image", imageInput);
 
       try {
         const response = await fetch(
           `https://api.imgbb.com/1/upload?key=${apiKey}`,
           {
-            method: 'POST',
+            method: "POST",
             body: formData,
           }
         );
@@ -54,14 +53,13 @@ function VehicleMaintenances() {
           const uploadedImageUrl = data.data.url;
           setImageUrl([...imageUrl, uploadedImageUrl]);
         } else {
-          console.error('Error al subir la imagen');
+          console.error("Error al subir la imagen");
         }
       } catch (error) {
-        console.error('Error de solicitud', error);
+        console.error("Error de solicitud", error);
       }
     }
   };
-
 
   /////////////////////editar imagen//////////////////
   const handleEditImageUpload = async (e) => {
@@ -70,12 +68,12 @@ function VehicleMaintenances() {
     if (imageInput) {
       try {
         const formData = new FormData();
-        formData.append('image', imageInput);
+        formData.append("image", imageInput);
 
         const response = await fetch(
           `https://api.imgbb.com/1/upload?key=${apiKey}`,
           {
-            method: 'POST',
+            method: "POST",
             body: formData,
           }
         );
@@ -86,22 +84,21 @@ function VehicleMaintenances() {
 
           setNewImages((prevImages) => [...prevImages, uploadedImageUrl]);
 
-          console.log('Url = ', uploadedImageUrl);
+          console.log("Url = ", uploadedImageUrl);
         } else {
-          console.error('error al subir la imagen');
+          console.error("error al subir la imagen");
         }
       } catch (error) {
-        console.error('error de solicitud', error);
+        console.error("error de solicitud", error);
       }
     }
   };
   ///////////////////////////////////////////////////
   const removeImage = (indexToRemove) => {
-
     setEditingMaintenance((prevMaintenance) => {
-      const updatedImages = prevMaintenance.image.split(',');
+      const updatedImages = prevMaintenance.image.split(",");
       updatedImages.splice(indexToRemove, 1);
-      const serializedImages = updatedImages.join(',');
+      const serializedImages = updatedImages.join(",");
 
       return {
         ...prevMaintenance,
@@ -109,32 +106,33 @@ function VehicleMaintenances() {
       };
     });
 
-
-    Swal.fire('Imagen removida', 'Para confirmar su eliminación presione el botón "Actualizar"', 'success');
-
+    Swal.fire(
+      "Imagen removida",
+      'Para confirmar su eliminación presione el botón "Actualizar"',
+      "success"
+    );
   };
 
   ////////////////////////////////////////////////
-
 
   const MySwal = withReactContent(Swal);
 
   {
     mutation.isError
       ? MySwal.fire({
-        icon: "error",
-        text: "¡Algo salió mal!",
-      }).then(mutation.reset)
+          icon: "error",
+          text: "¡Algo salió mal!",
+        }).then(mutation.reset)
       : null;
   }
   {
     mutation.isSuccess
       ? MySwal.fire({
-        icon: "success",
-        title: "Tu trabajo ha sido guardado!",
-        showConfirmButton: false,
-        timer: 1500,
-      }).then(mutation.reset)
+          icon: "success",
+          title: "Tu trabajo ha sido guardado!",
+          showConfirmButton: false,
+          timer: 1500,
+        }).then(mutation.reset)
       : null;
   }
   const [maintenances, setMaintenances] = useState([]);
@@ -149,81 +147,82 @@ function VehicleMaintenances() {
   const status = useRef(null);
   const description = useRef(null);
 
-
-
   const handleSave = () => {
-
-
     if (!name.current.value.trim()) {
       Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'El nombre es requerido'
+        icon: "error",
+        title: "Error",
+        text: "El nombre es requerido",
       });
       return;
-    
-  } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚ, -]+$/.test(name.current.value.trim())) {
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚ, -]+$/.test(name.current.value.trim())) {
       Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'El nombre solo puede contener letras'
+        icon: "error",
+        title: "Error",
+        text: "El nombre solo puede contener letras",
       });
       return;
-  }
+    }
 
     if (!severity.current.value.trim()) {
-
       Swal.fire({
-        icon: 'error', title: 'Error', text: 'La gravedad es requerida'
+        icon: "error",
+        title: "Error",
+        text: "La gravedad es requerida",
       });
       return;
     }
 
     if (!type.current.value.trim()) {
-
       Swal.fire({
-        icon: 'error', title: 'Error', text: 'El tipo es requerido'
+        icon: "error",
+        title: "Error",
+        text: "El tipo es requerido",
       });
       return;
     }
 
     if (!date.current.value.trim()) {
       Swal.fire({
-        icon: 'error', title: 'Error', text: 'La fecha es requerida'
+        icon: "error",
+        title: "Error",
+        text: "La fecha es requerida",
       });
       return;
     }
 
-    const currentDate = new Date(); 
-    const selectedDate = new Date(date.current.value); 
-  
+    const currentDate = new Date();
+    const selectedDate = new Date(date.current.value);
+
     if (selectedDate > currentDate) {
       Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'La fecha no puede ser mayor que la fecha actual'
+        icon: "error",
+        title: "Error",
+        text: "La fecha no puede ser mayor que la fecha actual",
       });
       return;
     }
 
     if (description.current.value.trim()) {
-      if (!/^[a-zA-ZáéíóúÁÉÍÓÚ, - #1234567890]+$/.test(description.current.value.trim())) {
-          Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: 'La descripción solo puede contener letras y números'
-          });
-          return;
+      if (
+        !/^[a-zA-ZáéíóúÁÉÍÓÚ, - #1234567890]+$/.test(
+          description.current.value.trim()
+        )
+      ) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "La descripción solo puede contener letras y números",
+        });
+        return;
       }
-  }
+    }
 
-
-
-    let updatedImageString = '';
+    let updatedImageString = "";
     if (Array.isArray(imageUrl)) {
-      updatedImageString = imageUrl.filter(Boolean).join(',');
+      updatedImageString = imageUrl.filter(Boolean).join(",");
     } else {
-      updatedImageString = imageUrl || '';
+      updatedImageString = imageUrl || "";
     }
     const dateValue = date.current.value;
 
@@ -236,30 +235,29 @@ function VehicleMaintenances() {
       description: description.current.value,
       image: updatedImageString,
       vehicleId: vehicleId,
-
     };
-    mutation.mutateAsync(newMaintenance)
-    .then(() => {
-      Swal.fire({
-        icon: 'success',
-        title: 'Éxito',
-        text: 'El mantenimiento ha sido guardado exitosamente'
+    mutation
+      .mutateAsync(newMaintenance)
+      .then(() => {
+        Swal.fire({
+          icon: "success",
+          title: "Éxito",
+          text: "El mantenimiento ha sido guardado exitosamente",
+        });
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       })
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000); 
-    })
-    .catch((error) => {
-      console.error("Error al guardar el mantenimiento:", error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Hubo un problema al guardar el mantenimiento. Por favor, inténtalo de nuevo más tarde.'
+      .catch((error) => {
+        console.error("Error al guardar el mantenimiento:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Hubo un problema al guardar el mantenimiento. Por favor, inténtalo de nuevo más tarde.",
+        });
       });
-    });
-};
-
+  };
 
   const handleEditClick = (maintenanceId) => {
     const maintenanceToEdit = data.maintenances.find(
@@ -269,7 +267,6 @@ function VehicleMaintenances() {
 
     setShowEditModal(true);
   };
-
 
   const [modalCreate, setModalCreate] = useState(false);
 
@@ -324,47 +321,53 @@ function VehicleMaintenances() {
 
   const handleUpdate = () => {
     if (!name.current.value.trim()) {
-      
       Swal.fire({
-        icon: 'error', title: 'Error', text: 'El nombre es requerido'
+        icon: "error",
+        title: "Error",
+        text: "El nombre es requerido",
+      });
+      return;
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚ, -]+$/.test(name.current.value.trim())) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "El nombre solo puede contener letras",
       });
       return;
     }
-    
-    else if  (!/^[a-zA-ZáéíóúÁÉÍÓÚ, -]+$/.test(name.current.value.trim())){
-      Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'El nombre solo puede contener letras'
-      });
-      return;
-  }
 
-    const currentDate = new Date(); 
-    const selectedDate = new Date(date.current.value); 
-  
+    const currentDate = new Date();
+    const selectedDate = new Date(date.current.value);
+
     if (selectedDate > currentDate) {
       Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'La fecha no puede ser mayor que la fecha actual'
+        icon: "error",
+        title: "Error",
+        text: "La fecha no puede ser mayor que la fecha actual",
       });
       return;
     }
 
     if (description.current.value.trim()) {
-      if (!/^[a-zA-ZáéíóúÁÉÍÓÚ, - #1234567890]+$/.test(description.current.value.trim())) {
-          Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: 'La descripción solo puede contener letras y números'
-          });
-          return;
+      if (
+        !/^[a-zA-ZáéíóúÁÉÍÓÚ, - #1234567890]+$/.test(
+          description.current.value.trim()
+        )
+      ) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "La descripción solo puede contener letras y números",
+        });
+        return;
       }
-  }
+    }
 
-    const updatedImages = [...editingMaintenance.image.split(','), ...newImages];
-    const updatedImageString = updatedImages.filter(Boolean).join(',');
+    const updatedImages = [
+      ...editingMaintenance.image.split(","),
+      ...newImages,
+    ];
+    const updatedImageString = updatedImages.filter(Boolean).join(",");
 
     const updatedMaintenance = {
       id: editingMaintenance.id,
@@ -381,68 +384,67 @@ function VehicleMaintenances() {
     mutation.mutateAsync(updatedMaintenance, {
       onSuccess: () => {
         setShowEditModal(false);
-       
+
         Swal.fire({
-          icon: 'success',
-          title: 'Actualización exitosa',
-          text: 'El mantenimiento se ha actualizado correctamente.'
-        }    
-        );
+          icon: "success",
+          title: "Actualización exitosa",
+          text: "El mantenimiento se ha actualizado correctamente.",
+        });
         setTimeout(() => {
           window.location.reload();
-        }, 2000); 
+        }, 2000);
       },
       onError: (error) => {
-        console.error('Error al actualizar el mantenimiento:', error);
+        console.error("Error al actualizar el mantenimiento:", error);
         Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Hubo un problema al actualizar el mantenimiento. Por favor, inténtalo de nuevo más tarde.'
+          icon: "error",
+          title: "Error",
+          text: "Hubo un problema al actualizar el mantenimiento. Por favor, inténtalo de nuevo más tarde.",
         });
-      }
+      },
     });
   };
 
   const handleDelete = async (maintenanceId) => {
     try {
       const result = await Swal.fire({
-        title: '¿Estás seguro?',
-        text: '¡No podrás revertir esto!',
-        icon: 'warning',
+        title: "¿Estás seguro?",
+        text: "¡No podrás revertir esto!",
+        icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Sí, eliminarlo!',
-        cancelButtonText: 'Cancelar',
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Sí, eliminarlo!",
+        cancelButtonText: "Cancelar",
       });
 
       if (result.isConfirmed) {
         await deleteMaintenance(maintenanceId);
         Swal.fire(
-          '¡Eliminado!',
-          'El mantenimiento ha sido eliminado.',
-          'success'
+          "¡Eliminado!",
+          "El mantenimiento ha sido eliminado.",
+          "success"
         );
         setTimeout(() => {
           window.location.reload();
-        }, 2000); 
+        }, 2000);
       }
-
     } catch (error) {
-      console.error('Error al eliminar el mantenimiento:', error);
+      console.error("Error al eliminar el mantenimiento:", error);
       Swal.fire(
-        'Error',
-        'Hubo un problema al eliminar el mantenimiento.',
-        'error'
+        "Error",
+        "Hubo un problema al eliminar el mantenimiento.",
+        "error"
       );
     }
   };
 
-
-
-
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+    );
   }
 
   if (isError) {
@@ -455,28 +457,31 @@ function VehicleMaintenances() {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    const formattedDate = date.toISOString().split('T')[0];
+    const formattedDate = date.toISOString().split("T")[0];
     return formattedDate;
   };
 
   return (
     <>
       <Container className="container-fluid">
-        <h2 className="h3 mb-2 text-gray-800 custom-heading">Lista de mantenimiento o incidentes del vehículo</h2>
-       
-        <div className="card shadow mb-4">
+        <h2 className="h3 mb-2 text-gray-800 custom-heading">
+          Lista de mantenimiento o incidentes del vehículo
+        </h2>
 
+        <div className="card shadow mb-4">
           <Accordion defaultActiveKey="1">
             <Accordion.Item eventKey="0">
-              <Accordion.Header>Clic en el botón para crear un vehículo</Accordion.Header>
+              <Accordion.Header>
+                Clic en el botón para crear un vehículo
+              </Accordion.Header>
               <Accordion.Body>
                 <Form validated={validated} onSubmit={handleSave}>
-
                   <Row>
                     <Col md={6}>
                       <div className="mb-3 mt-3">
-                        <label htmlFor="inputName"
-                          className="form-label">Nombre</label>
+                        <label htmlFor="inputName" className="form-label">
+                          Nombre
+                        </label>
                         <input
                           type="text"
                           className="form-control"
@@ -486,17 +491,26 @@ function VehicleMaintenances() {
                           required
                         />
                         <div className="valid-feedback"></div>
-                        <div className="invalid-feedback">El campo es requerido.
+                        <div className="invalid-feedback">
+                          El campo es requerido.
                         </div>
                       </div>
                     </Col>
 
                     <Col md={6}>
                       <div className="mb-3 mt-3">
-                        <label htmlFor="inputGr"
-                          className="form-label">Gravedad</label>
-                        <select class="form-select" id="inputSeverity" ref={severity} required>
-                          <option select disable value="">Seleccione una opción</option>
+                        <label htmlFor="inputGr" className="form-label">
+                          Gravedad
+                        </label>
+                        <select
+                          class="form-select"
+                          id="inputSeverity"
+                          ref={severity}
+                          required
+                        >
+                          <option select disable value="">
+                            Seleccione una opción
+                          </option>
                           <option value="Leve">Leve</option>
                           <option value="Moderado">Moderado</option>
                           <option value="Grave">Grave</option>
@@ -511,10 +525,18 @@ function VehicleMaintenances() {
                     <Row>
                       <Col md={6}>
                         <div className="mb-3 mt-3">
-                          <label htmlFor="inputType"
-                            className="form-label">Tipo</label>
-                          <select class="form-select" id="inputType" ref={type} required>
-                            <option select disable value="">Seleccione una opción</option>
+                          <label htmlFor="inputType" className="form-label">
+                            Tipo
+                          </label>
+                          <select
+                            class="form-select"
+                            id="inputType"
+                            ref={type}
+                            required
+                          >
+                            <option select disable value="">
+                              Seleccione una opción
+                            </option>
                             <option value="Mantenimiento">Mantenimiento</option>
                             <option value="Incidente">Incidente</option>
                           </select>
@@ -526,8 +548,9 @@ function VehicleMaintenances() {
 
                       <Col md={6}>
                         <div className="mb-3 mt-3">
-                          <label htmlFor="inputDate"
-                            className="form-label">Fecha</label>
+                          <label htmlFor="inputDate" className="form-label">
+                            Fecha
+                          </label>
                           <input
                             type="date"
                             className="form-control"
@@ -542,8 +565,12 @@ function VehicleMaintenances() {
                     <Row>
                       <Col md={6}>
                         <div className="mb-3 mt-3">
-                          <label htmlFor="inputDescription"
-                            className="form-label">Descripción</label>
+                          <label
+                            htmlFor="inputDescription"
+                            className="form-label"
+                          >
+                            Descripción
+                          </label>
                           <input
                             type="text"
                             className="form-control"
@@ -555,9 +582,7 @@ function VehicleMaintenances() {
                         </div>
                       </Col>
 
-
                       <Col md={6}>
-
                         <div className="mb-3 mt-3">
                           <div>
                             <Form.Label>Imagen</Form.Label>
@@ -566,37 +591,48 @@ function VehicleMaintenances() {
                                 type="file"
                                 className="custom-file-input"
                                 id="customFile"
-
                                 onChange={handleImageUpload}
                                 multiple
                               />
-                              <label className="custom-file-label" htmlFor="customFile">
-                                Click para seleccionar una o más imágenes</label>
+                              <label
+                                className="custom-file-label"
+                                htmlFor="customFile"
+                              >
+                                Click para seleccionar una o más imágenes
+                              </label>
                             </div>
-                            {Array.isArray(imageUrl) && imageUrl.map((url, index) => (
-                              <img
-                                key={index}
-                                src={url}
-                                alt={`Imagen ${index + 1}`}
-                                className="uploadedImg"
-                                style={{ maxWidth: '200px', maxHeight: '200px', marginRight: '10px', marginBottom: '10px' }}
-                              />
-                            ))}</div>
+                            {Array.isArray(imageUrl) &&
+                              imageUrl.map((url, index) => (
+                                <img
+                                  key={index}
+                                  src={url}
+                                  alt={`Imagen ${index + 1}`}
+                                  className="uploadedImg"
+                                  style={{
+                                    maxWidth: "200px",
+                                    maxHeight: "200px",
+                                    marginRight: "10px",
+                                    marginBottom: "10px",
+                                  }}
+                                />
+                              ))}
+                          </div>
                         </div>
                       </Col>
                     </Row>
                   </Row>
                 </Form>
 
-                <Button variant="success" className="buttonSave" onClick={handleSave}>
+                <Button
+                  variant="success"
+                  className="buttonSave"
+                  onClick={handleSave}
+                >
                   Guardar
                 </Button>
-
               </Accordion.Body>
             </Accordion.Item>
           </Accordion>
-
-
 
           <div className="card-body">
             <Table striped="columns">
@@ -616,16 +652,18 @@ function VehicleMaintenances() {
                     <td>{maintenance.name}</td>
                     <td>{maintenance.severity}</td>
                     <td>{maintenance.type}</td>
-                    <img src={maintenance.image}
+                    <img
+                      src={maintenance.image}
                       alt="Mantenimiento"
-                      style={{ width: '150px', height: '150px' }} />
+                      style={{ width: "150px", height: "150px" }}
+                    />
 
                     <td>
                       <Button
                         variant="warning"
                         className="bg-gradient-warning mr-1 text-light"
                         onClick={() => handleEditClick(maintenance.id)}
-                        style={{marginRight:'20px'}}
+                        style={{ marginRight: "20px" }}
                       >
                         <i class="bi bi-pencil-square"></i>
                       </Button>
@@ -636,34 +674,30 @@ function VehicleMaintenances() {
                       >
                         <i class="bi bi-trash"></i>
                       </Button>{" "}
-
-
                     </td>
                   </tr>
                 ))}
               </tbody>
-
             </Table>
           </div>
         </div>
 
         <Link style={LinkStyle} to={"/vehicle"}>
-          <Button  className="buttonCancel">
-            Regresar
-          </Button>
+          <Button className="buttonCancel">Regresar</Button>
         </Link>
       </Container>
 
-
-      <Modal show={showEditModal} onHide={handleCloseEditModal} size="lg" centered>
+      <Modal
+        show={showEditModal}
+        onHide={handleCloseEditModal}
+        size="lg"
+        centered
+      >
         <Modal.Header closeButton>
           <Modal.Title>Editar mantenimiento</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-
-
-
-          <Form >
+          <Form>
             <Row>
               <Col md={6}>
                 <Form.Group controlId="formName">
@@ -678,35 +712,38 @@ function VehicleMaintenances() {
                     required
                   />
                   <div className="valid-feedback"></div>
-                  <div className="invalid-feedback">
-                  </div>
+                  <div className="invalid-feedback"></div>
                 </Form.Group>
-
-
 
                 <Form.Group controlId="formType">
                   <Form.Label>Tipo</Form.Label>
-                  <Form.Control as="select" ref={type}
-                    defaultValue={editingMaintenance ? editingMaintenance.type : ""}>
+                  <Form.Control
+                    as="select"
+                    ref={type}
+                    defaultValue={
+                      editingMaintenance ? editingMaintenance.type : ""
+                    }
+                  >
                     <option value="Mantenimiento">Mantenimiento</option>
                     <option value="Incidente">Incidente</option>
                   </Form.Control>
                 </Form.Group>
 
-
-
                 <Form.Group controlId="formSeverity">
                   <Form.Label>Gravedad</Form.Label>
-                  <Form.Control as="select" ref={severity} defaultValue={editingMaintenance ? editingMaintenance.severity : ""}>
+                  <Form.Control
+                    as="select"
+                    ref={severity}
+                    defaultValue={
+                      editingMaintenance ? editingMaintenance.severity : ""
+                    }
+                  >
                     <option value="Leve">Leve</option>
                     <option value="Moderado">Moderado</option>
                     <option value="Grave">Grave</option>
                     <option value="Critico">Crítico</option>
                   </Form.Control>
                 </Form.Group>
-
-
-
 
                 <Form.Label>Descripción</Form.Label>
                 <Form.Control
@@ -718,14 +755,15 @@ function VehicleMaintenances() {
                   ref={description}
                 />
 
-
                 <Form.Group controlId="formDate">
                   <Form.Label>Fecha</Form.Label>
                   <Form.Control
                     type="date"
                     placeholder="Fecha de cuando sucedió"
                     defaultValue={
-                      editingMaintenance ? formatDate(editingMaintenance.date) : ""
+                      editingMaintenance
+                        ? formatDate(editingMaintenance.date)
+                        : ""
                     }
                     ref={date}
                   />
@@ -734,47 +772,78 @@ function VehicleMaintenances() {
               <Col md={6}>
                 <Form.Group>
                   <Form.Label>Imágenes </Form.Label>
-                  <div className='styled-table'>
-                    <div style={{ display: 'flex', overflowX: 'auto', gap: '10px' }}>
-                      {editingMaintenance && editingMaintenance.image && editingMaintenance.image.split(',').map((imageUrl, index) => (
-                        <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                          <td>
-                            <img
-                              src={imageUrl}
-                              alt={`Imagen ${index}`}
-                              style={{ maxWidth: '200px', maxHeight: '200px' }}
-                            />
-                          </td>
-                          <td>
-                            <Button variant='danger' onClick={() => removeImage(index)}>
-                              Eliminar
-                            </Button>
-                          </td>
-                        </div>
-                      ))}
+                  <div className="styled-table">
+                    <div
+                      style={{
+                        display: "flex",
+                        overflowX: "auto",
+                        gap: "10px",
+                      }}
+                    >
+                      {editingMaintenance &&
+                        editingMaintenance.image &&
+                        editingMaintenance.image
+                          .split(",")
+                          .map((imageUrl, index) => (
+                            <div
+                              key={index}
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                              }}
+                            >
+                              <td>
+                                <img
+                                  src={imageUrl}
+                                  alt={`Imagen ${index}`}
+                                  style={{
+                                    maxWidth: "200px",
+                                    maxHeight: "200px",
+                                  }}
+                                />
+                              </td>
+                              <td>
+                                <Button
+                                  variant="danger"
+                                  onClick={() => removeImage(index)}
+                                >
+                                  Eliminar
+                                </Button>
+                              </td>
+                            </div>
+                          ))}
                     </div>
                   </div>
-                  <br>
-                  </br>
-                  <input type='file' accept='image/*' className='form-control-file' onChange={handleEditImageUpload} multiple />
+                  <br></br>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="form-control-file"
+                    onChange={handleEditImageUpload}
+                    multiple
+                  />
                   {newImages.map((imageUrl, index) => (
                     <div key={index}>Nueva imagen {index + 1}</div>
                   ))}
                 </Form.Group>
               </Col>
-           </Row>
+            </Row>
           </Form>
         </Modal.Body>
         <Modal.Footer>
           <Button className="buttonCancel" onClick={handleCloseEditModal}>
             Cancelar
           </Button>
-          <Button className="buttonSave" variant="success" onClick={handleUpdate}>
+          <Button
+            className="buttonSave"
+            variant="success"
+            onClick={handleUpdate}
+          >
             Actualizar
           </Button>
         </Modal.Footer>
-      </Modal >
-
+      </Modal>
     </>
   );
 }
