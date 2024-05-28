@@ -19,6 +19,15 @@ function PasswordRecovery() {
         MySwal.fire({
           icon: "success",
           text: "Se le ha enviado un correo electrónico para el restablecimiento de contraseña.",
+          showCancelButton: true,
+          confirmButtonText: "OK",
+          cancelButtonText: "Volver a inicio"
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.reload(); 
+          } else if (result.dismiss === Swal.DismissReason.cancel) {
+            window.location.href = "/login"; 
+          }
         });
       } else {
         MySwal.fire({

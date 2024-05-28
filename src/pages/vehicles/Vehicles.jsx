@@ -5,7 +5,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useMutation, useQuery } from "react-query";
-import {changeStatus, create, getByIdVehicle, getVehicles,} from "../../services/VehicleService";
+import { changeStatus, create, getByIdVehicle, getVehicles, } from "../../services/VehicleService";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -19,13 +19,12 @@ import "../../stylesheets/generalDesign.css";
 export const Vehicles = () => {
   const mutation = useMutation("vehicles", create);
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [plateNumberError, setPlateNumberError] = useState("");
 
   const [newImages, setNewImages] = useState([]);
   const [imageUrl, setImageUrl] = useState('');
   const apiKey = "6c4a708d4bdee0384fae9c67a8558f9e";
 
-  
+
   const handleImageUpload = async (e) => {
     const imageInput = e.target.files[0];
 
@@ -56,39 +55,39 @@ export const Vehicles = () => {
     }
   };
 
-/////////////////////editar imagen//////////////////
-const handleEditImageUpload = async (e) => {
-  const imageInput = e.target.files[0];
+  /////////////////////editar imagen//////////////////
+  const handleEditImageUpload = async (e) => {
+    const imageInput = e.target.files[0];
 
-  if (imageInput) {
-    try {
-      const formData = new FormData();
-      formData.append('image', imageInput);
+    if (imageInput) {
+      try {
+        const formData = new FormData();
+        formData.append('image', imageInput);
 
-      const response = await fetch(
-        `https://api.imgbb.com/1/upload?key=${apiKey}`,
-        {
-          method: 'POST',
-          body: formData,
+        const response = await fetch(
+          `https://api.imgbb.com/1/upload?key=${apiKey}`,
+          {
+            method: 'POST',
+            body: formData,
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          const uploadedImageUrl = data.data.url;
+
+          setNewImages((prevImages) => [...prevImages, uploadedImageUrl]);
+
+          console.log('Url = ', uploadedImageUrl);
+        } else {
+          console.error('error al subir la imagen');
         }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        const uploadedImageUrl = data.data.url;
-
-        setNewImages((prevImages) => [...prevImages, uploadedImageUrl]);
-
-        console.log('Url = ', uploadedImageUrl);
-      } else {
-        console.error('error al subir la imagen');
+      } catch (error) {
+        console.error('error de solicitud', error);
       }
-    } catch (error) {
-      console.error('error de solicitud', error);
     }
-  }
-};
-///////////////////////////////////////////////////
+  };
+  ///////////////////////////////////////////////////
 
 
 
@@ -97,19 +96,19 @@ const handleEditImageUpload = async (e) => {
   {
     mutation.isError
       ? MySwal.fire({
-          icon: "error",
-          text: "¡Algo salió mal!",
-        }).then(mutation.reset)
+        icon: "error",
+        text: "¡Algo salió mal!",
+      }).then(mutation.reset)
       : null;
   }
   {
     mutation.isSuccess
       ? MySwal.fire({
-          icon: "success",
-          title: "Tu trabajo ha sido guardado!",
-          showConfirmButton: false,
-          timer: 1500,
-        }).then(mutation.reset)
+        icon: "success",
+        title: "Tu trabajo ha sido guardado!",
+        showConfirmButton: false,
+        timer: 1500,
+      }).then(mutation.reset)
       : null;
   }
 
@@ -139,71 +138,71 @@ const handleEditImageUpload = async (e) => {
 
 
 
-    //VALIDACIONES
-    const validateFields = (plate_Number, category, make,model, year,color,capacity,
-                               fuel, traction, engine_capacity, mileage
-       ) => {
-     
-        const plateNumberRegex = /^[A-Za-z0-9-]{3,8}$/;
-        if (!plateNumberRegex.test(plate_Number)) {
-            return "La placa es requerida y debe tener entre 3 y 8 caracteres alfanuméricos.";
-        }
+  //VALIDACIONES
+  const validateFields = (plate_Number, category, make, model, year, color, capacity,
+    fuel, traction, engine_capacity, mileage
+  ) => {
 
-        
-      if (!category) {
-        return "La categoría requerida.";
-      }
-      
-      const makeRegex = /^[A-Za-z]{3,20}$/;
-      if (!make || !makeRegex.test(make)) {
-        return "La marca es requerida, solo permite letras.";
-      }
+    const plateNumberRegex = /^[A-Za-z0-9-]{3,8}$/;
+    if (!plateNumberRegex.test(plate_Number)) {
+      return "La placa es requerida y debe tener entre 3 y 8 caracteres alfanuméricos.";
+    }
+
+
+    if (!category) {
+      return "La categoría requerida.";
+    }
+
+    const makeRegex = /^[A-Za-z]{3,20}$/;
+    if (!make || !makeRegex.test(make)) {
+      return "La marca es requerida, solo permite letras.";
+    }
 
 
     const modelRegex = /^[A-Za-z0-9]{3,30}$/;
-      if (!model || !modelRegex.test(model)) {
-        return "Digite un formato válido para el modelo, acepta números-letras.";
-      }
-      
-      if (!year || isNaN(year) || year < 1980 || year > new Date().getFullYear()) {
-        return "El año debe ser entre 1980 y el año actual.";
-      }
-    
-      if (!color) {
-        return "Color es un campo requerido.";
-      }
-    
-      if (!capacity || isNaN(capacity) || capacity < 1 || capacity > 80) {
-        return "la capacidad debe ser entre 1 y 80.";
-      }
-      if (!fuel) {
-        return "La gasolina es un campo requerido.";
-      }
-    
-      if (!traction) {
-        return "La tracción es un campo requerido.";
-      }
-    
-      const digitsOnlyRegex = /^\d+$/;
-      if (!engine_capacity || !digitsOnlyRegex.test(engine_capacity) ||  parseInt(engine_capacity) < 0) {
-        return "El cilindraje solo acepta números.";
-      }
-    
-     
-      if (!mileage || !digitsOnlyRegex.test(mileage)  || parseInt(mileage) < 0) {
-        return "El kilometraje solo acepta números.";
-      }
+    if (!model || !modelRegex.test(model)) {
+      return "Digite un formato válido para el modelo, acepta números-letras.";
+    }
 
-      return null; 
-    };
-    
-    
+    if (!year || isNaN(year) || year < 1980 || year > new Date().getFullYear()) {
+      return "El año debe ser entre 1980 y el año actual.";
+    }
+
+    if (!color) {
+      return "Color es un campo requerido.";
+    }
+
+    if (!capacity || isNaN(capacity) || capacity < 1 || capacity > 80) {
+      return "la capacidad debe ser entre 1 y 80.";
+    }
+    if (!fuel) {
+      return "La gasolina es un campo requerido.";
+    }
+
+    if (!traction) {
+      return "La tracción es un campo requerido.";
+    }
+
+    const digitsOnlyRegex = /^\d+$/;
+    if (!engine_capacity || !digitsOnlyRegex.test(engine_capacity) || parseInt(engine_capacity) < 0) {
+      return "El cilindraje solo acepta números.";
+    }
+
+
+    if (!mileage || !digitsOnlyRegex.test(mileage) || parseInt(mileage) < 0) {
+      return "El kilometraje solo acepta números.";
+    }
+
+    return null;
+  };
+
+
   const handleSave = async (event) => {
-      event.preventDefault();
+    event.preventDefault();
 
-  
+
     const validationError = validateFields(
-    
+
       plate_Number.current.value,
       category.current.value,
       make.current.value,
@@ -236,7 +235,7 @@ const handleEditImageUpload = async (e) => {
 
     let newVehicle = {
       plate_Number: plate_Number.current.value,
-     category: category.current.value,
+      category: category.current.value,
       make: make.current.value,
       model: model.current.value,
       year: parseInt(year.current.value),
@@ -245,36 +244,33 @@ const handleEditImageUpload = async (e) => {
       fuel: fuel.current.value,
       traction: traction.current.value,
       engine_capacity: parseInt(engine_capacity.current.value),
-      mileage: parseInt(mileage.current.value), 
+      mileage: parseInt(mileage.current.value),
       oil_Change: oil_Change.current.value,
       status: true,
       image: updatedImageString,
     };
     const result = await create(newVehicle);
-  if (result.error) {
-  
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: result.error,
-    });
-  } else {
-    
-    Swal.fire({
-      icon: 'success',
-      title: 'Vehículo creado',
-      text: 'El vehículo se ha creado exitosamente',
-    }).then(() => {
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+    if (result.error) {
 
-    });
-  }
-};
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: result.error,
+      });
+    } else {
 
+      Swal.fire({
+        icon: 'success',
+        title: 'Vehículo creado',
+        text: 'El vehículo se ha creado exitosamente',
+      }).then(() => {
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
 
-
+      });
+    }
+  };
 
 
   const handleEditClick = (vehicleId) => {
@@ -287,7 +283,30 @@ const handleEditImageUpload = async (e) => {
     setShowEditModal(false);
   };
 
-  const handleUpdate = (event) => {
+  const handleUpdate = async (event) => {
+
+    const validationError = validateFields(
+      plate_Number.current.value,
+      category.current.value,
+      make.current.value,
+      model.current.value,
+      year.current.value,
+      color.current.value,
+      capacity.current.value,
+      fuel.current.value,
+      traction.current.value,
+      engine_capacity.current.value,
+      mileage.current.value,
+    );
+  
+    if (validationError) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: validationError,
+      });
+      return;
+    }
 
     const updatedImages = [...editingVehicle.image.split(','), ...newImages];
     const updatedImageString = updatedImages.filter(Boolean).join(',');
@@ -311,35 +330,28 @@ const handleEditImageUpload = async (e) => {
       image: updatedImageString,
     };
 
-  try{
-
-    mutation.mutateAsync(updatedVehicle).then(() => {
-
+    try {
+      await mutation.mutateAsync(updatedVehicle);
+      Swal.fire({
+        icon: 'success',
+        title: 'Vehículo actualizado',
+        text: 'El vehículo se ha actualizado exitosamente',
+      }).then(() => {
       setShowEditModal(false);
-      
-    });
-  
-  Swal.fire({
-    icon: 'success',
-    title: 'Vehículo editado',
-    text: 'El vehículo se ha editado exitosamente',
-  });
-
-  setTimeout(() => {
-    window.location.reload();
-  }, 2000); 
-  
-} catch (error) {
-  Swal.fire({
-    icon: 'error',
-    title: 'Error',
-    text: 'Hubo un error al editar el vehículo',
-  });
-}
+      });
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.message || 'Hubo un error al actualizar el vehículo',
+      });
+    }
   };
 
-
-   const removeImage = (indexToRemove) => {
+  const removeImage = (indexToRemove) => {
 
     setEditingVehicle((prevVehicle) => {
       const updatedImages = prevVehicle.image.split(',');
@@ -393,27 +405,27 @@ const handleEditImageUpload = async (e) => {
     // Inicializa el DataTable después de renderizar los datos
     const newDataTable = new DataTable("#tableVehicles", {
       language: {
-        processing:     "Procesando...",
-        search:         "Buscar:",
-        lengthMenu:    "Mostrar _MENU_ elementos",
-        info:           "Mostrando elementos _START_ al _END_ de un total de _TOTAL_ elementos",
-        infoEmpty:      "Mostrando 0 elementos ",
-        infoFiltered:   "(filtrado de _MAX_ elementos en total)",
-        infoPostFix:    "",
+        processing: "Procesando...",
+        search: "Buscar:",
+        lengthMenu: "Mostrar _MENU_ elementos",
+        info: "Mostrando elementos _START_ al _END_ de un total de _TOTAL_ elementos",
+        infoEmpty: "Mostrando 0 elementos ",
+        infoFiltered: "(filtrado de _MAX_ elementos en total)",
+        infoPostFix: "",
         loadingRecords: "Cargando...",
-        zeroRecords:    "No se encontraron elementos",
-        emptyTable:     "No hay datos disponibles en la tabla",
+        zeroRecords: "No se encontraron elementos",
+        emptyTable: "No hay datos disponibles en la tabla",
         paginate: {
-            first:      "Primero",
-            previous:   "Anterior",
-            next:       "Siguiente",
-            last:       "Último"
+          first: "Primero",
+          previous: "Anterior",
+          next: "Siguiente",
+          last: "Último"
         },
         aria: {
-            sortAscending:  ": activar para ordenar la columna de manera ascendente",
-            sortDescending: ": activar para ordenar la columna de manera descendente"
+          sortAscending: ": activar para ordenar la columna de manera ascendente",
+          sortDescending: ": activar para ordenar la columna de manera descendente"
         }
-    },
+      },
       retrieve: true,
       responsive: true,
       bLengthChange: false,
@@ -426,7 +438,7 @@ const handleEditImageUpload = async (e) => {
           text: '<i class="fa-solid fa-print" aria-hidden="true"></i>',
           className: "btn btn-info",
           exportOptions: {
-            columns: [0, 1, 2, 3, 4, 5, 6],
+            columns: [0, 1, 2, 3, 4, 5, ],
           },
           customize: function (win) {
             $(win.document.body)
@@ -443,9 +455,9 @@ const handleEditImageUpload = async (e) => {
           titleAttr: "Exportar a PDF",
           text: '<i class="fa-regular fa-file-pdf" aria-hidden="true"></i>',
           className: "btn btn-danger",
-          exportOptions: { columns: [0, 1, 2, 3, 4, 5, 6] },
+          exportOptions: { columns: [0, 1, 2, 3, 4, 5, ] },
           customize: function (doc) {
-            doc.content[1].margin = [100, 0, 100, 0]; 
+            doc.content[1].margin = [100, 0, 100, 0];
           },
         },
         {
@@ -454,7 +466,7 @@ const handleEditImageUpload = async (e) => {
           titleAttr: "Exportar a Excel",
           text: '<i class="fa-solid fa-file-csv"></i>',
           className: "btn btn-success",
-          exportOptions: { columns: [0, 1, 2, 3, 4, 5, 6] },
+          exportOptions: { columns: [0, 1, 2, 3, 4, 5, ] },
         },
       ],
     });
@@ -467,7 +479,7 @@ const handleEditImageUpload = async (e) => {
 
 
   const handleStatus = (id) => {
-   
+
     Swal.fire({
       title: '¿Está seguro?',
       text: '¿Desea cambiar el estado del vehículo?',
@@ -503,7 +515,7 @@ const handleEditImageUpload = async (e) => {
         <h2 className="h3 mb-2 text-gray-800 custom-heading">Vehículos</h2>
         <p className="mb-4">Lista de vehículos</p>
         <div className="card shadow mb-4">
-       
+
           <div>
             <Accordion defaultActiveKey="1">
               <Accordion.Item eventKey="0">
@@ -840,7 +852,7 @@ const handleEditImageUpload = async (e) => {
                         </Col>
                       </Row>
 
-         
+
                       <Button
                         variant="success"
                         className="buttonSave"
@@ -892,7 +904,7 @@ const handleEditImageUpload = async (e) => {
                       <Button
                         variant="warning"
                         className="bg-gradient-warning mr-1 text-light"
-                        style={{marginRight: '20px'}}
+                        style={{ marginRight: '20px' }}
                         onClick={() => handleEditClick(vehicle.id)}
                       >
                         <i className="bi bi-pencil-square"></i>
@@ -957,7 +969,7 @@ const handleEditImageUpload = async (e) => {
                     placeholder="Ingrese el año"
                     defaultValue={editingVehicle ? editingVehicle.year : ""}
                     ref={year}
-                    required 
+                    required
                   ></Form.Control>
                   <div className="valid-feedback"></div>
                   <div className="invalid-feedback">
@@ -1013,34 +1025,34 @@ const handleEditImageUpload = async (e) => {
                   </Form.Group>
 
                   <Form.Group>
-                  <Form.Label>Imágenes </Form.Label>
-                  <div className='styled-table'>
-                    <div style={{ display: 'flex', overflowX: 'auto', gap: '10px' }}>
-                      {editingVehicle && editingVehicle.image && editingVehicle.image.split(',').map((imageUrl, index) => (
-                        <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                          <td>
-                            <img
-                              src={imageUrl}
-                              alt={`Imagen ${index}`}
-                              style={{ maxWidth: '200px', maxHeight: '200px' }}
-                            />
-                          </td>
-                          <td>
-                            <Button variant='danger' onClick={() => removeImage(index)}>
-                              Eliminar
-                            </Button>
-                          </td>
-                        </div>
-                      ))}
+                    <Form.Label>Imagen </Form.Label>
+                    <div className='styled-table'>
+                      <div style={{ display: 'flex', overflowX: 'auto', gap: '10px' }}>
+                        {editingVehicle && editingVehicle.image && editingVehicle.image.split(',').map((imageUrl, index) => (
+                          <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <td>
+                              <img
+                                src={imageUrl}
+                                alt={`Imagen ${index}`}
+                                style={{ maxWidth: '200px', maxHeight: '200px' }}
+                              />
+                            </td>
+                            <td>
+                              <Button variant='danger' onClick={() => removeImage(index)}>
+                                Eliminar
+                              </Button>
+                            </td>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                  <br>
-                  </br>
-                  <input type='file' accept='image/*' className='form-control-file' onChange={handleEditImageUpload} multiple />
-                  {newImages.map((imageUrl, index) => (
-                    <div key={index}>Nueva imagen {index + 1}</div>
-                  ))}
-                </Form.Group>
+                    <br>
+                    </br>
+                    <input type='file' accept='image/*' className='form-control-file' onChange={handleEditImageUpload} multiple />
+                    {newImages.map((imageUrl, index) => (
+                      <div key={index}>Nueva imagen {index + 1}</div>
+                    ))}
+                  </Form.Group>
                 </Col>
 
                 <Col>
@@ -1157,14 +1169,14 @@ const handleEditImageUpload = async (e) => {
             Cancelar
           </Button>
           <Button
-           
+
             className="buttonSave"
             variant="success"
             onClick={handleUpdate}
           >
             Actualizar
           </Button>
-         
+
         </Modal.Footer>
       </Modal>
 
@@ -1182,88 +1194,88 @@ const handleEditImageUpload = async (e) => {
             <div>
               <Row>
                 <Col md={4}>
-                <p style={{color: 'black'}}>
+                  <p style={{ color: 'black' }}>
                     <strong>Placa:</strong> {selectedVehicle.plate_Number}
                   </p>
-                  </Col>
+                </Col>
 
-                  <Col md={4}> 
-                  <p style={{color: 'black'}}>
+                <Col md={4}>
+                  <p style={{ color: 'black' }}>
                     <strong>Categoría:</strong> {selectedVehicle.category}
-                    </p>
-                    </Col>
+                  </p>
+                </Col>
 
-                  <Col md={4}>
-                  <p style={{color: 'black'}}>
+                <Col md={4}>
+                  <p style={{ color: 'black' }}>
                     <strong>Marca:</strong> {selectedVehicle.make}
-                    </p>
-                    </Col>
-                    <Col md={4}>
-                  <p style={{color: 'black'}}>
+                  </p>
+                </Col>
+                <Col md={4}>
+                  <p style={{ color: 'black' }}>
                     <strong>Modelo:</strong> {selectedVehicle.model}
-                    </p>
-                    </Col>
+                  </p>
+                </Col>
 
-                    <Col md={4}> 
-                  <p style={{color: 'black'}}>
+                <Col md={4}>
+                  <p style={{ color: 'black' }}>
                     <strong>Año:</strong> {selectedVehicle.year}
-                    </p>
-                    </Col>
-                    <Col md={4}> 
-                  <p style={{color: 'black'}}>
+                  </p>
+                </Col>
+                <Col md={4}>
+                  <p style={{ color: 'black' }}>
                     <strong>Color:</strong> {selectedVehicle.color}
-                    </p>
-                    </Col>
+                  </p>
+                </Col>
 
-                    <Col md={4}>
-                  <p style={{color: 'black'}}>
+                <Col md={4}>
+                  <p style={{ color: 'black' }}>
                     <strong>Capacidad:</strong> {selectedVehicle.capacity}
-                    </p>
-                    </Col>
-                
-                    <Col md={4}>
-                   <p style={{color: 'black'}}>
+                  </p>
+                </Col>
+
+                <Col md={4}>
+                  <p style={{ color: 'black' }}>
                     <strong>Gasolina:</strong> {selectedVehicle.fuel}
-                    </p>
-                    </Col>
-          
-                    <Col md={4}>
-                  <p style={{color: 'black'}}>
+                  </p>
+                </Col>
+
+                <Col md={4}>
+                  <p style={{ color: 'black' }}>
                     <strong>Tracción:</strong> {selectedVehicle.traction}
-                    </p>
-                    </Col>
-                    </Row>
-                    <Row>
-                    <Col md={4}>
-                  <p style={{color: 'black'}}>
+                  </p>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={4}>
+                  <p style={{ color: 'black' }}>
                     <strong>Cilindraje:</strong>{" "}
                     {selectedVehicle.engine_capacity}
-                    </p>
-                    </Col>
-                  
-                    <Col md={4}> 
-                  <p style={{color: 'black'}}>
-                    <strong>Kilometraje:</strong> {selectedVehicle.mileage}
-                    </p>
-                    </Col>
-               
-                    <Col md={4}> 
-                  <p style={{color: 'black'}}>
-                    <strong>Cambio de Aceite:</strong>{" "}
-                    {selectedVehicle.oil_Change}          
-                    </p>
-                  </Col>
-                   </Row>
-                      <Row>
+                  </p>
+                </Col>
+
                 <Col md={4}>
-                  <p  style={{color: 'black'}} className="d-flex align-items-center">
+                  <p style={{ color: 'black' }}>
+                    <strong>Kilometraje:</strong> {selectedVehicle.mileage}
+                  </p>
+                </Col>
+
+                <Col md={4}>
+                  <p style={{ color: 'black' }}>
+                    <strong>Cambio de Aceite:</strong>{" "}
+                    {selectedVehicle.oil_Change}
+                  </p>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={4}>
+                  <p style={{ color: 'black' }} className="d-flex align-items-center">
                     <strong>Estado:  </strong>{" "}
                     {selectedVehicle.status ? "Habilitado" : "Deshabilitado"}
-                   
+
                     <Button
                       variant={selectedVehicle.status ? "success" : "danger"}
                       onClick={() => handleStatus(selectedVehicle.id)}
-                      style={{marginLeft: '10px'}}
+                      style={{ marginLeft: '10px' }}
                     >
                       {selectedVehicle.status ? (
                         <i class="bi bi-toggle-on"></i>
@@ -1272,17 +1284,17 @@ const handleEditImageUpload = async (e) => {
                       )}
                     </Button>
                   </p>
-                </Col>          
+                </Col>
 
                 <Col md={4} className="text-right">
                   {selectedVehicle.image && (
                     <img
                       src={selectedVehicle.image}
-                      style={{ maxWidth: "400%", maxHeight: "400px" }}
+                      style={{ width: "100%", maxHeight: "400px", objectFit: "contain" }}
                     />
                   )}
                 </Col>
-                </Row>
+              </Row>
             </div>
 
           )}

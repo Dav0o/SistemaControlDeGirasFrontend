@@ -162,7 +162,7 @@ function VehicleMaintenances() {
       });
       return;
     
-  } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚ, -]+$/.test(name.current.value.trim())) {
+  } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚ, - . ,]+$/.test(name.current.value.trim())) {
       Swal.fire({
           icon: 'error',
           title: 'Error',
@@ -207,7 +207,7 @@ function VehicleMaintenances() {
     }
 
     if (description.current.value.trim()) {
-      if (!/^[a-zA-ZáéíóúÁÉÍÓÚ, - #1234567890]+$/.test(description.current.value.trim())) {
+      if (!/^[a-zA-ZáéíóúÁÉÍÓÚ, - . , #1234567890]+$/.test(description.current.value.trim())) {
           Swal.fire({
               icon: 'error',
               title: 'Error',
@@ -331,7 +331,7 @@ function VehicleMaintenances() {
       return;
     }
     
-    else if  (!/^[a-zA-ZáéíóúÁÉÍÓÚ, -]+$/.test(name.current.value.trim())){
+    else if  (!/^[a-zA-ZáéíóúÁÉÍÓÚ, - . ,]+$/.test(name.current.value.trim())){
       Swal.fire({
           icon: 'error',
           title: 'Error',
@@ -353,7 +353,7 @@ function VehicleMaintenances() {
     }
 
     if (description.current.value.trim()) {
-      if (!/^[a-zA-ZáéíóúÁÉÍÓÚ, - #1234567890]+$/.test(description.current.value.trim())) {
+      if (!/^[a-zA-ZáéíóúÁÉÍÓÚ, - . , #1234567890]+$/.test(description.current.value.trim())) {
           Swal.fire({
               icon: 'error',
               title: 'Error',
@@ -571,7 +571,7 @@ function VehicleMaintenances() {
                                 multiple
                               />
                               <label className="custom-file-label" htmlFor="customFile">
-                                Click para seleccionar una o más imágenes</label>
+                                Clic para seleccionar una o más imágenes</label>
                             </div>
                             {Array.isArray(imageUrl) && imageUrl.map((url, index) => (
                               <img

@@ -184,7 +184,7 @@ function Users() {
     return null;
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
 
     const validationError = validateUserFields(
       userDni.current.value,
@@ -219,19 +219,25 @@ function Users() {
       state: true,
     };
     try {
-      mutation.mutateAsync(newUser).then (() => {
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000); 
-      });
-
-      Swal.fire({
-        icon: 'success',
-        title: 'Usuario creado',
-        text: 'El usuario se ha creado exitosamente',
-      });
-
-
+      const result = await mutation.mutateAsync(newUser);
+  
+      if (result.error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: result.error,
+        });
+      } else {
+        Swal.fire({
+          icon: 'success',
+          title: 'Usuario creado',
+          text: 'El usuario se ha creado exitosamente',
+        }).then(() => {
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        });
+      }
     } catch (error) {
       Swal.fire({
         icon: 'error',
@@ -329,30 +335,31 @@ function Users() {
       state: editingUser.state,
     };
 
-   try{
+    try{
 
-    mutation.mutateAsync(updatedUser);
-    setShowEditModal(false);
+      mutation.mutateAsync(updatedUser);
+      setShowEditModal(false);
+    
   
-
-  Swal.fire({
-    icon: 'success',
-    title: 'Usuario editado',
-    text: 'El usuario se ha editado exitosamente',
-  });
-
-  setTimeout(() => {
-    window.location.reload();
-  }, 1500); 
+    Swal.fire({
+      icon: 'success',
+      title: 'Usuario editado',
+      text: 'El usuario se ha editado exitosamente',
+    });
   
-} catch (error) {
-  Swal.fire({
-    icon: 'error',
-    title: 'Error',
-    text: 'Hubo un error al editar el usuario',
-  });
-}
-  };
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500); 
+    
+  } catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Hubo un error al editar el usuario',
+    });
+  }
+    };
+  
 
 
   const [showDetailModal, setShowDetailModal] = useState(false);

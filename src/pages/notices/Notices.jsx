@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useMutation, useQuery } from "react-query";
-import { Row, Col, Accordion, Form, Button, Container, Table, Modal, FormLabel } from "react-bootstrap";
+import { Row, Col, Accordion, Form, Button, Container, Table, Modal, FormLabel, Spinner } from "react-bootstrap";
 import {  create, getNotices, deleteNotice, changeStatus } from "../../services/NoticeService.js";
 import Swal from "sweetalert2";
 import DataTable from 'datatables.net';
@@ -37,7 +37,6 @@ function Notices() {
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
   };
-
 
 
 
@@ -237,6 +236,17 @@ function Notices() {
   };
 
 
+  if (isLoading) {
+    return (
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+    );
+  }
+
+  if (isError) {
+    return <div>Error</div>;
+  }
   return (
     <>
       <Container className="container-fluid">
