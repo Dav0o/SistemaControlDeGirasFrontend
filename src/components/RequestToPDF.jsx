@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   },
 });
 function RequestToPDF({ formData }) {
-  console.log(formData.processes[0].user.name);
+  // console.log(formData.processes[0].user.name);
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -148,13 +148,13 @@ function RequestToPDF({ formData }) {
           <Text style={styles.input}>{formData.personsAmount}</Text>
         </View>
 
-        <View>
+        {/* <View>
           <Text style={styles.label}>Persona encargada:</Text>
           <Text style={styles.input}>
             {formData.processes[0].user.name}{" "}
             {formData.processes[0].user.lastName1}
           </Text>
-        </View>
+        </View> */}
 
         <View style={styles.row}>
           <View style={styles.column}>
