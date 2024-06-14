@@ -25,7 +25,7 @@ function RequestForm() {
     if (!objetivo.trim()) {
       return 'El objetivo es requerido';
     }
-    if (!objetivo.trim() || !/^[a-zA-ZáéíóúüÜÁÉÍÓÚ\s-.,;/:()"'=#1234567890]+$/.test(objetivo)) {
+    if (!objetivo.trim() || !/^[a-zA-ZñÑáéíóúüÜÁÉÍÓÚ\s-.,;/:()"'=#1234567890]+$/.test(objetivo)) {
       return 'El objetivo no acepta @ !¡ ¿? $ & % * + [] {} <> ';
     }
 
@@ -69,11 +69,11 @@ function RequestForm() {
       return 'El lugar de destino es requerido';
     }
 
-    if (!/^[a-zA-ZáéíóúÁÉÍÓÚ, -]+$/.test(lugarSalida.trim())) {
+    if (!/^[a-zA-ZñÑáéíóúÁÉÍÓÚ, -]+$/.test(lugarSalida.trim())) {
       return 'El lugar de salida solo puede contener letras';
     }
     
-    if (!/^[a-zA-ZáéíóúÁÉÍÓÚ, -]+$/.test(lugarDestino.trim())) {
+    if (!/^[a-zA-ZñÑáéíóúÁÉÍÓÚ, -]+$/.test(lugarDestino.trim())) {
       return 'El lugar de destino solo puede contener letras';
     }
     
@@ -81,7 +81,7 @@ function RequestForm() {
     if (!itinerario.trim()) {
       return 'El itinerario es requerido';
     }
-    if (!itinerario.trim() || !/^[a-zA-ZáéíóúüÜÁÉÍÓÚ\s-.,;/:()"'=#1234567890]+$/.test(itinerario)) {
+    if (!itinerario.trim() || !/^[a-zA-ZñÑáéíóúüÜÁÉÍÓÚ\s-.,;/:()"'=#1234567890]+$/.test(itinerario)) {
       return 'El itinerario no acepta @ !¡ ¿? $ & % * + [] {} <> ';
     }
 
@@ -90,7 +90,7 @@ function RequestForm() {
     }
 
    
-    if (observaciones.trim() && !/^[a-zA-ZáéíóúüÜÁÉÍÓÚ\s\-.,;/:()"'=#1234567890]+$/.test(observaciones)) {
+    if (observaciones.trim() && !/^[a-zA-ZñÑáéíóúüÜÁÉÍÓÚ\s\-.,;/:()"'=#1234567890]+$/.test(observaciones)) {
       return 'Las observaciones no aceptan @ !¡ ¿? $ & % * + [] {} <> ';
   }
 
