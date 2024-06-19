@@ -30,7 +30,7 @@ function VehicleMaintenances() {
 
   const [newImages, setNewImages] = useState([]);
   const [imageUrl, setImageUrl] = useState("");
-  const apiKey = "6c4a708d4bdee0384fae9c67a8558f9e";
+  const apiKey = "85a713159de230240e6eeb0c37ca3d34";
 
   const handleImageUpload = async (e) => {
     const imageInput = e.target.files[0];
